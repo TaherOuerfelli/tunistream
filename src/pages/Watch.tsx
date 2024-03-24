@@ -2,10 +2,10 @@ import { makeProviders, makeStandardFetcher,makeSimpleProxyFetcher, targets ,Ful
 import VideoPlayer from '../components/VideoPlayer';
 import LoadingSources from '../components/LoadingSources';
 import { useState,useEffect } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import StreamNotFound from '../components/StreamNotFound';
 
-const proxyUrl = process.env.PROXY_URL_LINK;
+const proxyUrl = 'https://taupe-narwhal-20b068.netlify.app';//process.env.PROXY_URL_LINK;
 
 const providers = makeProviders({
   fetcher: makeStandardFetcher(fetch),
@@ -31,7 +31,7 @@ const providers = makeProviders({
 //{/>:null}
 export default function Watch(){
   const { movieID } = useParams();
-  const navigate = useNavigate();
+
   const [startPlay , setStartPlay] = useState(false);
   const [notFoundMedia , setNotFoundMedia] = useState(false);
   const [StreamLink , setStreamLink] = useState('');
