@@ -6,7 +6,7 @@ import Footer from "./Footer";
 
 
 
-const SEARCH_API_KEY = '22336235ae8cd5ba3de3feef1417f230';
+const SEARCH_API_KEY = process.env.REACT_APP_TMDB_API_KEY;
 
 interface SearchResult {
   id: number;

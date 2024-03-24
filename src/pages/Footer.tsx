@@ -9,7 +9,7 @@ export default function Footer(){
                 <Link to='/about' className="link link-hover">About us</Link>
                 <Link to='/Movie' className="link link-hover">MoviePage</Link>
 
-            </nav> 
+            </nav>
             <nav>
                 <div className="grid grid-flow-col gap-4">
                 <p>Joins our Discord:</p>

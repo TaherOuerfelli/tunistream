@@ -5,7 +5,7 @@ import { useState,useEffect } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import StreamNotFound from '../components/StreamNotFound';
 
-const proxyUrl = "https://taupe-narwhal-20b068.netlify.app";
+const proxyUrl = process.env.PROXY_URL_LINK;
 
 const providers = makeProviders({
   fetcher: makeStandardFetcher(fetch),
