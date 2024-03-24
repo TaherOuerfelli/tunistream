@@ -29,10 +29,10 @@ export default function Homepage(){
         const fetchSearchResults = async () => {
             try {
             setSearching(true);
-              if (searchQuery.trim() === '') {
+              if (searchQuery?.trim() === '') {
                 setSearchResults([]);
                 setSearchQuery('');
-                setTimeout(setSearching(false),3000);
+                setTimeout(()=>setSearching(false),2000);
                 return;
               }
       
@@ -52,7 +52,7 @@ export default function Homepage(){
                 }));
       
               setSearchResults(results);
-              setTimeout(setSearching(false),3000);
+              setTimeout(()=>setSearching(false),2000);
             } catch (error) {
               console.error('Error fetching search results:', error);
               setSearching(false);
