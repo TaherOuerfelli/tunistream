@@ -32,7 +32,7 @@ export default function Homepage(){
               if (searchQuery?.trim() === '') {
                 setSearchResults([]);
                 setSearchQuery('');
-                setTimeout(()=>setSearching(false),2000);
+                setTimeout(()=>setSearching(false),1500);
                 return;
               }
       
@@ -52,7 +52,7 @@ export default function Homepage(){
                 }));
       
               setSearchResults(results);
-              setTimeout(()=>setSearching(false),2000);
+              setTimeout(()=>setSearching(false),1500);
             } catch (error) {
               console.error('Error fetching search results:', error);
               setSearching(false);
