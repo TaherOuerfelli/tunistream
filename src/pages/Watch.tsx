@@ -5,7 +5,7 @@ import { useState,useEffect } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import StreamNotFound from '../components/StreamNotFound';
 
-const proxyUrl = import.meta.env.VITE_PROXY_URL_LINK;
+const proxyUrl = import.meta.env.PROXY_URL_LINK;
 
 const providers = makeProviders({
   fetcher: makeStandardFetcher(fetch),
