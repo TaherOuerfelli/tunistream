@@ -6,10 +6,11 @@ import About from "./pages/AboutUs"
 import MoviePage from "./pages/MoviePage"
 import SeriesPage from "./pages/SeriesPage";
 
-import { Route, RouterProvider , createBrowserRouter , createRoutesFromElements} from 'react-router-dom';
-
 import NotFoundPage from "./pages/NotFoundPage";
 import Watch from "./pages/Watch";
+
+import { Route, RouterProvider , createBrowserRouter , createRoutesFromElements} from 'react-router-dom';
+
 
 
 const router = createBrowserRouter(
