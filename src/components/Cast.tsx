@@ -1,8 +1,14 @@
 
+interface casterProps{
+    profile_path:string,
+    id:string,
+    name:string,
+    character:string
 
+}
 
 interface CastProps {
-    caster: {};
+    caster: casterProps;
 }
 
 const Card: React.FC<CastProps> = ({ caster }) => {

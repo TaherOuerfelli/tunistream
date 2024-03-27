@@ -8,9 +8,7 @@ import Footer from "./Footer";
 
 const SEARCH_API_KEY = '22336235ae8cd5ba3de3feef1417f230';
 
-const spacesToDashes= (inputString: string) => {
-    return inputString.replace(/\s+/g, '-');
-}
+
 
 const isArrayEmpty = (arr: any[]): boolean => {
     return Array.isArray(arr) && arr.length === 0;
@@ -145,11 +143,11 @@ export default function MoviePage(){
                         </h1>
                         </div>
                         <div className="border-t border-gray-500 my-2"></div>
-                        <Link to={`/Watch/Movie/${movieID}?name=${movieData.title}&year=${releaseYear}`} className="btn btn-block bg-white text-xl text-black hover:text-white font-bold mt-7 mr-1 w-3/4">
+                        <Link to={`/Watch/Movie/${movieID}?name=${movieData.title}&year=${releaseYear}`} className="btn btn-block bg-white text-xl text-black hover:text-white font-bold mt-7 mr-1 ">
                         Watch Movie
                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2.5" stroke-linecap="butt" stroke-linejoin="bevel"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
                         </Link>
-                        <button className="btn btn-block shadow-xl text-xl font-bold mt-3 w-3/4">
+                        <button className="btn btn-block shadow-xl text-xl font-bold mt-3 ">
                         Download
                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3cd27e" stroke-width="2.5" stroke-linecap="butt" stroke-linejoin="bevel"><path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 9l-5 5-5-5M12 12.8V2.5"/></svg>
                         </button>

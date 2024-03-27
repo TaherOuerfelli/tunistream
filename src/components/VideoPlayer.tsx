@@ -5,6 +5,10 @@ interface ProgressProps {
   value: number;
   onChangef: (value: number) => void;
 }
+interface VideoProps{
+  videoSrc:string;
+  Name:string;
+}
 
 const HoverableProgress: React.FC<ProgressProps> = (props) => {
   const [hovering, setHovering] = useState(false);
@@ -35,8 +39,8 @@ const formatTime = (time: number): string => {
   return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 };
 
-const VideoPlayer = ({ videoSrc , Name }) => {
-  const videoRef = useRef(null);
+const VideoPlayer: React.FC<VideoProps> = ({videoSrc , Name}) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
   const videoElement = videoRef.current;
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -129,7 +133,7 @@ const VideoPlayer = ({ videoSrc , Name }) => {
 
   const handleCanPlay = () => {
     setIsLoading(false); // Set isLoading to false when video can play
-    setDuration(videoElement.duration);
+    if (videoElement)setDuration(videoElement.duration);
   };
 
 
@@ -159,7 +163,7 @@ const VideoPlayer = ({ videoSrc , Name }) => {
 
   const handleVideoLoad = () => {
     setVideoLoaded(true);
-    setDuration(videoElement.duration);
+    if (videoElement)setDuration(videoElement.duration);
   };
 
 
@@ -205,8 +209,8 @@ const VideoPlayer = ({ videoSrc , Name }) => {
   };
   
   const addSeconds = (value : number) => {
-    videoElement.currentTime = Math.round(value);
-    setCurrentTime(videoElement.currentTime);
+    if (videoElement)videoElement.currentTime = Math.round(value);
+    if (videoElement)setCurrentTime(videoElement.currentTime);
   }
 
 
