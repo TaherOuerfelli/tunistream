@@ -6,7 +6,7 @@ import Footer from "./Footer";
 
 
 
-const SEARCH_API_KEY:string = import.meta.env.TMDB_API_KEY;
+const SEARCH_API_KEY = process.env.TMDB_API_KEY;
 
 interface SearchResult {
   id: number;
