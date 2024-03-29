@@ -24,8 +24,7 @@ const Card: React.FC<CastProps> = ({ caster }) => {
         profilePage=`https://www.themoviedb.org/person/${caster.id}`;
     }
     return(
-        <>
-        <a href={profilePage} target="_blank" rel="noopener noreferrer" className="avatar flex flex-col m-5 text-center items-center hover:bg-base-300">
+        <a href={profilePage} target="_blank" rel="noopener noreferrer" className="avatar flex flex-col m-1 p-5 w-full rounded-lg text-center items-center hover:bg-base-100">
             <div className=" w-24 rounded-full">
                 <img src={imglink}
                 alt={caster.name}
@@ -36,7 +35,7 @@ const Card: React.FC<CastProps> = ({ caster }) => {
             {caster.character?(<p>"{caster.character}"</p>):null}
     
         </a>
-        </>
+
     )
 };
 

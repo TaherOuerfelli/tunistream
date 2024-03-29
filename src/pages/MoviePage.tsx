@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useState,useEffect } from 'react';
 import Header from "./Header";
 import Footer from "./Footer";
+import { ItemScroll } from "../components/ItemScroll";
 
 
 const SEARCH_API_KEY = '22336235ae8cd5ba3de3feef1417f230';
@@ -168,16 +169,17 @@ export default function MoviePage(){
                     <p className="text-xl mx-5 my-3 font-thin">{movieData.overview}</p>
                     
                 </div>
-                <div className="w-full mt-5">
-                {!isArrayEmpty(creditsData.cast)  && <><h1 className="text-4xl font-bold mx-10">Cast</h1>
-                    <div className="flex flex-wrap justify-start items-center mt-3 mx-5">
-                    {creditsData.cast ? (creditsData.cast.slice(0,12).map((castMember: any) => (
-                        <CastMember key={castMember.id} caster={castMember}/>
+                {!isArrayEmpty(creditsData.cast)  && <><h1 className="text-4xl font-bold mx-10 mt-10">Cast</h1>
+                <div className="flex flex-col w-full justify-center items-center">
+                    <ItemScroll>
+                    {creditsData.cast ? (creditsData.cast.map((castMember: any) => (
+                      <div className="w-fit">
+                          <CastMember key={castMember.id} caster={castMember}/>
+                      </div>
                     ))): null}
-
+                    </ItemScroll>
                     
-                    </div></>}
-                </div>
+                </div></>}
             </div>
         </div>
         </div>

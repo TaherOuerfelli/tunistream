@@ -36,7 +36,8 @@ export default function Watch(){
   const { movieID } = useParams();
 
   const [startPlay , setStartPlay] = useState(false);
-  const [notFoundMedia , setNotFoundMedia] = useState(false);
+  const [DoneFetching , setDoneFetching] = useState(false);
+  const [FoundStream , setFoundStream] = useState(false);
   const [StreamLink , setStreamLink] = useState('');
   const [mediaInfo, setMediaInfo] = useState<ScrapeMedia>({
     type: 'movie',
@@ -51,6 +52,7 @@ export default function Watch(){
     per:0,
     discovered:false,
     embedID:'',
+    embedSource:'',
     found:false
   });
   const [sourceIds, setSourceIds] = useState( ['showbox', 'vidsrcto', 'zoechip', 'vidsrc', 'gomovies', 'ridomovies', 'flixhq', 'smashystream', 'remotestream']);
@@ -79,7 +81,8 @@ export default function Watch(){
         ...prevSourceInfo,
         ID: evt.sourceId,
         discovered: true,
-        embedID: evt.embeds[0].embedScraperId
+        embedID: evt.embeds[0].embedScraperId,
+        embedSource: evt.sourceId
       }));
     },
     start: (id) => {
@@ -124,19 +127,18 @@ export default function Watch(){
           if(stream.type === 'file'){
           const qualityEntries : string[] = Object.keys(stream.qualities);
           const streamQualities : Record<string, Quality> = stream.qualities;
-          const firstQuality : string = qualityEntries[2];
+          const firstQuality : string = qualityEntries[0];
           console.log(firstQuality);
           const firstStream : Quality | undefined = streamQualities[firstQuality];
           console.log(firstStream);
           //console.log(firstStream.url);
         
         if(firstStream.url){
-            setStreamLink(firstStream.url) 
-            setNotFoundMedia(false)
-        }}else{
-          setNotFoundMedia(true)
+            setStreamLink(firstStream.url);
+            setFoundStream(true)
+          }}
         }
-      }
+        setDoneFetching(true);
       };
       fetchData();
     }
@@ -145,16 +147,16 @@ export default function Watch(){
   
   
 
-    if(StreamLink !=='')
+    if(FoundStream)
     {
-      setTimeout(()=> setStartPlay(true),1500)
+      setTimeout(()=> setStartPlay(true),200)
     }
     return(
         <>
 <div className='bg-black'>
 {startPlay  ? <VideoPlayer videoSrc={StreamLink} Name={mediaInfo.title}/> : null}
-{notFoundMedia ? <StreamNotFound Name={mediaInfo.title}/>: null}
-{!startPlay && !notFoundMedia  ? <LoadingSources sourceInfo={sourceInfo} sourceIds={sourceIds}/>:null}
+{!FoundStream && DoneFetching ? <StreamNotFound Name={mediaInfo.title}/>: null}
+{!startPlay && !DoneFetching  ? <LoadingSources sourceInfo={sourceInfo} sourceIds={sourceIds} gotLink={FoundStream}/>:null}
 </div>
 
                 
