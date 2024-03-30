@@ -143,14 +143,14 @@ export default function SeriesPage(){
                     </h1>
                     <div className="mx-2 font-bold text-1xl mt-5 ">
                         <h1>Genre: <span className="font-thin badge">{genres}</span></h1>
-                        <div className="border-t  border-gray-500 my-2"></div>
+                        <div className="divider my-2 h-1"></div> 
                         
                         <h1>Creator: <span className="font-thin">{directorName}</span></h1>
-                        <div className="border-t border-gray-500 my-2"></div>
+                        <div className="divider my-2 h-1"></div> 
                         <h1>Language: <span className="font-thin">{Language}, {Country}</span></h1>
-                        <div className="border-t border-gray-500 my-2"></div>
+                        <div className="divider my-2 h-1"></div> 
                         <h1>Episode Duration: <span className="font-thin">{runtime}</span></h1>
-                        <div className="border-t border-gray-500 my-2"></div>
+                        <div className="divider my-2 h-1"></div> 
 
                         <div className="tooltip font-thin" data-tip="TMDB Rating.">
                         <h1 className="flex flex-row font-bold">Ratings: <span className="font-thin text-xl ml-3">{voteAverage} </span>
@@ -158,7 +158,7 @@ export default function SeriesPage(){
                         <span className="text-xs font-light mx-1 mt-2">vote count: {voteCount}</span>
                         </h1>
                         </div>
-                        <div className="border-t border-gray-500 my-2"></div>
+                        <div className="divider my-2 h-1"></div> 
                         <button className="btn btn-block bg-white text-xl text-black hover:text-white font-bold mt-7 mr-1 ">
                         Watch Now S1:E1
                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2.5" stroke-linecap="butt" stroke-linejoin="bevel"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
@@ -180,12 +180,14 @@ export default function SeriesPage(){
             </div>
                 <div className=" mx-10 w-fit mt-10">
                     <h1 className="mx-2 font-bold text-2xl ">Overview:</h1>
-                    <div className="border-t border-gray-500 my-2 w-full"></div>
+                    <div className="divider my-2 h-1"></div> 
                     <p className="text-xl mx-5 my-3 font-thin">{seriesData.overview}</p>
                     
                 </div>
                 <div className="mx-10 mt-10">
+                <div className="divider my-2 h-1"></div> 
                   <ShowSeasons seasonsList={seriesData.seasons} ShowID={seriesData.id}/>
+                  <div className="divider my-2 h-1"></div> 
                 </div>
                     {!isArrayEmpty(creditsData.cast)  && <><h1 className="text-4xl font-bold mx-10 mt-10">Cast</h1>
                 <div className="flex flex-col w-full justify-center items-center">

@@ -128,14 +128,14 @@ export default function MoviePage(){
                     </h1>
                     <div className="mx-2 font-bold text-1xl mt-5 ">
                         <h1>Genre: <span className="font-thin badge">{genres}</span></h1>
-                        <div className="border-t  border-gray-500 my-2"></div>
+                        <div className="divider my-2 h-1"></div> 
                         
                         <h1>Director: <span className="font-thin">{directorName}</span></h1>
-                        <div className="border-t border-gray-500 my-2"></div>
+                        <div className="divider my-2 h-1"></div> 
                         <h1>Language: <span className="font-thin">{Language}, {Country}</span></h1>
-                        <div className="border-t border-gray-500 my-2"></div>
+                        <div className="divider my-2 h-1"></div> 
                         <h1>Duration: <span className="font-thin">{runtime}</span></h1>
-                        <div className="border-t border-gray-500 my-2"></div>
+                        <div className="divider my-2 h-1"></div>  
 
                         <div className="tooltip font-thin" data-tip="TMDB Rating.">
                         <h1 className="flex flex-row font-bold">Ratings: <span className="font-thin text-xl ml-3">{voteAverage} </span>
@@ -143,7 +143,7 @@ export default function MoviePage(){
                         <span className="text-xs font-light mx-1 mt-2">vote count: {voteCount}</span>
                         </h1>
                         </div>
-                        <div className="border-t border-gray-500 my-2"></div>
+                        <div className="divider my-2 h-1"></div> 
                         <Link to={`/Watch/Movie/${movieID}?name=${movieData.title}&year=${releaseYear}`} className="btn btn-block bg-white text-xl text-black hover:text-white font-bold mt-7 mr-1 ">
                         Watch Movie
                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2.5" stroke-linecap="butt" stroke-linejoin="bevel"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
@@ -165,7 +165,7 @@ export default function MoviePage(){
             </div>
                 <div className=" mx-10 w-fit mt-10">
                     <h1 className="mx-2 font-bold text-2xl ">Overview:</h1>
-                    <div className="border-t border-gray-500 my-2 w-full"></div>
+                    <div className="divider my-2 h-1"></div> 
                     <p className="text-xl mx-5 my-3 font-thin">{movieData.overview}</p>
                     
                 </div>

@@ -1,4 +1,4 @@
-import { makeProviders, makeStandardFetcher,makeSimpleProxyFetcher, targets ,FullScraperEvents ,ScrapeMedia } from '@movie-web/providers';
+import { makeProviders, makeStandardFetcher,makeSimpleProxyFetcher, targets ,FullScraperEvents ,ScrapeMedia, StreamFile, Qualities } from '@movie-web/providers';
 import VideoPlayer from '../components/VideoPlayer';
 import LoadingSources from '../components/LoadingSources';
 import { useState,useEffect } from 'react';
@@ -23,13 +23,6 @@ const providers = makeProviders({
 
 
 
-    interface Quality {
-      type: string;
-      url: string;
-      // Other properties if needed
-  }
-
-
 
 //{/>:null}
 export default function Watch(){
@@ -39,6 +32,8 @@ export default function Watch(){
   const [DoneFetching , setDoneFetching] = useState(false);
   const [FoundStream , setFoundStream] = useState(false);
   const [StreamLink , setStreamLink] = useState('');
+  const [StreamType , setStreamType] = useState<"hls" | "file">('file');
+  const [StreamQuality, setStreamQuality] = useState<Record<Qualities, StreamFile> | null>(null);
   const [mediaInfo, setMediaInfo] = useState<ScrapeMedia>({
     type: 'movie',
     title: '',
@@ -115,35 +110,39 @@ export default function Watch(){
      });
     }
   }, [searchParams]);
-
   useEffect(() => {
     // Call providers.runAll() when mediaInfo changes
     if (mediaInfo.title && mediaInfo.releaseYear) {
       const fetchData = async () => {
         const output = await providers.runAll({ media: mediaInfo, events: eventListeners });
-        if(output){
-          const stream = output?.stream;
-          console.log(stream)
-          if(stream.type === 'file'){
-          const qualityEntries : string[] = Object.keys(stream.qualities);
-          const streamQualities : Record<string, Quality> = stream.qualities;
-          const firstQuality : string = qualityEntries[0];
-          console.log(firstQuality);
-          const firstStream : Quality | undefined = streamQualities[firstQuality];
-          console.log(firstStream);
-          //console.log(firstStream.url);
-        
-        if(firstStream.url){
-            setStreamLink(firstStream.url);
-            setFoundStream(true)
-          }}
+        if (output) {
+          const { stream } = output;
+          console.log(stream);
+          if (stream.type === 'file') {
+            const qualityEntries = Object.keys(stream.qualities);
+            const streamQualities: Partial<Record<Qualities, StreamFile>> = stream.qualities;
+            const firstQuality = qualityEntries[0];
+            console.log(firstQuality);
+            const firstStream = streamQualities[firstQuality as Qualities];
+            console.log(firstStream);
+
+            if (firstStream && firstStream.url) {
+              setStreamType(stream.type as "hls" | "file");
+              setStreamLink(firstStream.url);
+              setStreamQuality(streamQualities as Record<Qualities, StreamFile>);
+              setFoundStream(true);
+            }
+          } else { // Assuming the only other type is 'hls'
+            setStreamType('hls');
+            setStreamLink(stream.playlist);
+            setFoundStream(true);
+          }
         }
         setDoneFetching(true);
       };
       fetchData();
     }
   }, [mediaInfo]);
-
   
   
 
@@ -154,7 +153,7 @@ export default function Watch(){
     return(
         <>
 <div className='bg-black'>
-{startPlay  ? <VideoPlayer videoSrc={StreamLink} Name={mediaInfo.title}/> : null}
+{startPlay  ? <VideoPlayer videoSrc={StreamLink} Name={mediaInfo.title} type={StreamType} Quality={StreamQuality}/> : null}
 {!FoundStream && DoneFetching ? <StreamNotFound Name={mediaInfo.title}/>: null}
 {!startPlay && !DoneFetching  ? <LoadingSources sourceInfo={sourceInfo} sourceIds={sourceIds} gotLink={FoundStream}/>:null}
 </div>
