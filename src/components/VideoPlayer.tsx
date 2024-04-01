@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import Hls from 'hls.js';
 import { Qualities, StreamFile } from '@movie-web/providers';
 import { ErrorBoundary } from '../pages/ErrorBoundary';
+import { debounce } from 'lodash';
+
 
 
 
@@ -66,6 +68,7 @@ const VideoPlayer: React.FC<VideoProps> = ({videoSrc , Name, type, Quality , med
   const [progress, setProgress] = useState(0);
   const [loadedFraction, setLoadedFraction] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [AudioState, setAudioState] = useState('on');
   //const [settingsMenu, setSettingsMenu] = useState(0);
   const [showUI, setShowUI] = useState(true);
   const [theme , setTheme] = useState('dark');
@@ -297,6 +300,37 @@ const VideoPlayer: React.FC<VideoProps> = ({videoSrc , Name, type, Quality , med
     setError('An error occurred while playing the video. (Try changing source)');
     console.error('Video error:', (event.target as HTMLVideoElement).error);
   };
+
+  const debouncedVolumeChange = debounce((value: number) => {
+    if (videoRef.current) {
+      if(value != 0){
+      videoRef.current.volume = value / 100;
+      videoRef.current.muted = false;
+      if(videoRef.current.volume > 0.4){
+        setAudioState('on')
+      }else{
+        setAudioState('low')
+      }
+    }else{
+      videoRef.current.muted = true;
+      setAudioState('off');
+    }
+    }
+  }, 100); // Adjust the debounce delay as needed
+const handleAudioButton = ()=>{
+  if (videoRef.current) {
+    if(videoRef.current.muted){
+      videoRef.current.muted = false;
+      setAudioState("on");
+
+    }else{
+      videoRef.current.muted = true;
+      setAudioState("off");
+
+    }
+  }
+};
+
   return (
     <>
     <div className="relative h-screen">
@@ -362,6 +396,31 @@ const VideoPlayer: React.FC<VideoProps> = ({videoSrc , Name, type, Quality , med
       <button className='btn btn-ghost px-2 mx-1 mr-5' onClick={() => addSeconds(currentTime+10)}>
       <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38"/></svg>
       </button>
+
+
+      <div className='flex flex-row h-full'>
+        <button className='btn btn-ghost' onClick={handleAudioButton}>
+          {AudioState === 'on'? 
+      <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+       : AudioState === 'low'?
+       <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+       : AudioState === 'off'?
+       <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6"/></svg>
+       : null}
+      </button>
+      <input 
+  type="range" 
+  min={0} 
+  max={100}  
+  onChange={(e) => {
+    const volumeValue = parseFloat(e.target.value);
+    debouncedVolumeChange(volumeValue);
+  }} 
+  className="range range-xs mt-4 w-24 mx-3" 
+/>
+      </div>
+
+
       <h2 className=' text-xl'>{formatTime(currentTime)} / {formatTime(duration)}</h2>
 
 

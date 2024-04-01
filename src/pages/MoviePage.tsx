@@ -196,9 +196,9 @@ export default function MoviePage(){
         <>
         <Header/>
         <main className="w-full h-full" style={{ backgroundImage: `url(${backgroundImage})` }}>
-        <div className="flex justify-center bg-base-200  bg-opacity-70 w-full ">
+        <div className="flex justify-center bg-base-200  bg-opacity-60 w-full ">
         <div className=" mx-10">
-            <div className="flex flex-col bg-base-300 rounded-lg shadow-md mx-10 my-5 mt-10 bg-opacity-95">
+            <div className="flex flex-col bg-base-300 backdrop-blur-sm rounded-lg shadow-md mx-10 my-5 mt-10 bg-opacity-90">
             <div className='flex flex-row '>
                 {posterUrl ? <img className=" w-1/3 h-1/3 rounded shadow-red-800" src={posterUrl} alt='Poster Picture' /> : <div className="skeleton w-[20rem] h-[30rem]"></div>}
                 <div className="flex flex-col gap-2 w-1/2 m-5">

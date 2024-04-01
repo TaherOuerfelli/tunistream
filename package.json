@@ -13,11 +13,13 @@
     "@movie-web/providers": "^2.2.6",
     "found": "^1.3.0",
     "hls.js": "^1.5.7",
+    "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router": "^6.22.3"
   },
   "devDependencies": {
+    "@types/lodash": "^4.17.0",
     "@types/node": "^20.11.29",
     "@types/react": "^18.2.64",
     "@types/react-dom": "^18.2.21",
