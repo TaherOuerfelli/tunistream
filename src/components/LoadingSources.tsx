@@ -31,12 +31,12 @@ const LoadingSources: React.FC<SourceProps> = ({ sourceIds, sourceInfo , gotLink
         if (sourceIds.length > 0) {
             const initialSourceInfos = sourceIds.map((sourceID, index) => ({
                 sourceID,
-                status: index <= 2 ? sourceInfo.status : "", // Set statusInfo for the first source
-                per: index === 0 ? sourceInfo.per : 0, // Set per for the first source
+                status: index === 0 ? sourceInfo.status : "", // Set statusInfo for each source based on its own index
+                per: index === 0 ? sourceInfo.per : 0, // Set per for each source based on its own index
             }));
             setSourceInfos(initialSourceInfos);
         }
-    }, [sourceIds]);
+    }, [sourceIds, sourceInfo]);
 
     useEffect(() => {
         const index = sourceIds.findIndex(id => id === sourceInfo.ID);

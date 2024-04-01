@@ -1,7 +1,14 @@
-import { Outlet } from "react-router-dom";
+import { useEffect } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 
 
 export default function Root() {
+    const navigate = useNavigate();
+    useEffect(() => {
+        navigate("/Home")
+    },[]);
+    let theme = localStorage.getItem('theme');
+    document.documentElement.setAttribute('data-theme', theme || 'dark');
     return (
         <>
             

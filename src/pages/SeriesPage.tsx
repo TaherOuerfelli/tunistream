@@ -1,5 +1,5 @@
 import CastMember from "../components/Cast";
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { useState,useEffect } from 'react';
 import Header from "./Header";
@@ -8,15 +8,9 @@ import ShowSeasons from "../components/ShowSeasons";
 import { ItemScroll } from "../components/ItemScroll";
 
 
-const SEARCH_API_KEY = '22336235ae8cd5ba3de3feef1417f230';
+const SEARCH_API_KEY:string = import.meta.env.VITE_TMDB_API_KEY;
 
-const spacesToDashes= (inputString: string) => {
-    return inputString.replace(/\s+/g, '-');
-}
 
-const isArrayEmpty = (arr: any[]): boolean => {
-    return Array.isArray(arr) && arr.length === 0;
-};
   
 
 export default function SeriesPage(){
@@ -24,6 +18,47 @@ export default function SeriesPage(){
     const navigate = useNavigate();
     const [seriesData, setMovieData] = useState<any>({});
     const [creditsData, setCreditsData] = useState<any>({});
+    const [bookmarks, setBookmarks] = useState<string[]>([]);
+    const [currentSeason , setCurrentSeason] = useState("1");
+    const [currentEpisode , setCurrentEpisode] = useState("1");
+
+    useEffect(() => {
+      let mediaData = {};
+      try {
+          const storedMediaData = localStorage.getItem('mediaData');
+          if (storedMediaData) {
+            mediaData = JSON.parse(storedMediaData);
+            Object.keys(mediaData).map((mediaID)=>{
+              if(mediaID.slice(1, -2) === seriesID)
+              {
+                currentSeason < mediaID.slice(-2, -1) ? setCurrentSeason(mediaID.slice(-2, -1)):null;
+                currentEpisode < mediaID.slice(-1)? setCurrentEpisode(mediaID.slice(-1)):null;
+              }
+            })
+          }
+        } catch (error) {
+          console.error('Error parsing media data from localStorage:', error);
+        }
+    },[]);
+
+
+
+    useEffect(() => {
+      const checkSeriesExistence = async () => {
+        try {
+          const response = await fetch(
+            `https://api.themoviedb.org/3/tv/${seriesID}?api_key=${SEARCH_API_KEY}`
+          );
+          if (response.status === 404) {
+            navigate('/not-found');
+          }
+        } catch (error) {
+          console.error('Error checking series existence:', error);
+        }
+      };
+
+      checkSeriesExistence();
+    }, [seriesID]);
 
     useEffect(() => {
       const fetchMovieDetails = async () => {
@@ -33,7 +68,7 @@ export default function SeriesPage(){
           );
           const data = await response.json();
           setMovieData(data);
-          navigate(`/Series/${seriesID}?name=${spacesToDashes(data.name)}`);
+          navigate(`/Series/${seriesID}?name=${data.name}`);
           console.log('Movie/Show Details:', data);
 
             // Fetch movie credits
@@ -52,6 +87,32 @@ export default function SeriesPage(){
   
       fetchMovieDetails();
     }, [seriesID]);
+
+
+    useEffect(() => {
+      // Load bookmarks from localStorage on component mount
+      const storedBookmarks = localStorage.getItem('bookmarks');
+      if (storedBookmarks) {
+        setBookmarks(JSON.parse(storedBookmarks));
+      }
+    }, []);
+  
+    const toggleBookmark = () => {
+      const updatedBookmarks = [...bookmarks];
+      const index = updatedBookmarks.indexOf('s'+seriesID);
+      if (index !== -1) {
+        // If the movie name is already bookmarked, remove it
+        updatedBookmarks.splice(index, 1);
+      } else {
+        // If the movie name is not bookmarked, add it
+        updatedBookmarks.push('s'+seriesID);
+      }
+      setBookmarks(updatedBookmarks);
+      // Update local storage
+      localStorage.setItem('bookmarks', JSON.stringify(updatedBookmarks));
+    };
+
+
 
     const formatRuntime = (runtime: string): string => {
         const minutes = parseInt(runtime, 10);
@@ -128,6 +189,12 @@ export default function SeriesPage(){
     if (!seriesData || !creditsData) {
         return null; // Render nothing if data is not available yet
     }
+
+    let firstSession = 0;
+    if (seriesData.seasons)
+    {
+      if  (seriesData.seasons[0].name === "Specials")firstSession = 1;
+    }
     return(
         <>
         <Header/>
@@ -136,9 +203,9 @@ export default function SeriesPage(){
         <div className=" mx-10">
             <div className="flex flex-col bg-base-300 rounded-lg shadow-md mx-10 my-5 mt-10 bg-opacity-95">
             <div className='flex flex-row '>
-                <img className=" w-1/3 h-1/3 rounded shadow-red-800" src={posterUrl} alt='{movieData.title} Poster Picture' />
+            {posterUrl ? <img className=" w-1/3 h-1/3 rounded shadow-red-800" src={posterUrl} alt='Poster Picture' /> : <div className="skeleton w-[20rem] h-[30rem]"></div>}
                 <div className="flex flex-col gap-2 w-1/2 m-5">
-                    <h1 className="text-4xl font-bold ">{seriesName}<p className="text-xl badge ml-2 p-3 shadow-md">{releaseYear}</p>
+                    <h1 className="text-4xl font-bold ">{seriesName}{releaseYear && <p className="text-xl badge ml-2 p-3 shadow-md">{releaseYear}</p>}
                     
                     </h1>
                     <div className="mx-2 font-bold text-1xl mt-5 ">
@@ -159,37 +226,41 @@ export default function SeriesPage(){
                         </h1>
                         </div>
                         <div className="divider my-2 h-1"></div> 
-                        <button className="btn btn-block bg-white text-xl text-black hover:text-white font-bold mt-7 mr-1 ">
-                        Watch Now S1:E1
+                        {new Date(seriesData.first_air_date) > new Date() ? <span className='alert'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-info shrink-0 w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        {seriesData.status}</span>:
+                        <Link to={`/Watch/Series/${seriesID}/Session/${currentSeason}/Episode/${currentEpisode}?name=${seriesName}&year=${releaseYear}`} className="btn btn-block bg-white text-xl text-black hover:text-white font-bold mt-7 mr-1 ">
+                        {currentSeason !== "1" || currentEpisode !== "1" ? "Continue Watching":"Watch Now"} S{currentSeason}:E{currentEpisode}
                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2.5" stroke-linecap="butt" stroke-linejoin="bevel"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
-                        </button>
+                        </Link>}
+                        {/*
                         <button className="btn btn-block shadow-xl text-xl font-bold mt-3 ">
                         Download
                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3cd27e" stroke-width="2.5" stroke-linecap="butt" stroke-linejoin="bevel"><path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 9l-5 5-5-5M12 12.8V2.5"/></svg>
-                        </button>
+                        </button>*/}
                     </div>
                 </div>
                 <div className="mt-5">
-                    <div className="tooltip" data-tip="Bookmark">
-                    <button className="btn btn-square shadow-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2.5" stroke-linecap="butt" stroke-linejoin="bevel"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                    <div className="tooltip" data-tip={bookmarks.includes('s'+seriesID?.toString()) ? `Remove "${seriesName}" from Bookmarks` : "Bookmark"}>
+                    <button className="btn btn-square shadow-lg" onClick={toggleBookmark}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill={bookmarks.includes('s'+seriesID?.toString()) ? "currentcolor" : "none"} stroke="currentcolor" stroke-width="2.5" stroke-linecap="butt" stroke-linejoin="bevel"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
                     </button>
                     </div>
                 </div>
                 
             </div>
+            {seriesData.overview ?
                 <div className=" mx-10 w-fit mt-10">
                     <h1 className="mx-2 font-bold text-2xl ">Overview:</h1>
                     <div className="divider my-2 h-1"></div> 
                     <p className="text-xl mx-5 my-3 font-thin">{seriesData.overview}</p>
                     
-                </div>
+                </div>:null}
                 <div className="mx-10 mt-10">
                 <div className="divider my-2 h-1"></div> 
-                  <ShowSeasons seasonsList={seriesData.seasons} ShowID={seriesData.id}/>
+                  <ShowSeasons seasonsList={seriesData.seasons} ShowID={seriesData.id} ShowName={seriesName} ShowReleaseDate={releaseYear}/>
                   <div className="divider my-2 h-1"></div> 
                 </div>
-                    {!isArrayEmpty(creditsData.cast)  && <><h1 className="text-4xl font-bold mx-10 mt-10">Cast</h1>
+                    {creditsData.cast  && <><h1 className="text-4xl font-bold mx-10 mt-10">Cast</h1>
                 <div className="flex flex-col w-full justify-center items-center">
                     <ItemScroll>
                     {creditsData.cast ? (creditsData.cast.map((castMember: any) => (

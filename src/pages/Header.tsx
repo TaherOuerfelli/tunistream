@@ -1,7 +1,12 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 
 export default function Header(){
+    useEffect(()=>{
+        let theme = localStorage.getItem('theme');
+        document.documentElement.setAttribute('data-theme', theme || 'dark');
+      },[])
     return(
         <>
         <div className="navbar bg-base-100 shadow-xl shadow-black/20 sticky top-0 z-30">

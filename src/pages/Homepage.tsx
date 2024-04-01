@@ -3,6 +3,8 @@ import Results from "./Results";
 import { useSearchParams } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
+import Bookmarks from "../components/Bookmarks";
+import ContinueWatching from "../components/ContinueWatching";
 
 
 
@@ -22,6 +24,12 @@ export default function Homepage(){
     const [searchQuery,setSearchQuery] = useState(query);
     const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
     const [searching, setSearching] = useState(false);
+    const [theme , setTheme] = useState('dark');
+    useEffect(()=>{
+        let theme = localStorage.getItem('theme');
+        document.documentElement.setAttribute('data-theme', theme || 'dark');
+        setTheme(theme ?? 'dark');
+      },[])
 
     useEffect(() => {
         searchQuery ? setSearchParams({Search:searchQuery}):setSearchParams();
@@ -61,13 +69,16 @@ export default function Homepage(){
       
           fetchSearchResults();
           console.log(searchResults);
+          
       }, [searchQuery]);
+
+      
     return(
         <>
         <Header/>
         <div className="sticky top-0 left-1/4 my-10 z-40 h-14 w-1/2">
         <div className=" flex justify-center items-start h-fit w-full">
-            <label className="input input-bordered flex items-center gap-2 ml-10 my-1 h-14 w-full shadow-lg shadow-black/20">
+            <label className={`input input-bordered ${theme === 'light' || theme === 'cyberpunk' ? 'border-1 border-black' : 'border-2 border-gray'} flex items-center gap-2 ml-10 my-1 h-14 w-full shadow-lg shadow-black/20`}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4 opacity-70"><path fillRule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clipRule="evenodd" /></svg>
                 <input type="text" value={searchQuery ? searchQuery : ''} className="grow " placeholder="Search" onChange={(e)=> {
                     setSearchQuery(e.target.value);
@@ -79,7 +90,10 @@ export default function Homepage(){
                     }}/>
             </label>
         </div></div>
-        {searchQuery ? (<Results results={searchResults} ISsearching={searching}/>): <div className="h-screen"></div>}
+        {searchQuery ? (<Results results={searchResults} ISsearching={searching}/>):null}
+        <ContinueWatching />
+        <Bookmarks/>
+        <div className="h-screen"></div>
         <Footer/>
         </>
     )

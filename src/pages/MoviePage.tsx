@@ -7,7 +7,7 @@ import Footer from "./Footer";
 import { ItemScroll } from "../components/ItemScroll";
 
 
-const SEARCH_API_KEY = '22336235ae8cd5ba3de3feef1417f230';
+const SEARCH_API_KEY:string = import.meta.env.VITE_TMDB_API_KEY;
 
 
 
@@ -15,11 +15,65 @@ const isArrayEmpty = (arr: any[]): boolean => {
     return Array.isArray(arr) && arr.length === 0;
 };
 
+const formatTime = (time: number): string => {
+  const hours = Math.floor(time / 3600);
+  const minutes = Math.floor((time % 3600) / 60);
+  const seconds = Math.floor(time % 60);
+
+  const formattedHours = String(hours).padStart(2, '0');
+  const formattedMinutes = String(minutes).padStart(2, '0');
+  const formattedSeconds = String(seconds).padStart(2, '0');
+  if(isNaN(time)) {return "00:00:00"}
+  return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+  
+};
+
+
 export default function MoviePage(){
     const { movieID } = useParams();
     const navigate = useNavigate();
     const [movieData, setMovieData] = useState<any>({});
     const [creditsData, setCreditsData] = useState<any>({});
+    const [bookmarks, setBookmarks] = useState<string[]>([]);
+    const [progress , setProgress] = useState(0);
+
+    useEffect(() => {
+      let mediaData: {[key: string]: any } = {};
+      try {
+          const storedMediaData = localStorage.getItem('mediaData');
+          if (storedMediaData) {
+            mediaData = JSON.parse(storedMediaData);
+            Object.keys(mediaData).map((mediaID)=>{
+              if(mediaID.slice(1,) === movieID)
+              {
+                  setProgress(mediaData[mediaID])
+              }
+            })
+          }
+        } catch (error) {
+          console.error('Error parsing media data from localStorage:', error);
+        }
+    },[]);
+
+    useEffect(() => {
+      const checkMovieExistence = async () => {
+        try {
+          const response = await fetch(
+            `https://api.themoviedb.org/3/movie/${movieID}?api_key=${SEARCH_API_KEY}`
+          );
+          if (response.status === 404) {
+            navigate('/not-found');
+          }else{
+
+          }
+        } catch (error) {
+          console.error('Error checking movie existence:', error);
+        }
+      };
+
+      checkMovieExistence();
+    }, [movieID]);
+
     useEffect(() => {
       const fetchMovieDetails = async () => {
         try {
@@ -47,6 +101,31 @@ export default function MoviePage(){
   
       fetchMovieDetails();
     }, [movieID]);
+
+    useEffect(() => {
+      // Load bookmarks from localStorage on component mount
+      const storedBookmarks = localStorage.getItem('bookmarks');
+      if (storedBookmarks) {
+        setBookmarks(JSON.parse(storedBookmarks));
+      }
+    }, []);
+  
+    const toggleBookmark = () => {
+      const updatedBookmarks = [...bookmarks];
+      const index = updatedBookmarks.indexOf('m'+movieID);
+      if (index !== -1) {
+        // If the movie name is already bookmarked, remove it
+        updatedBookmarks.splice(index, 1);
+      } else {
+        // If the movie name is not bookmarked, add it
+        updatedBookmarks.push('m'+movieID);
+      }
+      setBookmarks(updatedBookmarks);
+      // Update local storage
+      localStorage.setItem('bookmarks', JSON.stringify(updatedBookmarks));
+    };
+
+
 
     const formatRuntime = (runtime: string): string => {
         const minutes = parseInt(runtime, 10);
@@ -121,9 +200,9 @@ export default function MoviePage(){
         <div className=" mx-10">
             <div className="flex flex-col bg-base-300 rounded-lg shadow-md mx-10 my-5 mt-10 bg-opacity-95">
             <div className='flex flex-row '>
-                <img className=" w-1/3 h-1/3 rounded shadow-red-800" src={posterUrl} alt='{movieData.title} Poster Picture' />
+                {posterUrl ? <img className=" w-1/3 h-1/3 rounded shadow-red-800" src={posterUrl} alt='Poster Picture' /> : <div className="skeleton w-[20rem] h-[30rem]"></div>}
                 <div className="flex flex-col gap-2 w-1/2 m-5">
-                    <h1 className="text-4xl font-bold ">{movieData.title}<p className="text-xl badge ml-2 p-3 shadow-md">{releaseYear}</p>
+                    <h1 className="text-4xl font-bold ">{movieData.title? movieData.title : <div className="skeleton h-7 w-15"></div>} {releaseYear ? <p className="text-xl badge ml-2 p-3 shadow-md">{releaseYear}</p>:null}
                     
                     </h1>
                     <div className="mx-2 font-bold text-1xl mt-5 ">
@@ -144,31 +223,36 @@ export default function MoviePage(){
                         </h1>
                         </div>
                         <div className="divider my-2 h-1"></div> 
+                        {new Date(movieData.release_date) > new Date() ? <span className='alert'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-info shrink-0 w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        {movieData.status}</span>:
                         <Link to={`/Watch/Movie/${movieID}?name=${movieData.title}&year=${releaseYear}`} className="btn btn-block bg-white text-xl text-black hover:text-white font-bold mt-7 mr-1 ">
-                        Watch Movie
+                        {progress > 1 ? `Continue (${formatTime(progress)})`:"Watch Movie"}
                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2.5" stroke-linecap="butt" stroke-linejoin="bevel"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
-                        </Link>
+                        </Link>}
+                        {/*
                         <button className="btn btn-block shadow-xl text-xl font-bold mt-3 ">
                         Download
                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3cd27e" stroke-width="2.5" stroke-linecap="butt" stroke-linejoin="bevel"><path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 9l-5 5-5-5M12 12.8V2.5"/></svg>
-                        </button>
+    </button>*/}
                     </div>
                 </div>
                 <div className="mt-5">
-                    <div className="tooltip" data-tip="Bookmark">
-                    <button className="btn btn-square shadow-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2.5" stroke-linecap="butt" stroke-linejoin="bevel"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                    <div className="tooltip" data-tip={bookmarks.includes('m'+movieID?.toString()) ? `Remove "${movieData.title}" from Bookmarks` : "Bookmark"}>
+                    <button className="btn btn-square shadow-lg transition-transform transform hover:scale-110" onClick={toggleBookmark}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill={bookmarks.includes('m'+movieID?.toString()) ? "currentcolor" : "none"} stroke="currentcolor" stroke-width="2.5" stroke-linecap="butt" stroke-linejoin="bevel"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
                     </button>
                     </div>
                 </div>
                 
             </div>
-                <div className=" mx-10 w-fit mt-10">
+                {movieData.overview ?
+                <div className="container mx-auto">
+                <div className="w-full mt-10">
                     <h1 className="mx-2 font-bold text-2xl ">Overview:</h1>
                     <div className="divider my-2 h-1"></div> 
                     <p className="text-xl mx-5 my-3 font-thin">{movieData.overview}</p>
                     
-                </div>
+                </div> </div>: null}
                 {!isArrayEmpty(creditsData.cast)  && <><h1 className="text-4xl font-bold mx-10 mt-10">Cast</h1>
                 <div className="flex flex-col w-full justify-center items-center">
                     <ItemScroll>

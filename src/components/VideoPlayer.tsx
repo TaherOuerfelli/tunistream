@@ -2,6 +2,9 @@ import React, { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Hls from 'hls.js';
 import { Qualities, StreamFile } from '@movie-web/providers';
+import { ErrorBoundary } from '../pages/ErrorBoundary';
+
+
 
 interface ProgressProps {
   value: number;
@@ -10,10 +13,17 @@ interface ProgressProps {
 interface VideoProps{
   videoSrc:string;
   Name:string;
+  mediaID:string;
+  mediaType:string;
+  sessionIndex:string;
+  episodeIndex:string;
   type: 'hls' | 'file';
   Quality: Record<Qualities, StreamFile> | null
 }
-
+type StreamHLS = {
+  type: 'hls';
+  url: string;
+}
 const HoverableProgress: React.FC<ProgressProps> = (props) => {
   const [hovering, setHovering] = useState(false);
   return (
@@ -39,13 +49,16 @@ const formatTime = (time: number): string => {
   const formattedHours = String(hours).padStart(2, '0');
   const formattedMinutes = String(minutes).padStart(2, '0');
   const formattedSeconds = String(seconds).padStart(2, '0');
-
+  if(isNaN(time)) {return "00:00:00"}
   return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+  
 };
-const VideoPlayer: React.FC<VideoProps> = ({videoSrc , Name, type, Quality}) => {
+
+const VideoPlayer: React.FC<VideoProps> = ({videoSrc , Name, type, Quality , mediaID , mediaType , sessionIndex , episodeIndex}) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoLink , setVideoLink] = useState(videoSrc);
   const [videoLoaded, setVideoLoaded] = useState(false);
+  const [error, setError] = useState<string>();
   const [isLoading, setIsLoading] = useState(true);
   const [playing, setPlaying] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
@@ -53,9 +66,18 @@ const VideoPlayer: React.FC<VideoProps> = ({videoSrc , Name, type, Quality}) => 
   const [progress, setProgress] = useState(0);
   const [loadedFraction, setLoadedFraction] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
-
-  //ui close
+  //const [settingsMenu, setSettingsMenu] = useState(0);
   const [showUI, setShowUI] = useState(true);
+  const [theme , setTheme] = useState('dark');
+  const [VideoQuality, setVideoQuality] = useState<Record<Qualities, StreamFile | StreamHLS> |null>(Quality);
+  const [hlsMainLink, setHlsMainLink] = useState<string |null>(null);
+
+
+  useEffect(()=>{
+    let theme = localStorage.getItem('theme');
+    document.documentElement.setAttribute('data-theme', theme || 'dark');
+    setTheme(theme ?? 'dark');
+  },[])
 
   useEffect(() => {
     if (videoRef.current) {
@@ -66,11 +88,33 @@ const VideoPlayer: React.FC<VideoProps> = ({videoSrc , Name, type, Quality}) => 
         hls.on(Hls.Events.MANIFEST_PARSED, function() {
           videoRef.current?.play();
         });
+        
       } else if (type === 'file') {
         videoRef.current.src = videoLink;
       }
+      
+      console.log(VideoQuality)
     }
   }, [videoLink, type]);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      if (type === 'hls' && Hls.isSupported()){
+        setHlsMainLink(videoLink)
+        const hls = new Hls();
+        hls.loadSource(videoLink);
+        hls.on(Hls.Events.MANIFEST_PARSED, function() {
+          const hlsQualitiesData = hls.levels.reduce((acc, level) => {
+            const quality: Qualities = `${level.height}p`as Qualities;
+            acc[quality] = {type: 'hls', url: level.url[0]};
+            return acc;
+          }, {} as Record<Qualities, StreamHLS>);
+          setVideoQuality(hlsQualitiesData);
+        });
+        
+      } 
+    }
+  },[videoSrc]);
 
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout>;
@@ -89,6 +133,8 @@ const VideoPlayer: React.FC<VideoProps> = ({videoSrc , Name, type, Quality}) => 
         }, 3000); // Hide UI after 3 seconds of inactivity
       };
     };
+
+    
 
     const handleMouseLeave = () => {
       if (!playing) {
@@ -152,7 +198,23 @@ const VideoPlayer: React.FC<VideoProps> = ({videoSrc , Name, type, Quality}) => 
   const handleVideoLoad = () => {
     setVideoLoaded(true);
     const videoElement = videoRef.current;
-    if (videoElement) setDuration(videoElement.duration);
+    if (videoElement){
+      setDuration(videoElement.duration);
+      const storedMediaData = localStorage.getItem('mediaData');
+        if (storedMediaData) {
+          let mediaData = JSON.parse(storedMediaData);
+          console.log("mediaDATA:",mediaData);
+          if (mediaData) {
+            let currentTime = 0;
+          if(mediaType === "movie"){
+           currentTime = mediaData['m'+mediaID];
+          }else{
+            currentTime = mediaData['s'+mediaID+sessionIndex+episodeIndex]
+          }
+          // Use the retrieved currentTime as needed
+          addSeconds(currentTime);
+      }}
+    };
   };
 
   useEffect(() => {
@@ -186,8 +248,23 @@ const VideoPlayer: React.FC<VideoProps> = ({videoSrc , Name, type, Quality}) => 
 
   const handleTimeUpdate = () => {
     const videoElement = videoRef.current;
-    if (videoElement) {
+    if (videoElement && videoElement.readyState > 1 && !videoElement.paused) {
       setCurrentTime(videoElement.currentTime);
+      let mediaData :  { [key: string]: number }  = {};
+      try {
+        const storedMediaData = localStorage.getItem('mediaData');
+        if (storedMediaData) {
+          mediaData = JSON.parse(storedMediaData);
+        }
+      } catch (error) {
+        console.error('Error parsing media data from localStorage:', error);
+      }
+      if(mediaType === 'movie'){
+        mediaData['m'+mediaID] = videoElement.currentTime;
+      }else{
+        mediaData['s'+mediaID+sessionIndex+episodeIndex] = videoElement.currentTime;
+      }
+      localStorage.setItem('mediaData', JSON.stringify(mediaData));
     }
   };
   
@@ -216,17 +293,24 @@ const VideoPlayer: React.FC<VideoProps> = ({videoSrc , Name, type, Quality}) => 
       });
     }
   };
-
+  const handleVideoError = (event: React.SyntheticEvent<HTMLVideoElement, Event>) => {
+    setError('An error occurred while playing the video. (Try changing source)');
+    console.error('Video error:', (event.target as HTMLVideoElement).error);
+  };
   return (
     <>
     <div className="relative h-screen">
       <div className={`flex flex-row relative top-5 transition-opacity duration-300 ${showUI ? 'opacity-100' : 'opacity-0'}`}>
-      <h1 className='text-white text-2xl ml-12 mt-3'>{Name}</h1>
-      <Link to='/Home' className="btn btn-ghost text-2xl absolute right-7 top-3 font-bold bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text z-40">TUNISTREAM.CLUB</Link>
+      <h1 className='text-white text-xl ml-12 mt-3'>{Name} {mediaType === "movie" ? null: <span className='text-gray-400 font-thin'>S{sessionIndex}:E{episodeIndex}</span>}</h1>
+      <Link to='/Home' className="btn btn-ghost text-2xl absolute right-7 top-3 font-bold bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text z-40" onClick={() => document.exitFullscreen()}>TUNISTREAM.CLUB</Link>
 
       </div>
     <div className="absolute inset-0 flex items-center justify-center">
     <div className='flex flex-col 'onClick={togglePlayback}>
+      <ErrorBoundary>
+      {error && <div className='flex flex-col justify-center items-center gap-4 absolute inset-0'>
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ff5555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+        Error: {error}</div>}
       <video
         ref={videoRef}
         className={`${
@@ -236,10 +320,11 @@ const VideoPlayer: React.FC<VideoProps> = ({videoSrc , Name, type, Quality}) => 
 
         onPlay={()=> setPlaying(true)}
         onPause={()=> setPlaying(false)}
+        onError={handleVideoError}
         autoPlay
 
         onLoadedMetadata={handleVideoLoad}
-
+        
         onWaiting={handleWaiting}
         onCanPlay={handleCanPlay}
 
@@ -248,20 +333,19 @@ const VideoPlayer: React.FC<VideoProps> = ({videoSrc , Name, type, Quality}) => 
         >
           
 
-          </video>
-        {videoLoaded ? null : (
+          </video></ErrorBoundary>
+        {/*videoLoaded ? null : (
           <p>Loading video...</p>
-      
-          )}
-        {isLoading &&
-        <div className="absolute top-1/2 left-1/2">
+        )*/}
+        {isLoading && !error &&
+        <div className="flex justify-center items-center absolute inset-0">
           
           <span className="loading loading-spinner loading-lg"></span>
         </div>
         }
         
         </div></div>
-        <div className={`absolute w-full h-fit bottom-2 pt-5 mt-10 rounded-lg transition-opacity duration-500 ${showUI ? 'opacity-100' : 'opacity-0'}`}>
+        <div className={`absolute ${theme === 'light' || theme === 'cyberpunk' ? 'bg-base-200 bg-opacity-75' : ''} w-full h-fit bottom-2 pt-5 mt-10 rounded-lg transition-opacity duration-500 ${showUI ? 'opacity-100' : 'opacity-0'}`}>
         <progress className="progress absolute ml-8 bottom-14 h-1" style={{ width:'94%' }} value={Math.round(loadedFraction * 100)} max="100"></progress>
         <HoverableProgress value={progress} onChangef={handleProgress} />
         <div className='flex flex-row items-center mb-1'>
@@ -289,19 +373,33 @@ const VideoPlayer: React.FC<VideoProps> = ({videoSrc , Name, type, Quality}) => 
       </div>
       <div tabIndex={0} className="dropdown-content z-[1] card card-compact w-64 p-2 mb-5 shadow bg-base-200 text-content absolute right-0">
         <div className="card-body ">
-          <h3 className="card-title">Quality:</h3>
+          <h3 className="card-title">Settings:</h3>
+          <div tabIndex={1} role="button" className="btn btn-ghost">Select Quality</div>
+        </div>
+      </div>
+      
+
+      <div tabIndex={1} className="dropdown-content z-[1] card card-compact w-64 p-2 mb-5 shadow bg-base-200 text-content absolute right-0">
+        <div className="card-body ">
+          <h3 className="card-title text-2xl">Quality:</h3>
+          <div className='divider h-0 m-0'></div>
           <table>
             <tbody>
-              {Quality && Object.keys(Quality).map((quality, index) => (
+              {VideoQuality && Object.keys(VideoQuality).reverse().map((quality, index) => (
                 <tr key={index}>
                   <td>
                     <label className="cursor-pointer label">
-                      <span className="label-text">{quality}</span>
-                      <input type="radio" name="quality" className="radio" value={Quality[quality as Qualities].url} onChange={(e) => setVideoLink(e.target.value)} checked={videoLink === Quality[quality as Qualities].url} />
+                      <span className="label-text text-1xl">{quality}{+quality? 'p':null}</span>
+                      <input type="radio" name="quality" className="radio" value={VideoQuality[quality as Qualities].url} onChange={(e) => setVideoLink(e.target.value)} checked={videoLink === VideoQuality[quality as Qualities].url} />
                     </label>
                   </td>
                 </tr>
               ))}
+              {hlsMainLink && 
+              <label className="cursor-pointer label">
+              <span className="label-text text-1xl">Auto</span>
+              <input type="radio" name="quality" className="radio" value={hlsMainLink} onChange={(e) => setVideoLink(e.target.value)} checked={videoLink === hlsMainLink} />
+                </label>}
             </tbody>
           </table>
         </div>
@@ -325,4 +423,5 @@ const VideoPlayer: React.FC<VideoProps> = ({videoSrc , Name, type, Quality}) => 
 };
 
 export default VideoPlayer;
+
 

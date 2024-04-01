@@ -10,8 +10,8 @@ import NotFoundPage from "./pages/NotFoundPage";
 import Watch from "./pages/Watch";
 
 import { Route, RouterProvider , createBrowserRouter , createRoutesFromElements} from 'react-router-dom';
-import ProgressBar from "./components/ProgressBar";
 import Settings from "./pages/Settings";
+import { useEffect } from "react";
 
 
 
@@ -26,8 +26,8 @@ const router = createBrowserRouter(
       <Route path="Movie/:movieID" element={<MoviePage/>} />
       <Route path="Series/:seriesID" element={<SeriesPage/>} />
 
-      <Route path="Progress" element={<ProgressBar value={0} bufferValue={0} onProgressChange={()=>{}} onBufferChange={()=>{}}/>} />
-      <Route path="Watch/Movie/:movieID" element={<Watch/>} />
+      <Route path="Watch/Movie/:mediaID" element={<Watch MediaType="movie"/>} />
+      <Route path="Watch/Series/:mediaID/Session/:sessionIndex/Episode/:epIndex" element={<Watch MediaType="series"/>} />
       <Route path="*" element={<NotFoundPage/>} />
     </Route>
 
@@ -35,6 +35,7 @@ const router = createBrowserRouter(
 );
 
 function App() {
+
   return (
     <>
       <RouterProvider router={router}/>

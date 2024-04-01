@@ -19,14 +19,15 @@ const providers = makeProviders({
     // Define event listeners
 
       
-      
+interface watchProps{
+  MediaType : string;
+}
 
 
-
-
-//{/>:null}
-export default function Watch(){
-  const { movieID } = useParams();
+const Watch: React.FC<watchProps> = ( { MediaType }) => {
+  const { mediaID } = useParams();
+  const { sessionIndex } = useParams();
+  const { epIndex } = useParams();
 
   const [startPlay , setStartPlay] = useState(false);
   const [DoneFetching , setDoneFetching] = useState(false);
@@ -34,12 +35,27 @@ export default function Watch(){
   const [StreamLink , setStreamLink] = useState('');
   const [StreamType , setStreamType] = useState<"hls" | "file">('file');
   const [StreamQuality, setStreamQuality] = useState<Record<Qualities, StreamFile> | null>(null);
-  const [mediaInfo, setMediaInfo] = useState<ScrapeMedia>({
+  const [mediaInfo, setMediaInfo] = useState<ScrapeMedia>(MediaType === "movie" ? {
     type: 'movie',
     title: '',
     releaseYear: 0,
-    tmdbId: movieID || ''
-  });
+    tmdbId: mediaID || ''
+  }:
+  {
+    type: 'show',
+    episode: {
+        number: epIndex ? +epIndex : 0,
+        tmdbId: '',
+    },
+    season: {
+        number: sessionIndex ? +sessionIndex : 0,
+        tmdbId: '',
+    },
+    title: '',
+    releaseYear: 0,
+    tmdbId: mediaID || ''
+  }
+  );
 
   const [sourceInfo, setSourceInfo] = useState({
     ID:'',
@@ -50,11 +66,41 @@ export default function Watch(){
     embedSource:'',
     found:false
   });
-  const [sourceIds, setSourceIds] = useState( ['showbox', 'vidsrcto', 'zoechip', 'vidsrc', 'gomovies', 'ridomovies', 'flixhq', 'smashystream', 'remotestream']);
+  const [sourceIds, setSourceIds] = useState<string[]>([]);
 
 
   // Extract search parameters using useSearchParams
   const [searchParams] = useSearchParams();
+  useEffect(() => {
+    // Extract parameters from searchParams and update mediaInfo
+    const title = searchParams.get('name');
+    const releaseYear = searchParams.get('year');
+    const episodeID = searchParams.get('epID');
+    const sessionID = searchParams.get('ssID');
+
+    if (title && releaseYear) {
+      MediaType === "movie" ? setMediaInfo({
+        type:"movie",
+        title: title,
+        releaseYear: +releaseYear,
+        tmdbId: mediaID || ''
+     }) : setMediaInfo({
+        type:"show",
+        title: title,
+        releaseYear: +releaseYear,
+        episode: {
+          number: epIndex ? +epIndex : 0,
+          tmdbId: episodeID? episodeID:'',
+        },
+        season: {
+          number: sessionIndex ? +sessionIndex : 0,
+          tmdbId: sessionID? sessionID:'',
+        },
+        tmdbId: mediaID || ''
+     });
+    }
+  }, [searchParams]);
+
 
   const eventListeners: FullScraperEvents = {
     update: (evt) => {
@@ -96,24 +142,13 @@ export default function Watch(){
     console.log('Source Ids:', sourceIds);
   }, [sourceIds]);
 
-  useEffect(() => {
-    // Extract parameters from searchParams and update mediaInfo
-    const title = searchParams.get('name');
-    const releaseYear = searchParams.get('year');
+  
 
-    if (title && releaseYear) {
-      setMediaInfo({
-        ...mediaInfo,
-        title: title,
-        releaseYear: +releaseYear,
-        tmdbId: movieID || ''
-     });
-    }
-  }, [searchParams]);
   useEffect(() => {
     // Call providers.runAll() when mediaInfo changes
     if (mediaInfo.title && mediaInfo.releaseYear) {
       const fetchData = async () => {
+        console.log("MEDIA INFORMATION: ",mediaInfo)
         const output = await providers.runAll({ media: mediaInfo, events: eventListeners });
         if (output) {
           const { stream } = output;
@@ -121,7 +156,7 @@ export default function Watch(){
           if (stream.type === 'file') {
             const qualityEntries = Object.keys(stream.qualities);
             const streamQualities: Partial<Record<Qualities, StreamFile>> = stream.qualities;
-            const firstQuality = qualityEntries[0];
+            const firstQuality = qualityEntries[1]?qualityEntries[1]:qualityEntries[0];
             console.log(firstQuality);
             const firstStream = streamQualities[firstQuality as Qualities];
             console.log(firstStream);
@@ -153,7 +188,7 @@ export default function Watch(){
     return(
         <>
 <div className='bg-black'>
-{startPlay  ? <VideoPlayer videoSrc={StreamLink} Name={mediaInfo.title} type={StreamType} Quality={StreamQuality}/> : null}
+{startPlay  ? <VideoPlayer videoSrc={StreamLink} Name={mediaInfo.title} type={StreamType} Quality={StreamQuality} mediaID={mediaID ?? ''} mediaType={MediaType} sessionIndex={sessionIndex ?? '1'} episodeIndex={epIndex ?? '1'}/> : null}
 {!FoundStream && DoneFetching ? <StreamNotFound Name={mediaInfo.title}/>: null}
 {!startPlay && !DoneFetching  ? <LoadingSources sourceInfo={sourceInfo} sourceIds={sourceIds} gotLink={FoundStream}/>:null}
 </div>
@@ -163,3 +198,4 @@ export default function Watch(){
         </>
     )
 };
+export default Watch;

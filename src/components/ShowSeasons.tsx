@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router';
 
 const SEARCH_API_KEY:string = import.meta.env.VITE_TMDB_API_KEY;
 
@@ -11,11 +12,14 @@ interface InfoProps {
 interface ShowProps {
     seasonsList: InfoProps[];
     ShowID: string;
+    ShowName:string;
+    ShowReleaseDate:string;
 }
 
-const ShowSeasons: React.FC<ShowProps> = ({ seasonsList, ShowID }) => {
+const ShowSeasons: React.FC<ShowProps> = ({ seasonsList, ShowID , ShowName , ShowReleaseDate }) => {
     const [selectedSeason, setSelectedSeason] = useState<number | null>(null);
     const [seasonEpisodes, setSeasonEpisodes] = useState<Record<string, any>>({});
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchSeasonEpisodes = async () => {
@@ -26,6 +30,7 @@ const ShowSeasons: React.FC<ShowProps> = ({ seasonsList, ShowID }) => {
                     ...prevState,
                     [selectedSeason]: data.episodes
                 }));
+                console.log(seasonEpisodes);
             }
         };
 
@@ -35,7 +40,7 @@ const ShowSeasons: React.FC<ShowProps> = ({ seasonsList, ShowID }) => {
     const handleSeasonClick = (seasonNumber: number) => {
         setSelectedSeason(seasonNumber === selectedSeason ? null : seasonNumber);
     };
-    if(!seasonsList) return <p>Season details unavailable.</p>
+    if(!seasonsList) return <p>Series details are unavailable.</p>
     return (
         <>
             <ul className="menu menu-horizontal bg-base-200 text-xl font-bold">
@@ -60,9 +65,9 @@ const ShowSeasons: React.FC<ShowProps> = ({ seasonsList, ShowID }) => {
                             </thead>
                             <tbody>
                                 {seasonEpisodes[season.season_number] ? seasonEpisodes[season.season_number].map((episode: any) => (
-                                    <tr key={episode.id} className="hover:bg-base-100 hover:cursor-pointer text-lg">
+                                    <tr key={episode.id} className={`hover:bg-base-100 text-lg ${new Date(episode.air_date) > new Date() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} onClick={() => navigate(`/Watch/Series/${ShowID}/Session/${season.season_number}/Episode/${episode.episode_number}?name=${ShowName}&year=${ShowReleaseDate}&epID=${episode.id}&ssID=${season.id}`)}>
                                         <th className="badge m-5">{episode.episode_number}</th>
-                                        <td>{episode.name}</td>
+                                        <td>{episode.name} {new Date(episode.air_date) > new Date() ? <span className='badge'>Not aired yet. </span>: ''}</td>
                                         <td>{episode.runtime} min</td>
                                         <td>
                                             <div className="radial-progress text-xs" style={{ "--value": "0", "--size": "2.5rem", "--thickness": "5px" } as any} role="progressbar">
