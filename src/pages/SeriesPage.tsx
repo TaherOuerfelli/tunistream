@@ -189,12 +189,6 @@ export default function SeriesPage(){
     if (!seriesData || !creditsData) {
         return null; // Render nothing if data is not available yet
     }
-
-    let firstSession = 0;
-    if (seriesData.seasons)
-    {
-      if  (seriesData.seasons[0].name === "Specials")firstSession = 1;
-    }
     return(
         <>
         <Header/>

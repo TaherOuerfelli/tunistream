@@ -11,7 +11,7 @@ import Watch from "./pages/Watch";
 
 import { Route, RouterProvider , createBrowserRouter , createRoutesFromElements} from 'react-router-dom';
 import Settings from "./pages/Settings";
-import { useEffect } from "react";
+
 
 
 
