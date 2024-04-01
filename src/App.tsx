@@ -27,7 +27,7 @@ const router = createBrowserRouter(
       <Route path="Series/:seriesID" element={<SeriesPage/>} />
 
       <Route path="Watch/Movie/:mediaID" element={<Watch MediaType="movie"/>} />
-      <Route path="Watch/Series/:mediaID/Session/:sessionIndex/Episode/:epIndex" element={<Watch MediaType="series"/>} />
+      <Route path="Watch/Series/:mediaID/Season/:sessionIndex/Episode/:epIndex" element={<Watch MediaType="series"/>} />
       <Route path="*" element={<NotFoundPage/>} />
     </Route>
 

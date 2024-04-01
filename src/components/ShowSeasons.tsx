@@ -65,7 +65,7 @@ const ShowSeasons: React.FC<ShowProps> = ({ seasonsList, ShowID , ShowName , Sho
                             </thead>
                             <tbody>
                                 {seasonEpisodes[season.season_number] ? seasonEpisodes[season.season_number].map((episode: any) => (
-                                    <tr key={episode.id} className={`hover:bg-base-100 text-lg ${new Date(episode.air_date) > new Date() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} onClick={() => navigate(`/Watch/Series/${ShowID}/Session/${season.season_number}/Episode/${episode.episode_number}?name=${ShowName}&year=${ShowReleaseDate}&epID=${episode.id}&ssID=${season.id}`)}>
+                                    <tr key={episode.id} className={`hover:bg-base-100 text-lg ${new Date(episode.air_date) > new Date() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} onClick={() => navigate(`/Watch/Series/${ShowID}/Season/${season.season_number}/Episode/${episode.episode_number}?name=${ShowName}&year=${ShowReleaseDate}&epID=${episode.id}&ssID=${season.id}`)}>
                                         <th className="badge m-5">{episode.episode_number}</th>
                                         <td>{episode.name} {new Date(episode.air_date) > new Date() ? <span className='badge'>Not aired yet. </span>: ''}</td>
                                         <td>{episode.runtime} min</td>
