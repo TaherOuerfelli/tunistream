@@ -111,7 +111,7 @@ const CardBookmark: React.FC<CardProps> = ({ mediaId , session , episode , isEdi
                     </button>}
                     
                     <div className={`card-body relative  mb-4 p-0 ${isEditing ? 'blur-sm' : ''}`}>
-                    <span className='bg-base-200 rounded-bl-lg  text-lg w-fit px-4 absolute right-0 top-4'>{mediaType === 'movie' ? null:`S${session}:E${episode}`}</span>
+                    <span className='bg-base-200 text-lg w-fit px-2 absolute right-0 top-4'><span>{mediaType === 'movie' ? null:`S${session}:E${episode}`}</span></span>
                         {isLoading ? <div className="skeleton w-48 h-80 mt-4"></div> : null}
                         {posterUrl ? <img
                             className="w-full h-full mt-4 "

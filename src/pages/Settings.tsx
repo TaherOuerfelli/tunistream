@@ -45,14 +45,14 @@ const Settings: React.FC = () => {
                   </li>
                   <div className="divider my-0 h-1"></div> 
                   <li>
-                      <button className="btn btn-sm btn-block btn-ghost justify-start text-xl" value="
+                      <button className="btn btn-sm btn-block btn-disabled btn-ghost justify-start text-xl" value="
                     default">
                       العربية 
                   </button>
                   </li>
                   <div className="divider my-0 h-1"></div> 
                   <li>
-                      <button className="btn btn-sm btn-block btn-ghost justify-start text-xl" value="
+                      <button className="btn btn-sm btn-block btn-disabled btn-ghost justify-start text-xl" value="
                     default">
                       Français 
                   </button>

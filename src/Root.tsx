@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react"
 
 
 export default function Root() {
@@ -13,7 +14,7 @@ export default function Root() {
     document.documentElement.setAttribute('data-theme', theme || 'dark');
     return (
         <>
-            
+            <Analytics/>
             <main>
                 <Outlet/>
             </main>
