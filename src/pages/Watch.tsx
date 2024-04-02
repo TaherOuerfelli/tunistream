@@ -156,7 +156,7 @@ const Watch: React.FC<watchProps> = ( { MediaType }) => {
           if (stream.type === 'file') {
             const qualityEntries = Object.keys(stream.qualities);
             const streamQualities: Partial<Record<Qualities, StreamFile>> = stream.qualities;
-            const firstQuality = qualityEntries[1]?qualityEntries[1]:qualityEntries[0];
+            const firstQuality = qualityEntries[2]?qualityEntries[2]:qualityEntries[1]?qualityEntries[1]:qualityEntries[0];
             console.log(firstQuality);
             const firstStream = streamQualities[firstQuality as Qualities];
             console.log(firstStream);

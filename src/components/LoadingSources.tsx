@@ -74,7 +74,7 @@ const LoadingSources: React.FC<SourceProps> = ({ sourceIds, sourceInfo , gotLink
                 <div ref={containerRef} className='flex transition-all duration-500 gap-7'>
                     {sourceInfos.map((source, index) => (
                         <div key={source.sourceID} className={`flex flex-col justify-center items-center  transition-all duration-500 ${index !== currentIndex ? 'opacity-50 scale-90' : 'scale-125 '}  `}>
-                            <div className="flex flex-row justify-center items-center text-center rounded-lg gap-2 bg-base-300 px-10 py-7">
+                            <div className="flex flex-row justify-center items-center text-center rounded-lg gap-2 border-2 border-base-100 px-10 py-7">
                                 <div className=' w-[33px] h-[24px] '>
                                 {((source.sourceID === sourceInfo.ID) || sourceInfo.embedSource.includes(source.sourceID)) ? (
                                     sourceInfo.discovered ? 

@@ -34,7 +34,7 @@ const HoverableProgress: React.FC<ProgressProps> = (props) => {
       onMouseLeave={() => setHovering(false)}
     >
       {hovering?
-      <input type="range" min={0} max="10000" value={props.value} className={`range range-xs range-accent absolute ml-7 bottom-[50px] transition-transform duration-1000 ${
+      <input type="range" min={0} max="10000" value={props.value? props.value:0} className={`range range-xs range-accent absolute ml-7 bottom-[50px] transition-transform duration-1000 ${
         hovering ? 'h-4' : 'h-1'
       }`} style={{ width:'95%' }} onChange={(event) => props.onChangef(+(event.target.value))}/>
       : 
@@ -58,6 +58,7 @@ const formatTime = (time: number): string => {
 
 const VideoPlayer: React.FC<VideoProps> = ({videoSrc , Name, type, Quality , mediaID , mediaType , sessionIndex , episodeIndex}) => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const rangeRef = useRef<HTMLInputElement>(null);
   const [videoLink , setVideoLink] = useState(videoSrc);
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [error, setError] = useState<string>();
@@ -69,6 +70,7 @@ const VideoPlayer: React.FC<VideoProps> = ({videoSrc , Name, type, Quality , med
   const [loadedFraction, setLoadedFraction] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [AudioState, setAudioState] = useState('on');
+  const [isAudioHovered, setAudioIsHovered] = useState(false);
   //const [settingsMenu, setSettingsMenu] = useState(0);
   const [showUI, setShowUI] = useState(true);
   const [theme , setTheme] = useState('dark');
@@ -80,6 +82,7 @@ const VideoPlayer: React.FC<VideoProps> = ({videoSrc , Name, type, Quality , med
     let theme = localStorage.getItem('theme');
     document.documentElement.setAttribute('data-theme', theme || 'dark');
     setTheme(theme ?? 'dark');
+    changeRangeValue();
   },[])
 
   useEffect(() => {
@@ -113,6 +116,7 @@ const VideoPlayer: React.FC<VideoProps> = ({videoSrc , Name, type, Quality , med
             return acc;
           }, {} as Record<Qualities, StreamHLS>);
           setVideoQuality(hlsQualitiesData);
+          
         });
         
       } 
@@ -202,6 +206,7 @@ const VideoPlayer: React.FC<VideoProps> = ({videoSrc , Name, type, Quality , med
     setVideoLoaded(true);
     const videoElement = videoRef.current;
     if (videoElement){
+      changeRangeValue();
       setDuration(videoElement.duration);
       const storedMediaData = localStorage.getItem('mediaData');
         if (storedMediaData) {
@@ -317,19 +322,29 @@ const VideoPlayer: React.FC<VideoProps> = ({videoSrc , Name, type, Quality , med
     }
     }
   }, 100); // Adjust the debounce delay as needed
+
+  const changeRangeValue = () => {
+    if (rangeRef.current && videoRef.current) {
+      rangeRef.current.value = (videoRef.current.volume*100).toString();
+    }
+  };
+
 const handleAudioButton = ()=>{
   if (videoRef.current) {
     if(videoRef.current.muted){
       videoRef.current.muted = false;
       setAudioState("on");
+      changeRangeValue();
 
     }else{
       videoRef.current.muted = true;
       setAudioState("off");
+      changeRangeValue();
 
     }
   }
 };
+useEffect(()=>{changeRangeValue();},[isAudioHovered]);
 
   return (
     <>
@@ -380,55 +395,65 @@ const handleAudioButton = ()=>{
         
         </div></div>
         <div className={`absolute ${theme === 'light' || theme === 'cyberpunk' ? 'bg-base-200 bg-opacity-75' : ''} w-full h-fit bottom-2 pt-5 mt-10 rounded-lg transition-opacity duration-500 ${showUI ? 'opacity-100' : 'opacity-0'}`}>
-        <progress className="progress absolute ml-8 bottom-14 h-1" style={{ width:'94%' }} value={Math.round(loadedFraction * 100)} max="100"></progress>
+        <progress className="progress absolute ml-7 bottom-14 h-1" style={{ width:'95%' }} value={Math.round(loadedFraction * 100)} max="100"></progress>
         <HoverableProgress value={progress} onChangef={handleProgress} />
         <div className='flex flex-row items-center mb-1'>
         <button className='btn btn-ghost ml-7 px-2' onClick={togglePlayback}>
         {playing ? 
-       <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+       <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
        : (
-         <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+         <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
          )}</button>
 
-      <button className='btn btn-ghost px-2 mx-1' onClick={() => addSeconds(currentTime-10)}>
-      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 2v6h6M2.66 15.57a10 10 0 1 0 .57-8.38"/></svg>
+      <button className='btn btn-ghost px-3 ' onClick={() => addSeconds(currentTime-10)}>
+      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 2v6h6M2.66 15.57a10 10 0 1 0 .57-8.38"/></svg>
       </button>
-      <button className='btn btn-ghost px-2 mx-1 mr-5' onClick={() => addSeconds(currentTime+10)}>
-      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38"/></svg>
+      <button className='btn btn-ghost px-3 ' onClick={() => addSeconds(currentTime+10)}>
+      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38"/></svg>
       </button>
 
 
-      <div className='flex flex-row h-full'>
-        <button className='btn btn-ghost' onClick={handleAudioButton}>
+      <div className='flex flex-row h-full w-fit '>
+        <button className=' w-fit px-1 btn btn-link no-underline no-animation' 
+                onMouseEnter={() => setAudioIsHovered(true)}
+                onMouseLeave={() => setAudioIsHovered(false)}
+                >
+                <div onClick={handleAudioButton} className='btn btn-ghost px-1'>
           {AudioState === 'on'? 
-      <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+          
+      <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
        : AudioState === 'low'?
-       <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+       <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
        : AudioState === 'off'?
-       <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6"/></svg>
-       : null}
-      </button>
+       <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6"/></svg>
+       : null}</div>
+          {isAudioHovered && (
       <input 
-  type="range" 
-  min={0} 
-  max={100}  
-  onChange={(e) => {
-    const volumeValue = parseFloat(e.target.value);
-    debouncedVolumeChange(volumeValue);
-  }} 
-  className="range range-xs mt-4 w-24 mx-3" 
-/>
+      ref={rangeRef}
+      type="range" 
+      min={0} 
+      max={100}  
+      onChange={(e) => {
+        const volumeValue = parseFloat(e.target.value);
+        debouncedVolumeChange(volumeValue);
+      }} 
+      className={`range range-xs w-24 mx-1 mr-3 transition-all duration-1000 ${
+        isAudioHovered || isAudioHovered ? "opacity-100 translate-x-1" : "opacity-0"
+      }`}
+      />) }
+      </button>
+
       </div>
 
 
-      <h2 className=' text-xl'>{formatTime(currentTime)} / {formatTime(duration)}</h2>
+      <h2 className='text-xl text-gray-300 ml-3'>{formatTime(currentTime)} / {formatTime(duration)}</h2>
 
 
         <div className='flex flex-row absolute right-3'>
 
       <div className="dropdown dropdown-top dropdown-end">
       <div tabIndex={0} role="button" className="btn btn-ghost px-2 mx-1">
-      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="butt" stroke-linejoin="bevel"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="butt" stroke-linejoin="bevel"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
       </div>
       <div tabIndex={0} className="dropdown-content z-[1] card card-compact w-64 p-2 mb-5 shadow bg-base-200 text-content absolute right-0">
         <div className="card-body ">
@@ -466,8 +491,8 @@ const handleAudioButton = ()=>{
     </div>
 
       <button className='btn btn-ghost px-2 mx-1 mr-3' onClick={handleFullscreenToggle}>
-      {isFullscreen? <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path></svg>
-      : <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>}
+      {isFullscreen? <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path></svg>
+      : <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>}
       </button>
 
       </div>
