@@ -71,7 +71,8 @@ const VideoPlayer: React.FC<VideoProps> = ({videoSrc , Name, type, Quality , med
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [AudioState, setAudioState] = useState('on');
   const [isAudioHovered, setAudioIsHovered] = useState(false);
-  //const [settingsMenu, setSettingsMenu] = useState(0);
+  const [settingsMenu, setSettingsMenu] = useState(0);
+  const [settings, setSettings] = useState(false);
   const [showUI, setShowUI] = useState(true);
   const [theme , setTheme] = useState('dark');
   const [VideoQuality, setVideoQuality] = useState<Record<Qualities, StreamFile | StreamHLS> |null>(Quality);
@@ -345,11 +346,15 @@ const handleAudioButton = ()=>{
   }
 };
 useEffect(()=>{changeRangeValue();},[isAudioHovered]);
+const handleSettings = ()=>{
+  if(settings === false)setSettingsMenu(0);
+  setSettings(!settings);
+}
 
   return (
     <>
-    <div className="relative h-screen">
-      <div className={`flex flex-row relative top-5 transition-opacity duration-300 ${showUI ? 'opacity-100' : 'opacity-0'} z-50`}>
+    <div className="relative h-screen overflow-hidden">
+      <div className={`flex flex-row relative top-5 transition-all duration-500 ${showUI ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'} z-50`}>
       <h1 className='text-white text-xl ml-12 mt-3'>{Name} {mediaType === "movie" ? null: <span className='text-gray-400 font-thin'>S{sessionIndex}:E{episodeIndex}</span>}</h1>
       <Link to='/Home' className="btn btn-ghost text-2xl absolute right-7 top-3 font-bold bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text z-50" onClick={() => document.exitFullscreen()}>TUNISTREAM.CLUB</Link>
 
@@ -362,7 +367,7 @@ useEffect(()=>{changeRangeValue();},[isAudioHovered]);
         Error: {error}</div>}
       <video
         ref={videoRef}
-        className={`${
+        className={`z-0 ${
           videoLoaded ? 'object-cover' : 'object-contain'
         } w-full h-full`}
         style={{ objectFit: 'contain', width: '100%', height: '100vh' }} // Make the video as big as the screen
@@ -394,7 +399,48 @@ useEffect(()=>{changeRangeValue();},[isAudioHovered]);
         }
         
         </div></div>
-        <div className={`absolute ${theme === 'light' || theme === 'cyberpunk' ? 'bg-base-200 bg-opacity-75' : ''} w-full h-fit bottom-2 pt-5 mt-10 rounded-lg transition-opacity duration-500 ${showUI ? 'opacity-100' : 'opacity-0'} z-50`}>
+
+        {/* Settings tab ###############  */}
+        {settings&&<div className='absolute top-0 w-screen h-screen z-[51]' onClick={() => setSettings(false)}></div>}
+        <div className={`flex flex-col justify-center items-start z-[55] bg-base-200 rounded-box  p-5 px-6 mb-2 shadow text-content absolute right-5 bottom-16 transition-all  ease-in-out ${settings && showUI ? 'duration-100 opacity-100 translate-y-0 h-fit w-fit' : 'duration-200 opacity-0 translate-y-10'}`}>
+        {settingsMenu===0&&<div role='Settings-menu'>
+          <h3 className="card-title text-sm">Settings:</h3>
+          <div className='divider h-0 m-0 my-2 w-full'></div>
+          <button className="btn btn-ghost text-lg font-bold" onClick={() => setSettingsMenu(1)}><div className='flex flex-row justify-between'><span className='mr-10'>Quality: </span><span className='flex font-bold ml-5 p-0 text-sm px-3 rounded-box bg-base-content text-base-200 justify-center items-center'>{VideoQuality && Object.keys(VideoQuality).map((quality) => (videoLink === VideoQuality[quality as Qualities].url ? quality + (+quality ? 'p' : null) : null))}</span></div></button>
+        </div>}
+          
+        {settingsMenu===1&&<div role='Setting-option'>
+          <div className='flex flex-row'> 
+          <button className='btn btn-link p-0 my-0 mr-1' onClick={() =>setSettingsMenu(0)}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H6M12 5l-7 7 7 7"/></svg>
+          </button>
+              <h3 className="card-title text-sm">Quality:</h3>
+              </div>
+                <div className='divider h-0 m-0 w-full'></div>
+                <table>
+                  <tbody>
+                    {VideoQuality && Object.keys(VideoQuality).reverse().map((quality, index) => (
+                      <tr key={index}>
+                        <td>
+                          <label className="cursor-pointer label">
+                            <span className="label-text text-lg mr-32">{quality}{+quality? 'p':null}</span>
+                            <input type="radio" name="quality" className="radio" value={VideoQuality[quality as Qualities].url} onChange={(e) => setVideoLink(e.target.value)} checked={videoLink === VideoQuality[quality as Qualities].url} />
+                          </label>
+                        </td>
+                      </tr>
+                    ))}
+                    {hlsMainLink && 
+                    <label className="cursor-pointer label">
+                    <span className="label-text text-1xl">Auto</span>
+                    <input type="radio" name="quality" className="radio" value={hlsMainLink} onChange={(e) => setVideoLink(e.target.value)} checked={videoLink === hlsMainLink} />
+                      </label>}
+                  </tbody>
+                </table>
+           </div>}
+        </div>
+
+
+        <div className={`absolute ${theme === 'light' || theme === 'cyberpunk' ? 'bg-base-200 bg-opacity-75' : ''} w-full h-fit bottom-0 pt-5 mt-10 rounded-lg transition-all duration-200 ${showUI ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'} z-50`}>
         <progress className="progress absolute ml-7 bottom-14 h-1" style={{ width:'95%' }} value={Math.round(loadedFraction * 100)} max="100"></progress>
         <HoverableProgress value={progress} onChangef={handleProgress} />
         <div className='flex flex-row items-center mb-1'>
@@ -451,44 +497,10 @@ useEffect(()=>{changeRangeValue();},[isAudioHovered]);
 
         <div className='flex flex-row absolute right-3'>
 
-      <div className="dropdown dropdown-top dropdown-end">
-      <div tabIndex={0} role="button" className="btn btn-ghost px-2 mx-1">
-      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="butt" stroke-linejoin="bevel"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-      </div>
-      <div tabIndex={0} className="dropdown-content z-[1] card card-compact w-64 p-2 mb-5 shadow bg-base-200 text-content absolute right-0">
-        <div className="card-body ">
-          <h3 className="card-title">Settings:</h3>
-          <div tabIndex={1} role="button" className="btn btn-ghost">Select Quality</div>
-        </div>
-      </div>
-      
 
-      <div tabIndex={1} className="dropdown-content z-[1] card card-compact w-64 p-2 mb-5 shadow bg-base-200 text-content absolute right-0">
-        <div className="card-body ">
-          <h3 className="card-title text-2xl">Quality:</h3>
-          <div className='divider h-0 m-0'></div>
-          <table>
-            <tbody>
-              {VideoQuality && Object.keys(VideoQuality).reverse().map((quality, index) => (
-                <tr key={index}>
-                  <td>
-                    <label className="cursor-pointer label">
-                      <span className="label-text text-1xl">{quality}{+quality? 'p':null}</span>
-                      <input type="radio" name="quality" className="radio" value={VideoQuality[quality as Qualities].url} onChange={(e) => setVideoLink(e.target.value)} checked={videoLink === VideoQuality[quality as Qualities].url} />
-                    </label>
-                  </td>
-                </tr>
-              ))}
-              {hlsMainLink && 
-              <label className="cursor-pointer label">
-              <span className="label-text text-1xl">Auto</span>
-              <input type="radio" name="quality" className="radio" value={hlsMainLink} onChange={(e) => setVideoLink(e.target.value)} checked={videoLink === hlsMainLink} />
-                </label>}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+      <button className="btn btn-ghost px-2 mx-1" onClick={handleSettings}>
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="butt" stroke-linejoin="bevel"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+      </button>
 
       <button className='btn btn-ghost px-2 mx-1 mr-3' onClick={handleFullscreenToggle}>
       {isFullscreen? <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path></svg>

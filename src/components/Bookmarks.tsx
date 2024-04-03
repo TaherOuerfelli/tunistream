@@ -59,7 +59,7 @@ export default function Bookmarks(){
                 </div>
                 </div>
                 <div className="divider w-full h-0 m-0"></div>
-                {JSON.parse(bookmarks).map((mediaId: string) => {
+                {JSON.parse(bookmarks).reverse().map((mediaId: string) => {
                     let session = '1';
                     let episode = '1';
                     if (mediaId.startsWith('s')) {

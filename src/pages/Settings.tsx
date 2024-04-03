@@ -9,11 +9,11 @@ const Settings: React.FC = () => {
     <>
       <Header />
 
-      <div className="flex flex-rox my-10">
-        <ul className="menu menu-lg bg-base-200 ml-10 mt-36 w-1/3 h-fit rounded-box sticky top-20">
+      <div className="flex flex-row my-10">
+        <ul className="menu menu-lg bg-base-200 ml-10 mt-36 w-[35%] min-w-48 h-fit rounded-box sticky top-20">
           <h1 className="menu-title text-3xl font-bold ">
           Settings</h1>
-          <div className='divider h-1 p-0 mx-2 my-0'></div>
+          <div className='divider h-1 p-0 mx-[5%] my-0'></div>
           <li><a className=' text-xl'>Language</a></li>
           <li><a className=' text-xl'>Appearance</a></li>
           <li><a className=' text-xl'>Other Settings</a></li>

@@ -17,7 +17,7 @@ interface ShowProps {
 }
 
 const ShowSeasons: React.FC<ShowProps> = ({ seasonsList, ShowID , ShowName , ShowReleaseDate }) => {
-    const [selectedSeason, setSelectedSeason] = useState<number | null>(null);
+    const [selectedSeason, setSelectedSeason] = useState<number | null>(1);
     const [seasonEpisodes, setSeasonEpisodes] = useState<Record<string, any>>({});
     const navigate = useNavigate();
 

@@ -65,7 +65,7 @@ export default function ContinueWatching(){
                         acc.push({ mediaId: mediaIdWithoutSession, session, episode });
                     }
                     return acc;
-                }, []).map(({ mediaId, session, episode }) => (
+                }, []).reverse().map(({ mediaId, session, episode }) => (
                     <CardBookmark mediaId={mediaId} session={session} episode={episode} isEditing={IsEditing} callBackFn={handleReset} deleteType="W"/>
                 ))}
             </div>

@@ -249,7 +249,7 @@ export default function MoviePage(){
                 <div className="container mx-auto">
                 <div className="w-full mt-10">
                     <h1 className="mx-2 font-bold text-2xl ">Overview:</h1>
-                    <div className="divider my-2 h-1"></div> 
+                    <div className="divider my-2 h-1 mx-[1%]"></div> 
                     <p className="text-xl mx-5 my-3 font-thin">{movieData.overview}</p>
                     
                 </div> </div>: null}
