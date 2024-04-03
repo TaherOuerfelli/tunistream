@@ -1,9 +1,18 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import Header from './Header';
 import Footer from './Footer';
 
 const Settings: React.FC = () => {
   //const { settings, toggleLanguage, toggleAppearance, toggleOtherSettings } = useSettings();
+  const langRef = useRef<HTMLDivElement>(null);
+  const themeRef = useRef<HTMLDivElement>(null);
+  const otherRef = useRef<HTMLDivElement>(null);
+
+  const scrollToElement = (reference: React.RefObject<HTMLDivElement>) => {
+    if (reference.current) {
+      reference.current.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
+    }
+  };
 
   return (
     <>
@@ -14,14 +23,14 @@ const Settings: React.FC = () => {
           <h1 className="menu-title text-3xl font-bold ">
           Settings</h1>
           <div className='divider h-1 p-0 mx-[5%] my-0'></div>
-          <li><a className=' text-xl'>Language</a></li>
-          <li><a className=' text-xl'>Appearance</a></li>
-          <li><a className=' text-xl'>Other Settings</a></li>
+          <li><a className=' text-xl' onClick={() =>scrollToElement(langRef)}>Language</a></li>
+          <li><a className=' text-xl' onClick={() =>scrollToElement(themeRef)}>Appearance</a></li>
+          <li><a className=' text-xl' onClick={() =>scrollToElement(otherRef)}>Other Settings</a></li>
         </ul>
-        <div className="container mx-10 bg-base-200 rounded-box h-screen w-full">
-          <div className='mx-12'>
-          <div className="w-full mt-10 ">
-                <h1 className="mx-2 font-bold text-4xl ">Language:</h1>
+        <div className="container mx-10 bg-base-200 rounded-box h-screen w-full" >
+          <div className='mx-12' >
+          <div className="w-full mt-10 " ref={langRef}>
+                <h1 className="mx-2 font-bold text-4xl " >Language:</h1>
                 <div className="divider my-2 h-1"></div> 
               
                   <div className="dropdown mb-10">
@@ -63,7 +72,7 @@ const Settings: React.FC = () => {
 
                 
           </div>
-          <div className="w-full mt-10 ">
+          <div className="w-full mt-10 " ref={themeRef}>
                 <h1 className="mx-2 font-bold text-4xl ">Appearance:</h1>
                 <div className="divider my-2 h-1"></div> 
                     
@@ -80,7 +89,7 @@ const Settings: React.FC = () => {
 
                 </div>
           </div>
-          <div className="w-full mt-10 ">
+          <div className="w-full mt-10 " ref={otherRef}>
                 <h1 className="mx-2 font-bold text-4xl ">Other Settings:</h1>
                 <div className="divider my-2 h-1"></div> 
                 
