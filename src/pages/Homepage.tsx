@@ -91,8 +91,8 @@ export default function Homepage(){
             </label>
         </div></div>
         {searchQuery ? (<Results results={searchResults} ISsearching={searching}/>):null}
-        <ContinueWatching />
         <Bookmarks/>
+        <ContinueWatching />
         <div className="h-screen"></div>
         <Footer/>
         </>

@@ -64,7 +64,7 @@ const ShowSeasons: React.FC<ShowProps> = ({ seasonsList, ShowID , ShowName , Sho
                                 </tr>
                             </thead>
                             <tbody>
-                                {seasonEpisodes[season.season_number] ? seasonEpisodes[season.season_number].map((episode: any) => (
+                                {seasonEpisodes[season.season_number] && seasonEpisodes[season.season_number].map((episode: any) => (
                                     <tr key={episode.id} className={`hover:bg-base-100 text-lg ${new Date(episode.air_date) > new Date() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} onClick={() => navigate(`/Watch/Series/${ShowID}/Season/${season.season_number}/Episode/${episode.episode_number}?name=${ShowName}&year=${ShowReleaseDate}&epID=${episode.id}&ssID=${season.id}`)}>
                                         <th className="badge m-5">{episode.episode_number}</th>
                                         <td>{episode.name} {new Date(episode.air_date) > new Date() ? <span className='badge'>Not aired yet. </span>: ''}</td>
@@ -75,11 +75,20 @@ const ShowSeasons: React.FC<ShowProps> = ({ seasonsList, ShowID , ShowName , Sho
                                             </div>
                                         </td>
                                     </tr>
-                                )) : (
+                                ))}
+
                                     <tr>
-                                        <td colSpan={4}><p>Loading</p></td>
+                                        <td colSpan={4}>{seasonEpisodes[season.season_number] && seasonEpisodes[season.season_number].length === 0 ? 
+                                        (
+                                            <div className='flex flex-row items-center bg-base-100 p-5 font-bold tracking-wide'>
+                                                <span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                                            </span><p className='mx-5'>Episodes are currently not available for this Season.</p>
+                                            </div>
+                                            )
+                                        : !seasonEpisodes[season.season_number] && <p>Loading</p>}</td>
                                     </tr>
-                                )}
+
                             </tbody>
                         </table>
                     </div>
