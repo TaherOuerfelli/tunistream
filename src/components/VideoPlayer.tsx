@@ -405,13 +405,13 @@ const handleSettings = ()=>{
         {settings&&<div className='absolute top-0 w-screen h-screen bg-transparent z-[51]' onClick={() => setSettings(false)}></div>}
         <div className={`z-[55] overflow-hidden bg-base-200 rounded-sm p-2 px-2 mb-2 shadow text-content absolute right-5 bottom-16 transition-all  ease-in-out ${settings && showUI ? 'duration-100 opacity-100 translate-y-0 ' : 'duration-200 opacity-0 translate-y-10'}`}>
         {/* Settings Menu 0 */}
-        <div role='Settings-menu'  className={`transition-all  ease-in-out ${settingsMenu===0 ? 'duration-100 opacity-100 translate-x-0 h-fit w-fit' : 'duration-200 opacity-0 -translate-x-20 w-0 h-0'}`}>
+        <div role='Settings-menu'  className={`transition-all  ease-in-out ${settingsMenu===0 ? 'duration-100 opacity-100 translate-x-0 h-fit w-fit' : 'duration-100 opacity-0 -translate-x-32 w-0 h-0'}`}>
           <h3 className="card-title text-sm">Settings:</h3>
           <div className='divider h-0 m-0 my-2 w-full'></div>
           <button className="btn btn-ghost text-lg font-bold" onClick={() => setSettingsMenu(1)}><div className='flex flex-row justify-between'><span className='mr-10'>Quality: </span><span className='flex font-bold ml-5 p-0 text-sm px-3 rounded-box bg-base-content text-base-200 justify-center items-center'>{VideoQuality && Object.keys(VideoQuality).map((quality) => (videoLink === VideoQuality[quality as Qualities].url ? quality + (+quality ? 'p' : '') : ''))}</span></div></button>
         </div>
           {/* Settings Menu 1 */}
-          <div role='Setting-option' className={`transition-all  ease-in-out ${settingsMenu===1 ? 'duration-100 opacity-100 translate-x-0 h-fit w-fit' : 'duration-200 opacity-0 translate-x-10 w-0 h-0'}`}>
+          <div role='Setting-option' className={`transition-all  ease-in-out ${settingsMenu===1 ? 'duration-250 opacity-100 translate-x-0 h-fit w-fit' : 'duration-200 opacity-0  translate-x-32 w-0 h-0'}`}>
           <div className='flex flex-row'> 
           <button className='btn btn-link p-0 my-0 mr-1' onClick={() =>setSettingsMenu(0)}>
           <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H6M12 5l-7 7 7 7"/></svg>
