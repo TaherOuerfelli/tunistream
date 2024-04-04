@@ -411,10 +411,10 @@ const handleSettings = ()=>{
           <button className="btn btn-ghost text-lg font-bold" onClick={() => setSettingsMenu(1)}><div className='flex flex-row justify-between'><span className='mr-10'>Quality: </span><span className='flex font-bold ml-5 p-0 text-sm px-3 rounded-box bg-base-content text-base-200 justify-center items-center'>{VideoQuality && Object.keys(VideoQuality).map((quality) => (videoLink === VideoQuality[quality as Qualities].url ? quality + (+quality ? 'p' : '') : ''))}</span></div></button>
         </div>
           {/* Settings Menu 1 */}
-          <div role='Setting-option' className={`transition-all  ease-in-out ${settingsMenu===1 ? 'duration-250 opacity-100 translate-x-0 h-fit w-fit' : 'duration-200 opacity-0  translate-x-32 w-0 h-0'}`}>
+          <div role='Setting-option' className={`transition-all  ease-in-out ${settingsMenu===1 ? 'duration-250 opacity-100 translate-x-0 h-fit w-fit' : 'duration-300 opacity-0  translate-x-32 w-0 h-0'}`}>
           <div className='flex flex-row'> 
           <button className='btn btn-link p-0 my-0 mr-1' onClick={() =>setSettingsMenu(0)}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H6M12 5l-7 7 7 7"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="35" height="25" className='mr-2' viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M75 12H6M12 5l-7 7 7 7"/></svg>
           </button>
               <h3 className="card-title text-sm">Quality:</h3>
               </div>
