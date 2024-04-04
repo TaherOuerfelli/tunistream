@@ -46,7 +46,7 @@ export default function Bookmarks(){
         <>
 
         {bookmarks && JSON.parse(bookmarks).length > 0 && (
-            <div className='flex flex-wrap justify-start gap-4 max-w-screen-lg mx-auto h-fit mt-10'>
+            <div className='flex flex-wrap justify-center gap-4 max-w-screen-lg min-w-[30rem] mx-auto h-fit mt-10'>
                 <div className="flex flex-start w-full h-fit justify-between">
                 <div className='flex flex-row w-fit mt-3 gap-2 '>
                 <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2.5" stroke-linecap="butt" stroke-linejoin="bevel"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>

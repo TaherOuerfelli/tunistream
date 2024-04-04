@@ -39,7 +39,7 @@ export default function ContinueWatching(){
         <>
 
         {Object.keys(mediaData).length > 0 && (
-            <div className='flex flex-wrap justify-start gap-4 max-w-screen-lg mx-auto h-fit mt-10 transition-transform duration-500 ease-in-out'>
+            <div className='flex flex-wrap justify-center gap-4 max-w-screen-lg min-w-[30rem] mx-auto h-fit mt-10 transition-transform duration-500 ease-in-out'>
                 <div className="flex flex-start w-full h-fit justify-between">
                 <div className='flex flex-row w-fit mt-3 gap-2 '>
                 <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>

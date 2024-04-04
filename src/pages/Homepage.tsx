@@ -1,4 +1,4 @@
-import { useState,useEffect } from "react"
+import { useState,useEffect, useRef } from "react"
 import Results from "./Results";
 import { useSearchParams } from "react-router-dom";
 import Header from "./Header";
@@ -25,6 +25,9 @@ export default function Homepage(){
     const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
     const [searching, setSearching] = useState(false);
     const [theme , setTheme] = useState('dark');
+    const [IsFocused , setIsFocused] = useState(false);
+    const [IsSticky , setSticky] = useState(false);
+    const stickyElementRef = useRef<HTMLDivElement>(null);
     useEffect(()=>{
         let theme = localStorage.getItem('theme');
         document.documentElement.setAttribute('data-theme', theme || 'dark');
@@ -71,16 +74,39 @@ export default function Homepage(){
           console.log(searchResults);
           
       }, [searchQuery]);
+    
 
       
+
+      useEffect(() => {
+        const handleScroll = () => {
+          const stickyElement = stickyElementRef.current;
+          if (!stickyElement) return;
+    
+          const rect = stickyElement.getBoundingClientRect();
+          if (rect.top <= 0) {
+            setSticky(true);
+          } else {
+            setSticky(false);
+          }
+        };
+    
+        // Attach scroll event listener
+        window.addEventListener('scroll', handleScroll);
+    
+        // Cleanup
+        return () => {
+          window.removeEventListener('scroll', handleScroll);
+        };
+      }, []);
     return(
         <>
         <Header/>
-        <div className="pointer-events-none flex justify-center items-center sticky top-0 left-1/4 my-10 z-40 h-14 w-full">
-        <div className="h-fit w-full mx-[25%] mt-2">
-            <label className={`input input-bordered pointer-events-auto ${theme === 'light' || theme === 'cyberpunk' ? 'border-1 border-black' : 'border-2 border-gray'} flex items-center gap-2 my-1 h-14 w-full shadow-lg shadow-black/20`}>
+        <div ref={stickyElementRef} className="pointer-events-none flex justify-center items-center sticky top-0 left-1/4 my-10 z-40 h-14 w-full">
+        <div className={`h-fit w-full transition-all duration-400 ${IsSticky? 'mx-[28%]':'mx-[27%]'} mt-2`}>
+            <label className={`input input-bordered ${theme === 'black' ? 'bg-gray-800' : 'bg-base-300'} pointer-events-auto flex items-center w-full  gap-2 my-1 shadow-lg shadow-black/20 transition-all duration-400 ${IsFocused || !IsSticky? 'rounded-lg h-14' : 'rounded-xs h-10'}  ${theme === 'light' || theme === 'cyberpunk' ? 'border-1 border-black bg-gray-800' : 'border-1 border-gray'}`}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4 opacity-70"><path fillRule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clipRule="evenodd" /></svg>
-                <input type="text" value={searchQuery ? searchQuery : ''} className="grow " placeholder="Search" onChange={(e)=> {
+                <input type="text" spellCheck="false" value={searchQuery ? searchQuery : ''} className="grow " placeholder="Search" onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)} onChange={(e)=> {
                     setSearchQuery(e.target.value);
                     window.scrollTo({
                         top: 0,

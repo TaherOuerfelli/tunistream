@@ -425,7 +425,7 @@ const handleSettings = ()=>{
                       <tr key={index}>
                         <td>
                           <label className="cursor-pointer label">
-                            <span className="label-text text-lg font-bold mr-24">{quality}{+quality? 'p':''}</span>
+                            <span className="label-text text-lg font-normal text-end mr-24">{quality}{+quality? 'p':''}</span>
                             <input type="radio" name="quality" className="radio" value={VideoQuality[quality as Qualities].url} onChange={(e) => setVideoLink(e.target.value)} checked={videoLink === VideoQuality[quality as Qualities].url} />
                           </label>
                         </td>
