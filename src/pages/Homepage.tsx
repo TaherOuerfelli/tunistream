@@ -104,7 +104,7 @@ export default function Homepage(){
         <Header/>
         <div ref={stickyElementRef} className="pointer-events-none flex justify-center items-center sticky top-0 left-1/4 my-10 z-40 h-14 w-full">
         <div className={`h-fit w-full transition-all duration-400 ${IsSticky? 'mx-[28%]':'mx-[27%]'} mt-2`}>
-            <label className={`input input-bordered ${theme === 'black' ? 'bg-gray-800' : 'bg-base-300'} pointer-events-auto flex items-center w-full  gap-2 my-1 shadow-lg shadow-black/20 transition-all duration-400 ${IsFocused || !IsSticky? 'rounded-lg h-14' : 'rounded-xs h-10'}  ${theme === 'light' || theme === 'cyberpunk' ? 'border-1 border-black bg-gray-800' : 'border-1 border-gray'}`}>
+            <label className={`input input-bordered pointer-events-auto flex items-center w-full  gap-2 my-1 shadow-lg shadow-black/20 transition-all duration-400 ${IsFocused || !IsSticky? 'h-14 bg-base-300' : ' h-10 bg-base-200'}  ${theme === 'light' || theme === 'cyberpunk' ? 'border-1 border-black bg-gray-800' : 'border-1 border-gray'}`}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4 opacity-70"><path fillRule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clipRule="evenodd" /></svg>
                 <input type="text" spellCheck="false" value={searchQuery ? searchQuery : ''} className="grow " placeholder="Search" onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)} onChange={(e)=> {
                     setSearchQuery(e.target.value);

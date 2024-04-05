@@ -106,12 +106,18 @@ const CardBookmark: React.FC<CardProps> = ({ mediaId , session , episode , isEdi
         <>
             {mediaInfo && (
                 <div className={`card btn max-w-56 h-fit bg-base-100 shadow-xl ${theme === 'light' || theme === 'cyberpunk' ? 'border-1 border-black' : 'border-2 border-gray-700'}`} onClick={handleClick}>
-                    {isEditing && <button className='btn btn-circle absolute z-40 scale-125 transition-transform transform hover:scale-150' onClick={handleDelete}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="#ff5555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-                    </button>}
                     
-                    <div className={`card-body relative  mb-4 p-0 ${isEditing ? 'blur-sm' : ''}`}>
-                    <span className='bg-base-200 text-lg w-fit px-2 absolute right-0 top-4'><span>{mediaType === 'movie' ? null:`S${session}:E${episode}`}</span></span>
+                    
+                    <div className="card-body relative  mb-4 p-0 ">
+                        
+                    <div>
+                        <div className='absolute w-full h-full bg-transparent z-40'> <button className={`btn btn-circle mt-[75%]  z-40 scale-125 transition-all transform hover:scale-150 duration-300 ${isEditing ? 'opacity-100 ':'opacity-0 scale-50 '}`} onClick={handleDelete}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="#ff5555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                    </button> </div>
+
+                    <div className={`transition-all duration-300 ${isEditing ? 'blur-sm' : 'blur-none'}`}>
+
+                    <span className='bg-base-300 rounded-box text-base font-medium text-content tracking-widest w-fit p-0 px-3 absolute right-2 top-2'>{mediaType === 'movie' ? null:<p>S{session} E{episode}</p>}</span>
                         {isLoading ? <div className="skeleton w-48 h-80 mt-4"></div> : null}
                         {posterUrl ? <img
                             className="w-full h-full mt-4 "
@@ -121,6 +127,8 @@ const CardBookmark: React.FC<CardProps> = ({ mediaId , session , episode , isEdi
                             onLoad={() => setIsLoading(false)}
                             onError={() => setIsLoading(false)}
                         />: <div className="skeleton w-full h-[200px]">Poster of {`${mediaName}`} is unavailable</div>}
+                        </div>
+                        </div>
                         <h2 className="card-title">{mediaName} </h2>
                         <div className="card-actions justify-start">
                             <span className="badge p-2 m-0">{releaseYear}</span>
