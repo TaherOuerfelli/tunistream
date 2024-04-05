@@ -9,7 +9,7 @@ export default function Header(){
       },[])
     return(
         <>
-        <div className="navbar bg-base-100 shadow-xl shadow-black/20 sticky top-0 z-30">
+        <div className="navbar bg-base-100 pointer-events-auto shadow-xl shadow-black/20 sticky top-0 z-30">
         <div className="flex-1 ">
             <Link to='/Home' className="btn btn-ghost text-2xl font-bold bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text ">TUNISTREAM.CLUB</Link>
             <p className="text-gray-500 text-xs">v1.01</p>

@@ -408,7 +408,7 @@ const handleSettings = ()=>{
         <div role='Settings-menu'  className={`transition-all  ease-in-out ${settingsMenu===0 ? 'duration-100 opacity-100 translate-x-0 h-fit w-fit' : 'duration-100 opacity-0 -translate-x-32 w-0 h-0'}`}>
           <h3 className="card-title text-sm">Settings:</h3>
           <div className='divider h-0 m-0 my-2 w-full'></div>
-          <button className="btn btn-ghost text-lg font-bold" onClick={() => setSettingsMenu(1)}><div className='flex flex-row justify-between'><span className='mr-10'>Quality: </span><span className='flex font-bold ml-5 p-0 text-sm px-3 rounded-box bg-base-content text-base-200 justify-center items-center'>{VideoQuality && Object.keys(VideoQuality).map((quality) => (videoLink === VideoQuality[quality as Qualities].url ? quality + (+quality ? 'p' : '') : ''))}</span></div></button>
+          <button className="btn btn-ghost text-lg font-bold" onClick={() => setSettingsMenu(1)}><div className='flex flex-row justify-between'><span className='mr-10'>Quality: </span><span className='flex font-bold ml-5 p-0 text-sm px-3 rounded-box bg-base-content text-base-200 justify-center items-center'>{VideoQuality && Object.keys(VideoQuality).map((quality) => (videoLink === VideoQuality[quality as Qualities].url ? quality + (+quality ? 'p' : '') : ''))}{hlsMainLink ? 'Auto': ''}</span></div></button>
         </div>
           {/* Settings Menu 1 */}
           <div role='Setting-option' className={`transition-all  ease-in-out ${settingsMenu===1 ? 'duration-250 opacity-100 translate-x-0 h-fit w-fit' : 'duration-300 opacity-0  translate-x-32 w-0 h-0'}`}>
@@ -425,7 +425,7 @@ const handleSettings = ()=>{
                       <tr key={index}>
                         <td>
                           <label className="cursor-pointer label">
-                            <span className="label-text text-lg font-normal text-end mr-24">{quality}{+quality? 'p':''}</span>
+                            <span className="label-text text-lg font-normal mr-24">{quality}{+quality? 'p':''}</span>
                             <input type="radio" name="quality" className="radio" value={VideoQuality[quality as Qualities].url} onChange={(e) => setVideoLink(e.target.value)} checked={videoLink === VideoQuality[quality as Qualities].url} />
                           </label>
                         </td>
@@ -433,7 +433,7 @@ const handleSettings = ()=>{
                     ))}
                     {hlsMainLink && 
                     <label className="cursor-pointer label">
-                    <span className="label-text text-1xl">Auto</span>
+                    <span className="label-text text-1xl mr-24">Auto</span>
                     <input type="radio" name="quality" className="radio" value={hlsMainLink} onChange={(e) => setVideoLink(e.target.value)} checked={videoLink === hlsMainLink} />
                       </label>}
                   </tbody>

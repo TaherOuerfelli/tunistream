@@ -102,6 +102,7 @@ const Watch: React.FC<watchProps> = ( { MediaType }) => {
   }, [searchParams]);
 
 
+
   const eventListeners: FullScraperEvents = {
     update: (evt) => {
       console.log('Update event:', evt);
