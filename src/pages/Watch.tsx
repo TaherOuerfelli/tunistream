@@ -10,7 +10,7 @@ const proxyUrl = import.meta.env.VITE_PROXY_URL_LINK;
 const providers = makeProviders({
   fetcher: makeStandardFetcher(fetch),
   proxiedFetcher: makeSimpleProxyFetcher(proxyUrl?proxyUrl:'', fetch),
-  target: targets.ANY,
+  target: targets.BROWSER,
 })
 
 
@@ -32,6 +32,7 @@ const Watch: React.FC<watchProps> = ( { MediaType }) => {
   const [startPlay , setStartPlay] = useState(false);
   const [DoneFetching , setDoneFetching] = useState(false);
   const [FoundStream , setFoundStream] = useState(false);
+  const [provider_id , setProviderId] = useState('');
   const [StreamLink , setStreamLink] = useState('');
   const [StreamType , setStreamType] = useState<"hls" | "file">('file');
   const [StreamQuality, setStreamQuality] = useState<Record<Qualities, StreamFile> | null>(null);
@@ -119,6 +120,7 @@ const Watch: React.FC<watchProps> = ( { MediaType }) => {
   },
     discoverEmbeds: (evt) => {
       console.log('DiscoverEmbeds event:', evt);
+      
       setSourceInfo(prevSourceInfo => ({
         ...prevSourceInfo,
         ID: evt.sourceId,
@@ -138,6 +140,7 @@ const Watch: React.FC<watchProps> = ( { MediaType }) => {
   
   useEffect(() => {
     console.log('Source Info:', sourceInfo);
+    setProviderId(sourceInfo.embedSource);
   }, [sourceInfo]);
   useEffect(() => {
     console.log('Source Ids:', sourceIds);
@@ -189,7 +192,7 @@ const Watch: React.FC<watchProps> = ( { MediaType }) => {
     return(
         <>
 <div className='bg-black h-screen overflow-hidden'>
-{startPlay  ? <VideoPlayer videoSrc={StreamLink} Name={mediaInfo.title} type={StreamType} Quality={StreamQuality} mediaID={mediaID ?? ''} mediaType={MediaType} sessionIndex={sessionIndex ?? '1'} episodeIndex={epIndex ?? '1'}/> : null}
+{startPlay  ? <VideoPlayer media={mediaInfo} videoSrc={StreamLink} provider_ID={provider_id} providersList={sourceIds} Name={mediaInfo.title} Stream_Type={StreamType} Quality={StreamQuality} mediaID={mediaID ?? ''} mediaType={MediaType} sessionIndex={sessionIndex ?? '1'} episodeIndex={epIndex ?? '1'}/> : null}
 {!FoundStream && DoneFetching ? <StreamNotFound Name={mediaInfo.title} Season={sessionIndex??null} Episode={epIndex??null}/>: null}
 {!startPlay && !DoneFetching  ? <LoadingSources sourceInfo={sourceInfo} sourceIds={sourceIds} gotLink={FoundStream}/>:null}
 </div>

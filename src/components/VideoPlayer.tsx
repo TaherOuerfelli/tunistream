@@ -1,25 +1,40 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Hls from 'hls.js';
-import { Qualities, StreamFile } from '@movie-web/providers';
+import { EmbedOutput, Qualities, ScrapeMedia, StreamFile, makeProviders, makeSimpleProxyFetcher, makeStandardFetcher, targets } from '@movie-web/providers';
 import { ErrorBoundary } from '../pages/ErrorBoundary';
 import { debounce } from 'lodash';
+import { SourcererOutput, NotFoundError } from '@movie-web/providers';
 
 
+const proxyUrl = import.meta.env.VITE_PROXY_URL_LINK;
 
+const providers = makeProviders({
+  fetcher: makeStandardFetcher(fetch),
+  proxiedFetcher: makeSimpleProxyFetcher(proxyUrl?proxyUrl:'', fetch),
+  target: targets.BROWSER,
+})
+
+declare type SourcererEmbed = {
+  embedId: string;
+  url: string;
+};
 
 interface ProgressProps {
   value: number;
   onChangef: (value: number) => void;
 }
 interface VideoProps{
+  media:ScrapeMedia;
   videoSrc:string;
+  provider_ID:string;
+  providersList:string[];
   Name:string;
   mediaID:string;
   mediaType:string;
   sessionIndex:string;
   episodeIndex:string;
-  type: 'hls' | 'file';
+  Stream_Type: 'hls' | 'file';
   Quality: Record<Qualities, StreamFile> | null
 }
 type StreamHLS = {
@@ -56,12 +71,18 @@ const formatTime = (time: number): string => {
   
 };
 
-const VideoPlayer: React.FC<VideoProps> = ({videoSrc , Name, type, Quality , mediaID , mediaType , sessionIndex , episodeIndex}) => {
+const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, providersList , Name, Stream_Type, Quality , mediaID , mediaType , sessionIndex , episodeIndex}) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const rangeRef = useRef<HTMLInputElement>(null);
+  const [providerID , setCurrentProviderID] = useState(provider_ID);
+  const [lastproviderID , setLastProviderID] = useState(provider_ID);
   const [videoLink , setVideoLink] = useState(videoSrc);
+  const [type , setVideoType] = useState<'hls' | 'file'>(Stream_Type);
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [error, setError] = useState<string>();
+  const [fetchError, setFetchError] = useState<string>('');
+  const [fetchEmbeds, setFetchEmbeds] = useState<SourcererEmbed[]>([]);
+  const [LoadingEmbed, setLoadingEmbed] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
   const [playing, setPlaying] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
@@ -123,7 +144,79 @@ const VideoPlayer: React.FC<VideoProps> = ({videoSrc , Name, type, Quality , med
         
       } 
     }
-  },[videoSrc]);
+  },[videoSrc,videoLink]);
+
+
+  const handleRefetch = async (id:string)=>{
+    setFetchError('');
+    setFetchEmbeds([]);
+    setLastProviderID(id);
+    // scrape a stream from source with id
+    let output: SourcererOutput;
+    try {
+      output = await providers.runSourceScraper({
+        id: id,
+        media: media,
+      })
+    } catch (err) {
+      if (err instanceof NotFoundError) {
+        setFetchError('source does not have this media');
+      } else {
+        setFetchError('failed to scrape');
+      }
+      return;
+    }
+
+    if (!output.stream && output.embeds.length === 0) {
+      setFetchError('no streams found');
+    }else{
+
+      if(output.embeds)setFetchEmbeds(output.embeds);
+    }
+  }
+
+  const handleFetchEmbed = async (id:string , url:string) => {
+          // scrape a stream from upcloud
+      let output: EmbedOutput;
+      try {
+        output = await providers.runEmbedScraper({
+          id: id,
+          url: url,
+        })
+      } catch (err) {
+        setFetchError('failed to scrape');
+        return;
+      }
+
+      // output.stream now has your stream
+      const { stream } = output;
+      const streamObj = stream[0];
+      console.log('Embed Stream:',streamObj);
+      if (streamObj.type === 'file') {
+        const qualityEntries = Object.keys(streamObj.qualities);
+        const streamQualities: Partial<Record<Qualities, StreamFile>> = streamObj.qualities;
+        const firstQuality = qualityEntries[2]?qualityEntries[2]:qualityEntries[1]?qualityEntries[1]:qualityEntries[0];
+        console.log(firstQuality);
+        const firstStream = streamQualities[firstQuality as Qualities];
+        console.log(firstStream);
+
+        if (firstStream && firstStream.url) {
+          (streamObj.type as "hls" | "file");
+          setCurrentProviderID(lastproviderID);
+          setVideoType('file');
+          setVideoLink(firstStream.url);
+          setVideoQuality(streamQualities as Record<Qualities, StreamFile>);
+
+        }
+      } else { // Assuming the only other type is 'hls'
+        setCurrentProviderID(lastproviderID);
+        setVideoType('hls');
+        setVideoLink(streamObj.playlist);
+
+      }
+      setLoadingEmbed('');
+      setSettings(false);
+  }
 
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout>;
@@ -142,8 +235,6 @@ const VideoPlayer: React.FC<VideoProps> = ({videoSrc , Name, type, Quality , med
         }, 3000); // Hide UI after 3 seconds of inactivity
       };
     };
-
-    
 
     const handleMouseLeave = () => {
       if (!playing) {
@@ -403,29 +494,41 @@ const handleSettings = ()=>{
 
         {/* Settings tab ###############  */}
         {settings&&<div className='absolute top-0 w-screen h-screen bg-transparent z-[51]' onClick={() => setSettings(false)}></div>}
-        <div className={`z-[55] overflow-hidden bg-base-200 rounded-sm p-2 px-2 mb-2 shadow text-content absolute right-5 bottom-16 transition-all  ease-in-out ${settings && showUI ? 'duration-100 opacity-100 translate-y-0 ' : 'duration-200 opacity-0 translate-y-10'}`}>
+        <div className={`z-[55] overflow-clip bg-base-200 rounded-box border-2 border-accent/50 p-4 mb-2 shadow text-content absolute right-5 bottom-16 transition-all  ease-in-out ${settings && showUI ? 'duration-100 pointer-events-auto opacity-100 translate-y-0 ' : 'duration-200 pointer-events-none opacity-0 translate-y-10'}`}>
         {/* Settings Menu 0 */}
-        <div role='Settings-menu'  className={`transition-all  ease-in-out ${settingsMenu===0 ? 'duration-100 opacity-100 translate-x-0 h-fit w-fit' : 'duration-100 opacity-0 -translate-x-32 w-0 h-0'}`}>
+        <div role='Settings-menu'  className={`flex flex-col transition-all  ease-in-out ${settingsMenu===0 ? 'duration-100 opacity-100 translate-x-0 h-fit w-fit' : 'duration-100 opacity-0 -translate-x-32 w-0 h-0'}`}>
+            
           <h3 className="card-title text-sm">Settings:</h3>
           <div className='divider h-0 m-0 my-2 w-full'></div>
-          <button className="btn btn-ghost text-lg font-bold" onClick={() => setSettingsMenu(1)}><div className='flex flex-row justify-between'><span className='mr-10'>Quality: </span><span className='flex font-bold ml-5 p-0 text-sm px-3 rounded-box bg-base-content text-base-200 justify-center items-center'>{VideoQuality && Object.keys(VideoQuality).map((quality) => (videoLink === VideoQuality[quality as Qualities].url ? quality + (+quality ? 'p' : '') : ''))}{hlsMainLink ? 'Auto': ''}</span></div></button>
+          <table>
+              <tbody>
+                <tr>
+                <button className="btn btn-ghost label text-lg w-full font-bold" onClick={() => setSettingsMenu(1)}><td><span className='mr-10'>Quality: </span></td><td><span className='flex font-bold p-0 text-sm px-3 rounded-box bg-base-content text-base-200 justify-center items-center'>{VideoQuality && Object.keys(VideoQuality).map((quality) => (!hlsMainLink && videoLink === VideoQuality[quality as Qualities].url ? quality + (+quality ? 'p' : '') : ''))}{hlsMainLink && videoLink === hlsMainLink ? 'Auto': ''}</span></td></button>
+                </tr>
+                <tr>
+                <button className="btn btn-ghost label text-lg w-full font-bold" onClick={() => setSettingsMenu(2)}><td><span className='mr-10'>Source: </span></td><td><span className='flex  justify-center items-center text-sm px-2'>{providerID}</span></td></button>
+                </tr>
+            </tbody>
+          </table>
         </div>
-          {/* Settings Menu 1 */}
+        {/* Menu 0 End */}
+          {/* Setting Menu 1 */}
           <div role='Setting-option' className={`transition-all  ease-in-out ${settingsMenu===1 ? 'duration-250 opacity-100 translate-x-0 h-fit w-fit' : 'duration-300 opacity-0  translate-x-32 w-0 h-0'}`}>
           <div className='flex flex-row'> 
           <button className='btn btn-link p-0 my-0 mr-1' onClick={() =>setSettingsMenu(0)}>
           <svg xmlns="http://www.w3.org/2000/svg" width="35" height="25" className='mr-2' viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M75 12H6M12 5l-7 7 7 7"/></svg>
           </button>
-              <h3 className="card-title text-sm">Quality:</h3>
+              <h3 className="card-title text-sm"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+              Quality</h3>
               </div>
-                <div className='divider h-0 m-0 w-full'></div>
+                <div className='divider h-0 m-0 my-2 w-full'></div>
                 <table>
                   <tbody>
                     {VideoQuality && Object.keys(VideoQuality).reverse().map((quality, index) => (
                       <tr key={index}>
                         <td>
                           <label className="cursor-pointer label">
-                            <span className="label-text text-lg font-normal mr-24">{quality}{+quality? 'p':''}</span>
+                            <span className="label-text text-lg font-bold mr-24">{quality}{+quality? 'p':''}</span>
                             <input type="radio" name="quality" className="radio" value={VideoQuality[quality as Qualities].url} onChange={(e) => setVideoLink(e.target.value)} checked={videoLink === VideoQuality[quality as Qualities].url} />
                           </label>
                         </td>
@@ -433,12 +536,84 @@ const handleSettings = ()=>{
                     ))}
                     {hlsMainLink && 
                     <label className="cursor-pointer label">
-                    <span className="label-text text-1xl mr-24">Auto</span>
+                    <span className="label-text font-bold text-lg mr-24">Auto</span>
                     <input type="radio" name="quality" className="radio" value={hlsMainLink} onChange={(e) => setVideoLink(e.target.value)} checked={videoLink === hlsMainLink} />
                       </label>}
                   </tbody>
                 </table>
            </div>
+           {/* menu 1 END */}
+           {/* Setting Menu 2 start */}
+           <div role='Setting-option' className={`transition-all ease-in-out ${settingsMenu===2 ? 'duration-250 opacity-100 translate-x-0 h-fit w-fit' : 'duration-300 opacity-0  translate-x-32 w-0 h-0'}`}>
+          <div className='flex flex-row'> 
+          <button className='btn btn-link p-1 my-0 mr-1' onClick={() =>setSettingsMenu(0)}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="35" height="25" className='mr-2' viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M75 12H6M12 5l-7 7 7 7"/></svg>
+          </button>
+              <h3 className="card-title text-sm ">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+              Sources</h3>
+              </div>
+                <div className='divider h-0 m-0 my-2 w-full'></div>
+                <div className='h-auto scroll-smooth overflow-hidden overflow-y-auto'>
+                <table>
+                  <tbody>
+                    {providersList && (providersList).map((Source, index) => (
+                      <tr key={index}>
+                        <td>
+                          <button className="btn w-full label" onClick={() =>{setSettingsMenu(3); handleRefetch(Source)}}>
+                            <span className="label-text text-lg font-bold mr-16">{Source}</span>
+                            <span>{Source === providerID? 
+                            <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#4ee54d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            :''}</span>
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                </div>
+           </div>
+           {/* menu 2 END */}
+           {/* Setting Menu 3 */}
+        <div role='Settings-menu'  className={`flex flex-col transition-all  ease-in-out ${settingsMenu===3 ? 'duration-100 opacity-100 translate-x-0 h-fit w-fit' : 'duration-100 opacity-0 -translate-x-32 w-0 h-0'}`}>
+        <div className='flex flex-row'>
+        <button className='btn btn-link p-1 my-0 mr-1' onClick={() =>setSettingsMenu(0)}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="35" height="25" className='mr-2' viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M75 12H6M12 5l-7 7 7 7"/></svg>
+          </button>
+            <h3 className="card-title text-sm">Embeds:</h3></div>
+            <div className='divider h-0 m-0 my-2 w-full'></div>
+            <div className='flex w-fit h-fit justify-center items-center'>
+
+              {fetchError ? <div className='flex flex-col p-10 justify-center items-center gap-2'>
+              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ff4242" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                <p className='text-gray-500 italic'>{fetchError}.</p></div>
+
+                : 
+                !fetchEmbeds || !(fetchEmbeds.length > 0) ? <div className='flex flex-col p-10 justify-center items-center gap-2'>
+                    <span className="loading loading-spinner loading-md"></span><p>Fetching...</p>
+                  </div> 
+                  :
+                  <div className='flex h-auto p-0 justify-start items-start scroll-smooth overflow-hidden overflow-y-auto'>
+                <table>
+                  <tbody>
+                    {fetchEmbeds && (fetchEmbeds as SourcererEmbed[]).map((Embed, index) => (
+                      <tr key={index}>
+                        <td>
+                          <button className={`btn ${LoadingEmbed === Embed.embedId ? 'btn-disabled':null} w-full label`} onClick={()=> {handleFetchEmbed(Embed.embedId,Embed.url); setLoadingEmbed(Embed.embedId)}}>
+                            <span className="label-text text-lg font-bold mr-10">{Embed.embedId}</span>
+                            {LoadingEmbed === Embed.embedId ? <span className="loading loading-spinner loading-md"></span>:''}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                </div> 
+                  
+              }
+            </div>
+          </div>
+          {/* Menu 3 End */}
         </div>
 
 
