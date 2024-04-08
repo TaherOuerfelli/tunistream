@@ -1,7 +1,14 @@
+import { useEffect } from "react";
 import Footer from "./Footer";
 import Header from "./Header";
 
+
+const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
 export default function AboutUs(){
+    useEffect (()=>scrollToTop(),[]);
     return(
         <>
         <Header/>

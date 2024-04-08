@@ -10,7 +10,9 @@ import { ItemScroll } from "../components/ItemScroll";
 
 const SEARCH_API_KEY:string = import.meta.env.VITE_TMDB_API_KEY;
 
-
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
   
 
 export default function SeriesPage(){
@@ -23,6 +25,7 @@ export default function SeriesPage(){
     const [currentEpisode , setCurrentEpisode] = useState("1");
 
     useEffect(() => {
+      scrollToTop();
       let mediaData = {};
       try {
           const storedMediaData = localStorage.getItem('mediaData');

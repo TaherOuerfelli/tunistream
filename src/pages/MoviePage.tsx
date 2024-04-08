@@ -28,6 +28,9 @@ const formatTime = (time: number): string => {
   
 };
 
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
 
 export default function MoviePage(){
     const { movieID } = useParams();
@@ -38,6 +41,7 @@ export default function MoviePage(){
     const [progress , setProgress] = useState(0);
 
     useEffect(() => {
+      scrollToTop();
       let mediaData: {[key: string]: any } = {};
       try {
           const storedMediaData = localStorage.getItem('mediaData');
