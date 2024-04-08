@@ -95,15 +95,15 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
   const [settingsMenu, setSettingsMenu] = useState(0);
   const [settings, setSettings] = useState(false);
   const [showUI, setShowUI] = useState(true);
-  const [theme , setTheme] = useState('dark');
+//  const [theme , setTheme] = useState('dark');
   const [VideoQuality, setVideoQuality] = useState<Record<Qualities, StreamFile | StreamHLS> |null>(Quality);
-  const [hlsMainLink, setHlsMainLink] = useState<string |null>(null);
+  const [hlsMainLink, setHlsMainLink] = useState(videoSrc);
 
 
   useEffect(()=>{
     let theme = localStorage.getItem('theme');
     document.documentElement.setAttribute('data-theme', theme || 'dark');
-    setTheme(theme ?? 'dark');
+    //setTheme(theme ?? 'dark');
     changeRangeValue();
   },[])
 
@@ -144,7 +144,7 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
         
       } 
     }
-  },[videoSrc,videoLink]);
+  },[hlsMainLink]);
 
 
   const handleRefetch = async (id:string)=>{
@@ -494,7 +494,7 @@ const handleSettings = ()=>{
 
         {/* Settings tab ###############  */}
         {settings&&<div className='absolute top-0 w-screen h-screen bg-transparent z-[51]' onClick={() => setSettings(false)}></div>}
-        <div className={`z-[55] overflow-clip bg-base-200 rounded-box border-2 border-accent/50 p-4 mb-2 shadow text-content absolute right-5 bottom-16 transition-all  ease-in-out ${settings && showUI ? 'duration-100 pointer-events-auto opacity-100 translate-y-0 ' : 'duration-200 pointer-events-none opacity-0 translate-y-10'}`}>
+        <div className={`z-[55] overflow-clip bg-base-200 rounded-box border-2 border-gray-200/50 p-4 mb-2 shadow text-content absolute right-5 bottom-16 transition-all  ease-in-out ${settings && showUI ? 'duration-100 pointer-events-auto opacity-100 translate-y-0 ' : 'duration-200 pointer-events-none opacity-0 translate-y-10'}`}>
         {/* Settings Menu 0 */}
         <div role='Settings-menu'  className={`flex flex-col transition-all  ease-in-out ${settingsMenu===0 ? 'duration-100 opacity-100 translate-x-0 h-fit w-fit' : 'duration-100 opacity-0 -translate-x-32 w-0 h-0'}`}>
             
@@ -503,7 +503,7 @@ const handleSettings = ()=>{
           <table>
               <tbody>
                 <tr>
-                <button className="btn btn-ghost label text-lg w-full font-bold" onClick={() => setSettingsMenu(1)}><td><span className='mr-10'>Quality: </span></td><td><span className='flex font-bold p-0 text-sm px-3 rounded-box bg-base-content text-base-200 justify-center items-center'>{VideoQuality && Object.keys(VideoQuality).map((quality) => (!hlsMainLink && videoLink === VideoQuality[quality as Qualities].url ? quality + (+quality ? 'p' : '') : ''))}{hlsMainLink && videoLink === hlsMainLink ? 'Auto': ''}</span></td></button>
+                <button className="btn btn-ghost label text-lg w-full font-bold" onClick={() => setSettingsMenu(1)}><td><span className='mr-10'>Quality: </span></td><td><span className='flex font-bold p-0 text-sm px-3 rounded-box bg-base-content text-base-200 justify-center items-center'>{VideoQuality && Object.keys(VideoQuality).map((quality) => (videoLink === VideoQuality[quality as Qualities].url ? quality + (+quality ? 'p' : '') : ''))}{hlsMainLink && videoLink === hlsMainLink ? 'Auto': ''}</span></td></button>
                 </tr>
                 <tr>
                 <button className="btn btn-ghost label text-lg w-full font-bold" onClick={() => setSettingsMenu(2)}><td><span className='mr-10'>Source: </span></td><td><span className='flex  justify-center items-center text-sm px-2'>{providerID}</span></td></button>
@@ -560,7 +560,7 @@ const handleSettings = ()=>{
                     {providersList && (providersList).map((Source, index) => (
                       <tr key={index}>
                         <td>
-                          <button className="btn w-full label" onClick={() =>{setSettingsMenu(3); handleRefetch(Source)}}>
+                          <button className="btn w-full label" onClick={() =>{setSettingsMenu(3); handleRefetch(Source);setLoadingEmbed('');}}>
                             <span className="label-text text-lg font-bold mr-16">{Source}</span>
                             <span>{Source === providerID? 
                             <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#4ee54d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
@@ -577,7 +577,7 @@ const handleSettings = ()=>{
            {/* Setting Menu 3 */}
         <div role='Settings-menu'  className={`flex flex-col transition-all  ease-in-out ${settingsMenu===3 ? 'duration-100 opacity-100 translate-x-0 h-fit w-fit' : 'duration-100 opacity-0 -translate-x-32 w-0 h-0'}`}>
         <div className='flex flex-row'>
-        <button className='btn btn-link p-1 my-0 mr-1' onClick={() =>setSettingsMenu(0)}>
+        <button className='btn btn-link p-1 my-0 mr-1' onClick={() =>setSettingsMenu(2)}>
           <svg xmlns="http://www.w3.org/2000/svg" width="35" height="25" className='mr-2' viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M75 12H6M12 5l-7 7 7 7"/></svg>
           </button>
             <h3 className="card-title text-sm">Embeds:</h3></div>
@@ -586,7 +586,7 @@ const handleSettings = ()=>{
 
               {fetchError ? <div className='flex flex-col p-10 justify-center items-center gap-2'>
               <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ff4242" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
-                <p className='text-gray-500 italic'>{fetchError}.</p></div>
+                <p className='text-gray-300 italic'>{fetchError}.</p></div>
 
                 : 
                 !fetchEmbeds || !(fetchEmbeds.length > 0) ? <div className='flex flex-col p-10 justify-center items-center gap-2'>
@@ -617,7 +617,7 @@ const handleSettings = ()=>{
         </div>
 
 
-        <div className={`absolute ${theme === 'light' || theme === 'cyberpunk' ? 'bg-base-200 bg-opacity-75' : ''} w-full h-fit bottom-0 pt-5 mt-10 rounded-lg transition-all duration-200 ${showUI ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'} z-50`}>
+        <div className={`absolute w-full h-fit bottom-0 pt-5 mt-10 rounded-lg transition-all duration-200 ${showUI ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'} z-50`}>
         <progress className="progress absolute ml-7 bottom-14 h-1" style={{ width:'95%' }} value={Math.round(loadedFraction * 100)} max="100"></progress>
         <HoverableProgress value={progress} onChangef={handleProgress} />
         <div className='flex flex-row items-center mb-1'>

@@ -193,12 +193,12 @@ export default function SeriesPage(){
         <>
         <Header/>
         <main className="w-full h-full" style={{ backgroundImage: `url(${backgroundImage})` }}>
-        <div className="flex justify-center bg-base-200  bg-opacity-60 w-full ">
-        <div className=" mx-10">
-            <div className="flex flex-col bg-base-300 backdrop-blur-sm rounded-lg shadow-md mx-10 my-5 mt-10 bg-opacity-90">
-            <div className='flex flex-row '>
-            {posterUrl ? <img className=" w-1/3 h-1/3 rounded shadow-red-800" src={posterUrl} alt='Poster Picture' /> : <div className="skeleton w-[20rem] h-[30rem]"></div>}
-                <div className="flex flex-col gap-2 w-1/2 m-5">
+        <div role="Container" className="flex justify-center bg-base-200  bg-opacity-60 w-full ">
+        <div className=" mx-5 sm:mx-10">
+            <div className="flex flex-col bg-base-300 backdrop-blur-sm rounded-lg shadow-md mx-5 sm:mx-10 my-5 mt-10 bg-opacity-90">
+            <div className='flex flex-col sm:flex-row '>
+            {posterUrl ? <img className=" max-w-[25rem] sm:w-1/3 h-1/3 rounded shadow-red-800" src={posterUrl} alt='Poster Picture' /> : <div className="skeleton w-full sm:w-[20rem] h-[30rem]"></div>}
+                <div className="flex flex-col gap-2 w-full sm:w-1/2 m-5">
                     <h1 className="text-4xl font-bold ">{seriesName}{releaseYear && <p className="text-xl badge ml-2 p-3 shadow-md">{releaseYear}</p>}
                     
                     </h1>
@@ -243,18 +243,18 @@ export default function SeriesPage(){
                 
             </div>
             {seriesData.overview ?
-                <div className=" mx-10 w-fit mt-10">
+                <div className=" mx-5 sm:mx-10 w-fit mt-10">
                     <h1 className="mx-2 font-bold text-2xl ">Overview:</h1>
                     <div className="divider my-2 h-1"></div> 
                     <p className="text-xl mx-5 my-3 font-thin">{seriesData.overview}</p>
                     
                 </div>:null}
-                <div className="mx-10 mt-10">
+                <div className="mx-5 sm:mx-10 mt-10">
                 <div className="divider my-2 h-1"></div> 
                   <ShowSeasons seasonsList={seriesData.seasons} ShowID={seriesData.id} ShowName={seriesName} ShowReleaseDate={releaseYear}/>
                   <div className="divider my-2 h-1"></div> 
                 </div>
-                    {creditsData.cast  && <><h1 className="text-4xl font-bold mx-10 mt-10">Cast</h1>
+                    {creditsData.cast  && <><h1 className="text-4xl font-bold mx-5 sm:mx-10 mt-10">Cast</h1>
                 <div className="flex flex-col w-full justify-center items-center">
                     <ItemScroll>
                     {creditsData.cast ? (creditsData.cast.map((castMember: any) => (
