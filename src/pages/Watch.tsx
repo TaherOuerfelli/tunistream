@@ -60,6 +60,8 @@ const Watch: React.FC<watchProps> = ( { MediaType }) => {
   }
   );
 
+
+
   const [sourceInfo, setSourceInfo] = useState({
     ID:'',
     status:'',
@@ -80,13 +82,15 @@ const Watch: React.FC<watchProps> = ( { MediaType }) => {
     const releaseYear = searchParams.get('year');
     const episodeID = searchParams.get('epID');
     const sessionID = searchParams.get('ssID');
+    const IMDBID = searchParams.get('i');
 
     if (title && releaseYear) {
       MediaType === "movie" ? setMediaInfo({
         type:"movie",
         title: title,
         releaseYear: +releaseYear,
-        tmdbId: mediaID || ''
+        tmdbId: mediaID || '',
+        imdbId: IMDBID || ''
      }) : setMediaInfo({
         type:"show",
         title: title,
@@ -99,7 +103,8 @@ const Watch: React.FC<watchProps> = ( { MediaType }) => {
           number: sessionIndex ? +sessionIndex : 0,
           tmdbId: sessionID? sessionID:'',
         },
-        tmdbId: mediaID || ''
+        tmdbId: mediaID || '',
+        imdbId: IMDBID || ''
      });
     }
   }, [searchParams]);

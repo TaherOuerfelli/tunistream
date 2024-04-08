@@ -225,7 +225,7 @@ export default function MoviePage(){
                         <div className="divider my-2 h-1"></div> 
                         {new Date(movieData.release_date) > new Date() ? <span className='alert'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-info shrink-0 w-7 h-7"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         {movieData.status}</span>:
-                        <Link to={`/Watch/Movie/${movieID}?name=${movieData.title}&year=${releaseYear}`} className="btn btn-block bg-white text-xl text-black hover:text-white font-bold mt-7 mr-1 ">
+                        <Link to={`/Watch/Movie/${movieID}?name=${movieData.title}&year=${releaseYear}&i=${movieData.imdb_id}`} className="btn btn-block bg-white text-xl text-black hover:text-white font-bold mt-7 mr-1 ">
                         {progress > 1 ? `Continue (${formatTime(progress)})`:"Watch Movie"}
                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2.5" stroke-linecap="butt" stroke-linejoin="bevel"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
                         </Link>}
