@@ -118,6 +118,7 @@ export default function SeriesPage(){
         const minutes = parseInt(runtime, 10);
         const hours = Math.floor(minutes / 60);
         const remainingMinutes = minutes % 60;
+        if(isNaN(minutes)) {return "Unavailabe"}
         
         if (hours === 0) {
           return `${remainingMinutes}min`;
@@ -142,11 +143,6 @@ export default function SeriesPage(){
     ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${seriesData.poster_path}`
     : '';
 
-
-    let genres ='Unavailable';
-    if (seriesData.genres) {
-        genres = seriesData.genres.map((genre: { name: string }) => genre.name).join(', ');
-    }
 
     let directorName ='';
     try{
@@ -203,7 +199,8 @@ export default function SeriesPage(){
                     
                     </h1>
                     <div className="mx-2 font-bold text-1xl mt-5 ">
-                        <h1>Genre: <span className="font-thin badge">{genres}</span></h1>
+                    <h1 className="mr-2">Genre:{seriesData.genres && seriesData.genres.map((genre: { name: string } , index:number) =>  <>{index !==0 ? ',':''} <span className="font-thin badge mx-1">{genre.name}</span></>)
+                        }</h1>
                         <div className="divider my-2 h-1"></div> 
                         
                         <h1>Creator: <span className="font-thin">{directorName}</span></h1>

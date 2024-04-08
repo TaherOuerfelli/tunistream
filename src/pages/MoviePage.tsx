@@ -156,11 +156,6 @@ export default function MoviePage(){
     : '';
 
 
-    let genres ='';
-    if (movieData.genres) {
-        genres = movieData.genres.map((genre: { name: string }) => genre.name).join(', ');
-    }
-
     let directorName ='null';
     if (creditsData.crew) {
          const director = creditsData.crew.find((crewMember: any) => crewMember.job === 'Director');
@@ -206,7 +201,8 @@ export default function MoviePage(){
                     
                     </h1>
                     <div className="mx-2 font-bold text-1xl mt-5 ">
-                        <h1>Genre: <span className="font-thin badge">{genres}</span></h1>
+                        <h1 className="mr-2">Genre:{movieData.genres && movieData.genres.map((genre: { name: string } , index:number) =>  <>{index !==0 ? ',':''} <span className="font-thin badge mx-1">{genre.name}</span></>)
+                        }</h1>
                         <div className="divider my-2 h-1"></div> 
                         
                         <h1>Director: <span className="font-thin">{directorName}</span></h1>
