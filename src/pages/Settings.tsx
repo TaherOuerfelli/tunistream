@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Header from './Header';
 import Footer from './Footer';
 
@@ -8,12 +8,15 @@ const Settings: React.FC = () => {
   const themeRef = useRef<HTMLDivElement>(null);
   const otherRef = useRef<HTMLDivElement>(null);
 
+  useEffect (()=>scrollToTop(),[]);
   const scrollToElement = (reference: React.RefObject<HTMLDivElement>) => {
     if (reference.current) {
       reference.current.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
     }
   };
-
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
   return (
     <>
       <Header />
