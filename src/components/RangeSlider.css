@@ -1,0 +1,9 @@
+input[type="range"]::-webkit-slider-thumb {
+    /* Increase size and change color */
+    height: 8rem;  /* Corrected property with colon */
+    width: 8rem;   /* Corrected property with colon */
+    background-color: red; /* Corrected property with colon */
+    border-radius: 50%;      /* Corrected property with colon */
+    outline: none;           /* Corrected property with colon */
+    box-shadow: 0 0 0.2rem rgba(0, 0, 0, 0.2); /* Corrected property with colon */
+  }

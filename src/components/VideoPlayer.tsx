@@ -5,6 +5,7 @@ import { EmbedOutput, Qualities, ScrapeMedia, StreamFile, makeProviders, makeSim
 import { ErrorBoundary } from '../pages/ErrorBoundary';
 import { debounce } from 'lodash';
 import { SourcererOutput, NotFoundError } from '@movie-web/providers';
+import RangeSlider from './RangeSlider';
 
 
 const proxyUrl = import.meta.env.VITE_PROXY_URL_LINK;
@@ -20,10 +21,6 @@ declare type SourcererEmbed = {
   url: string;
 };
 
-interface ProgressProps {
-  value: number;
-  onChangef: (value: number) => void;
-}
 interface VideoProps{
   media:ScrapeMedia;
   videoSrc:string;
@@ -41,22 +38,7 @@ type StreamHLS = {
   type: 'hls';
   url: string;
 }
-const HoverableProgress: React.FC<ProgressProps> = (props) => {
-  const [hovering, setHovering] = useState(false);
-  return (
-    <div
-      onMouseEnter={() => setHovering(true)}
-      onMouseLeave={() => setHovering(false)}
-    >
-      {hovering?
-      <input type="range" min={0} max="10000" value={props.value? props.value:0} className={`range range-xs range-accent absolute ml-7 bottom-[50px] transition-transform duration-1000 ${
-        hovering ? 'h-4' : 'h-1'
-      }`} style={{ width:'95%' }} onChange={(event) => props.onChangef(+(event.target.value))}/>
-      : 
-      <progress className="progress progress-accent absolute ml-7 bottom-14 h-1" style={{ width:'95%' }} value={props.value} max="10000"></progress>}
-    </div>
-  );
-};
+
 
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 3600);
@@ -343,7 +325,6 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
 
   const handleProgress = (value:number) =>
   {
-    console.log(value)
     addSeconds(duration * (value/10000))
   }
 
@@ -494,7 +475,7 @@ const handleSettings = ()=>{
 
         {/* Settings tab ###############  */}
         {settings&&<div className='absolute top-0 w-screen h-screen bg-transparent z-[51]' onClick={() => setSettings(false)}></div>}
-        <div className={`z-[55] overflow-clip bg-base-200 rounded-box border-2 border-gray-200/50 p-4 mb-2 shadow text-content absolute right-5 bottom-16 transition-all  ease-in-out ${settings && showUI ? 'duration-100 pointer-events-auto opacity-100 translate-y-0 ' : 'duration-200 pointer-events-none opacity-0 translate-y-10'}`}>
+        <div className={`z-[55] overflow-clip bg-base-200 rounded-box border-2 border-blue-400/50 p-4 mb-2 shadow text-content absolute right-5 bottom-20 transition-all  ease-in-out ${settings && showUI ? 'duration-100 pointer-events-auto opacity-100 translate-y-0 ' : 'duration-200 pointer-events-none opacity-0 translate-y-10'}`}>
         {/* Settings Menu 0 */}
         <div role='Settings-menu'  className={`flex flex-col transition-all  ease-in-out ${settingsMenu===0 ? 'duration-100 opacity-100 translate-x-0 h-fit w-fit' : 'duration-100 opacity-0 -translate-x-32 w-0 h-0'}`}>
             
@@ -575,7 +556,7 @@ const handleSettings = ()=>{
            </div>
            {/* menu 2 END */}
            {/* Setting Menu 3 */}
-        <div role='Settings-menu'  className={`flex flex-col transition-all  ease-in-out ${settingsMenu===3 ? 'duration-100 opacity-100 translate-x-0 h-fit w-fit' : 'duration-100 opacity-0 -translate-x-32 w-0 h-0'}`}>
+        <div role='Settings-menu'  className={`flex flex-col  transition-all  ease-in-out ${settingsMenu===3 ? 'duration-100 opacity-100 translate-x-0 h-[300px] overflow-y-auto w-fit' : 'duration-100 opacity-0 -translate-x-32 w-0 h-0'}`}>
         <div className='flex flex-row'>
         <button className='btn btn-link p-1 my-0 mr-1' onClick={() =>setSettingsMenu(2)}>
           <svg xmlns="http://www.w3.org/2000/svg" width="35" height="25" className='mr-2' viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M75 12H6M12 5l-7 7 7 7"/></svg>
@@ -617,9 +598,10 @@ const handleSettings = ()=>{
         </div>
 
 
-        <div className={`absolute w-full h-fit bottom-0 pt-5 mt-10 rounded-lg transition-all duration-200 ${showUI ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'} z-50`}>
-        <progress className="progress absolute ml-7 bottom-14 h-1" style={{ width:'95%' }} value={Math.round(loadedFraction * 100)} max="100"></progress>
-        <HoverableProgress value={progress} onChangef={handleProgress} />
+        <div className={`absolute w-full h-fit bottom-0 pt-5 my-3 rounded-lg transition-all duration-200 ${showUI ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'} z-50`}>
+
+        <RangeSlider Value={videoLoaded ? progress : 0} BufferValue={Math.round(loadedFraction * 10000)} onChange={(value) => handleProgress(value)}/>
+
         <div className='flex flex-row items-center mb-1'>
         <button className='btn btn-ghost ml-7 px-2' onClick={togglePlayback}>
         {playing ? 
@@ -660,7 +642,7 @@ const handleSettings = ()=>{
         const volumeValue = parseFloat(e.target.value);
         debouncedVolumeChange(volumeValue);
       }} 
-      className={`range range-xs w-24 mx-1 mr-3 transition-all duration-1000 ${
+      className={`range range-xs h-[7px] w-24 mx-1 mr-3 transition-all duration-1000 ${
         isAudioHovered || isAudioHovered ? "opacity-100 translate-x-1" : "opacity-0"
       }`}
       />) }
