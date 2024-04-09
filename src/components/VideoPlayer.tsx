@@ -38,7 +38,10 @@ type StreamHLS = {
   type: 'hls';
   url: string;
 }
-
+declare type EmbedId = {
+  source: string;
+  index: number | null;
+};
 
 const formatTime = (time: number): string => {
   const hours = Math.floor(time / 3600);
@@ -81,10 +84,13 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
 //  const [theme , setTheme] = useState('dark');
   const [VideoQuality, setVideoQuality] = useState<Record<Qualities, StreamFile | StreamHLS> |null>(Quality);
   const [hlsMainLink, setHlsMainLink] = useState(videoSrc);
+  const [currentFetchSource, setCurrentFetchSource] = useState<string>('');
   const [windowDimensions, setWindowDimensions] = useState({
     width: window.innerWidth,
     height: window.innerHeight
   });
+  const [erroredEmbed, setErroredEmbed] = useState<EmbedId | null>(null);
+  const [currentEmbed, setCurrentEmbed] = useState<EmbedId | null>(null);
 
   // Function to handle window resize
   const handleResize = () => {
@@ -181,16 +187,17 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
     }
   }
 
-  const handleFetchEmbed = async (id:string , url:string) => {
+  const handleFetchEmbed = async (id:string , url:string , sourceID : string , EmbedIndex : number) => {
           // scrape a stream from upcloud
       let output: EmbedOutput;
+      setErroredEmbed(null);
       try {
         output = await providers.runEmbedScraper({
           id: id,
           url: url,
         })
       } catch (err) {
-        setFetchError('failed to scrape');
+        setErroredEmbed({source:sourceID , index:EmbedIndex })
         return;
       }
 
@@ -221,6 +228,7 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
 
       }
       setLoadingEmbed(null);
+      setCurrentEmbed({source:sourceID,index:EmbedIndex})
       setSettings(false);
   }
 
@@ -574,7 +582,7 @@ const handleSettings = ()=>{
                     {providersList && (providersList).map((Source, index) => (
                       <tr key={index}>
                         <td>
-                          <button className="btn w-full label" onClick={() =>{setSettingsMenu(3); handleRefetch(Source);setLoadingEmbed(null);}}>
+                          <button className="btn w-full label" onClick={() =>{setSettingsMenu(3); handleRefetch(Source);setLoadingEmbed(null);setCurrentFetchSource(Source);}}>
                             <span className="label-text text-lg font-bold mr-16">{Source}</span>
                             <span>{Source === providerID? 
                             <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#4ee54d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
@@ -596,7 +604,7 @@ const handleSettings = ()=>{
           </button>
             <h3 className="card-title text-sm">Embeds:</h3></div>
             <div className='divider h-0 m-0 my-2 w-full'></div>
-            <div className='flex w-[220px] h-[300px] overflow-y-auto justify-start items-start'>
+            <div className='flex w-[250px] h-[300px] overflow-y-auto justify-start items-start'>
 
               {fetchError ? <div className='flex flex-col p-10 w-full justify-center items-center gap-2'>
               <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ff4242" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
@@ -613,9 +621,11 @@ const handleSettings = ()=>{
                     {fetchEmbeds && (fetchEmbeds as SourcererEmbed[]).map((Embed, index) => (
                       <tr key={index}>
                         <td>
-                          <button className={`btn ${LoadingEmbed === index ? 'btn-disabled':null} w-full label`} onClick={()=> {handleFetchEmbed(Embed.embedId,Embed.url); setLoadingEmbed(index)}}>
+                          <button className={`btn ${LoadingEmbed === index ? 'btn-disabled':null} w-full label`} onClick={()=> {handleFetchEmbed(Embed.embedId,Embed.url,currentFetchSource,index); setLoadingEmbed(index)}}>
                             <span className="label-text  text-lg font-bold mr-10">{Embed.embedId}</span>
-                            {LoadingEmbed === index ? <span className="loading loading-spinner loading-md"></span>:''}
+                            {LoadingEmbed === index && !erroredEmbed ? <span className="loading loading-spinner loading-md"></span>:erroredEmbed?.source === currentFetchSource && erroredEmbed?.index === index ? 
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff4242" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                            :currentEmbed?.source === currentFetchSource && currentEmbed.index === index ? 'Selected':''}
                           </button>
                         </td>
                       </tr>
