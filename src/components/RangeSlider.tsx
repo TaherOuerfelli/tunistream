@@ -20,6 +20,16 @@ interface RangeSliderProps {
     // Calculate the percentage for the filled track
     let trackFillPercentage =0;
     let trackBufferPercentage =0;
+    const handleHoverChange = () => {
+      let timeoutId;
+      setHovering(true);
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        setHovering(false);
+      }, 1000); // Adjust the delay time as needed
+    };
+
+
     useEffect (()=>{
         if(inputRef.current){
             inputRef.current.value = '0';
@@ -49,11 +59,11 @@ interface RangeSliderProps {
         />
         {/* Filled Track */}
         <div
-          className={`h-1 rounded-full bg-blue-600 absolute top-1/2 left-0 right-0 -translate-y-1/2 z-30`}
+          className={`h-1 rounded-full bg-blue-600 absolute top-1/2 left-0 right-0 -translate-y-1/2 z-30 duration-150 ${Hovering ? 'opacity-100':'opacity-80'}`}
           style={{ width: `${trackFillPercentage ?? ''}%` }}
         />
         {/* Thumb */}
-        <svg xmlns="http://www.w3.org/2000/svg" className={`absolute w-4 transition-opacity duration-150 ${Hovering ? 'opacity-100':'opacity-0'} top-1/2 left-0 -translate-y-1/2 z-30`}
+        <svg xmlns="http://www.w3.org/2000/svg" className={`absolute w-4 transition-opacity duration-150 ${Hovering ? 'opacity-100':'opacity-0'} top-1/2 left-0 -translate-y-1/2 z-30 transition-transform duration-100 ${Hovering ? 'scale-100':'scale-0'}`}
         style={{ left: `${trackFillPercentage-0.6}%`}} viewBox="0 0 24 24" fill="rgb(59 130 246)" stroke="rgb(59 130 246)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle></svg>
         <input
             ref={inputRef}
@@ -61,7 +71,8 @@ interface RangeSliderProps {
             min={min}
             max={max}
             className={`z-40 appearance-none opacity-0 h-0 w-full rounded-full absolute top-1/2 left-0 -translate-y-1/2 cursor-pointer `}
-            onChange={(e) => onChange(parseInt(e.target.value))}
+            onChange={(e) => {handleHoverChange(); onChange(parseInt(e.target.value))}}
+            onBlur={()=>setHovering(false)}
             onMouseEnter={()=>setHovering(true)}
             onMouseLeave={()=>setHovering(false)}
         />

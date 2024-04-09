@@ -6,7 +6,7 @@ import { ErrorBoundary } from '../pages/ErrorBoundary';
 import { debounce } from 'lodash';
 import { SourcererOutput, NotFoundError } from '@movie-web/providers';
 import RangeSlider from './RangeSlider';
-
+import '../styles/videoplayer.css';
 
 const proxyUrl = import.meta.env.VITE_PROXY_URL_LINK;
 
@@ -56,6 +56,7 @@ const formatTime = (time: number): string => {
 const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, providersList , Name, Stream_Type, Quality , mediaID , mediaType , sessionIndex , episodeIndex}) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const rangeRef = useRef<HTMLInputElement>(null);
+  const fullscreenRef = useRef<HTMLDivElement>(null);
   const [providerID , setCurrentProviderID] = useState(provider_ID);
   const [lastproviderID , setLastProviderID] = useState(provider_ID);
   const [videoLink , setVideoLink] = useState(videoSrc);
@@ -80,8 +81,31 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
 //  const [theme , setTheme] = useState('dark');
   const [VideoQuality, setVideoQuality] = useState<Record<Qualities, StreamFile | StreamHLS> |null>(Quality);
   const [hlsMainLink, setHlsMainLink] = useState(videoSrc);
+  const [windowDimensions, setWindowDimensions] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight
+  });
+
+  // Function to handle window resize
+  const handleResize = () => {
+    setWindowDimensions({
+      width: window.innerWidth,
+      height: window.innerHeight
+    });
+  };
+
+  useEffect(() => {
+    // Add event listener when component mounts
+    window.addEventListener('resize', handleResize);
+
+    // Remove event listener when component unmounts
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
 
+  
   useEffect(()=>{
     let theme = localStorage.getItem('theme');
     document.documentElement.setAttribute('data-theme', theme || 'dark');
@@ -358,23 +382,27 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
     }
   }
 
-  const handleFullscreenToggle = () => {
+  const toggleFullScreen = () => {
+    const fullscreenElement = fullscreenRef.current;
+    if (!fullscreenElement) return;
+
     if (!document.fullscreenElement) {
-      // If the page is not in fullscreen mode, request fullscreen
-      document.documentElement.requestFullscreen().then(() => {
-        setIsFullscreen(true);
-      }).catch((error) => {
-        console.error('Failed to enter fullscreen mode:', error);
-      });
+        // If the page is not in fullscreen mode, request fullscreen
+        fullscreenElement.requestFullscreen().then(() => {
+            setIsFullscreen(true);
+        }).catch((error) => {
+            console.error('Failed to enter fullscreen mode:', error);
+        });
     } else {
-      // If the page is already in fullscreen mode, exit fullscreen
-      document.exitFullscreen().then(() => {
-        setIsFullscreen(false);
-      }).catch((error) => {
-        console.error('Failed to exit fullscreen mode:', error);
-      });
+        // If the page is already in fullscreen mode, exit fullscreen
+        document.exitFullscreen().then(() => {
+            setIsFullscreen(false);
+        }).catch((error) => {
+            console.error('Failed to exit fullscreen mode:', error);
+        });
     }
-  };
+};
+  
   const handleVideoError = (event: React.SyntheticEvent<HTMLVideoElement, Event>) => {
     setError('An error occurred while playing the video. (Try changing source)');
     console.error('Video error:', (event.target as HTMLVideoElement).error);
@@ -418,6 +446,7 @@ const handleAudioButton = ()=>{
     }
   }
 };
+
 useEffect(()=>{changeRangeValue();},[isAudioHovered]);
 const handleSettings = ()=>{
   if(settings === false)setSettingsMenu(0);
@@ -426,13 +455,8 @@ const handleSettings = ()=>{
 
   return (
     <>
-    <div className="relative h-screen overflow-hidden">
-      <div className={`flex flex-row relative top-5 transition-all duration-500 ${showUI ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'} z-50`}>
-      <h1 className='text-white text-xl ml-12 mt-3'>{Name} {mediaType === "movie" ? null: <span className='text-gray-400 font-thin'>S{sessionIndex}:E{episodeIndex}</span>}</h1>
-      <Link to='/Home' className="btn btn-ghost text-2xl absolute right-7 top-3 font-bold bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text z-50" onClick={() => document.exitFullscreen()}>TUNISTREAM.CLUB</Link>
-
-      </div>
-    <div className="absolute inset-0 flex items-center justify-center">
+    <div ref={fullscreenRef} className={`relative overflow-hidden`} style={{ height: windowDimensions.height, width: windowDimensions.width,maxHeight:windowDimensions.height, overflow: 'hidden'  }}>
+    <div className="absolute inset-0 w-full flex items-center justify-center">
     <div className='flex flex-col 'onClick={togglePlayback}>
       <ErrorBoundary>
       {error && <div className='flex flex-col justify-center items-center gap-4 absolute inset-0'>
@@ -442,8 +466,8 @@ const handleSettings = ()=>{
         ref={videoRef}
         className={`z-0 ${
           videoLoaded ? 'object-cover' : 'object-contain'
-        } w-full h-full`}
-        style={{ objectFit: 'contain', width: '100%', height: '100vh' }} // Make the video as big as the screen
+        }`}
+        style={{ objectFit: 'contain', width: window.innerWidth, height:  window.innerHeight }} // Make the video as big as the screen
 
         onPlay={()=> setPlaying(true)}
         onPause={()=> setPlaying(false)}
@@ -456,9 +480,9 @@ const handleSettings = ()=>{
         onCanPlay={handleCanPlay}
 
         onTimeUpdate={handleTimeUpdate}
-
+        onMouseEnter={() => setShowUI(true)}
+        
         >
-          
 
           </video></ErrorBoundary>
         {/*videoLoaded ? null : (
@@ -473,8 +497,17 @@ const handleSettings = ()=>{
         
         </div></div>
 
+{/* UI STARTS HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEERE  */}
+      <div className={`flex flex-row absolute top-5 transition-all duration-500 ${showUI ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'} z-50`}>
+      <h1 className='text-white opacity-65 sm:opacity-80 text-xl ml-5 sm:ml-12 sm:mt-3 mt-20'>{Name} {mediaType === "movie" ? null: <span className='text-gray-400 font-thin'>S{sessionIndex}:E{episodeIndex}</span>}</h1>
+      </div>
+      
+      <div className={`flex flex-row absolute top-5 right-0 transition-all duration-500 ${showUI ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'} z-50`}>
+      <Link to='/Home' className="btn btn-ghost hidden sm:block text-lg sm:text-2xl absolute right-2 sm:right-10 top-2 sm:top-3 font-bold bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 text-transparent bg-clip-text z-50" onClick={() => document.exitFullscreen()}>TUNISTREAM.CLUB</Link>
+      </div>
+
         {/* Settings tab ###############  */}
-        {settings&&<div className='absolute top-0 w-screen h-screen bg-transparent z-[51]' onClick={() => setSettings(false)}></div>}
+        {settings&&<div className='absolute top-0 w-full bg-transparent z-[51]' style={{ height: window.innerHeight}} onClick={() => setSettings(false)}></div>}
         <div className={`z-[55] overflow-clip bg-base-200 rounded-box border-2 border-blue-400/50 p-4 mb-2 shadow text-content absolute right-5 bottom-20 transition-all  ease-in-out ${settings && showUI ? 'duration-100 pointer-events-auto opacity-100 translate-y-0 ' : 'duration-200 pointer-events-none opacity-0 translate-y-10'}`}>
         {/* Settings Menu 0 */}
         <div role='Settings-menu'  className={`flex flex-col transition-all  ease-in-out ${settingsMenu===0 ? 'duration-100 opacity-100 translate-x-0 h-fit w-fit' : 'duration-100 opacity-0 -translate-x-32 w-0 h-0'}`}>
@@ -651,7 +684,7 @@ const handleSettings = ()=>{
       </div>
 
 
-      <h2 className='text-xl text-gray-300 ml-3'>{formatTime(currentTime)} / {formatTime(duration)}</h2>
+      <h2 className='text-sm sm:text-xl text-gray-300 ml-3'>{formatTime(currentTime)} / {formatTime(duration)}</h2>
 
 
         <div className='flex flex-row absolute right-3'>
@@ -661,7 +694,7 @@ const handleSettings = ()=>{
       <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="butt" stroke-linejoin="bevel"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
       </button>
 
-      <button className='btn btn-ghost px-2 mx-1 mr-3' onClick={handleFullscreenToggle}>
+      <button className='btn btn-ghost px-2 mx-1 mr-3' onClick={toggleFullScreen}>
       {isFullscreen? <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path></svg>
       : <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>}
       </button>

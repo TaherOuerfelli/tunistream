@@ -1,0 +1,10 @@
+video::-webkit-media-controls {
+    display:none !important;
+    position: absolute;
+  }
+  video::-webkit-media-controls-enclosure {
+    display:none !important;
+  }
+  .custom-controllers{
+    z-index: 2147483647;
+  }
