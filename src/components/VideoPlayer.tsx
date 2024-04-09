@@ -610,15 +610,15 @@ const handleSettings = ()=>{
          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
          )}</button>
 
-      <button className='btn btn-ghost px-3 ' onClick={() => addSeconds(currentTime-10)}>
+      <button className='hidden sm:block btn btn-ghost px-3 ' onClick={() => addSeconds(currentTime-10)}>
       <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 2v6h6M2.66 15.57a10 10 0 1 0 .57-8.38"/></svg>
       </button>
-      <button className='btn btn-ghost px-3 ' onClick={() => addSeconds(currentTime+10)}>
+      <button className='hidden sm:block btn btn-ghost px-3 ' onClick={() => addSeconds(currentTime+10)}>
       <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38"/></svg>
       </button>
 
 
-      <div className='flex flex-row h-full w-fit '>
+      <div className='hidden sm:flex flex-row  h-full w-fit '>
         <button className=' w-fit px-1 btn btn-link no-underline no-animation' 
                 onMouseEnter={() => setAudioIsHovered(true)}
                 onMouseLeave={() => setAudioIsHovered(false)}
