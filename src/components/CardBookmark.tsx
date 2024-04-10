@@ -110,7 +110,7 @@ const CardBookmark: React.FC<CardProps> = ({ mediaId , session , episode , isEdi
     return (
         <>
             {mediaInfo && (
-                <div className={`card btn max-w-56 h-fit bg-base-100 shadow-xl ${theme === 'light' || theme === 'cyberpunk' ? 'border-1 border-black' : 'border-2 border-gray-700'} transition-all  ${isDeleted? 'duration-500 w-0 opacity-0' : 'opacity-100 duration-0 w-56'}`} onClick={handleClick}>
+                <div className={`card btn max-w-[10rem] sm:max-w-[14rem] h-fit bg-base-100 shadow-xl ${theme === 'light' || theme === 'cyberpunk' ? 'border-1 border-black' : 'border-2 border-gray-700'} transition-all  ${isDeleted? 'duration-500 w-0 opacity-0' : 'opacity-100 duration-0 w-56'}`} onClick={handleClick}>
                     
                     
                     <div className="card-body relative mb-4 p-0 ">
@@ -134,10 +134,10 @@ const CardBookmark: React.FC<CardProps> = ({ mediaId , session , episode , isEdi
                         />: <div className="skeleton w-full h-[200px]">Poster of {`${mediaName}`} is unavailable</div>}
                         </div>
                         </div>
-                        <h2 className={`card-title transition-all ${isDeleted? 'duration-100 opacity-0':'duration-0 opacity-100'}`}>{mediaName} </h2>
-                        <div className="card-actions justify-start">
-                            <span className="badge p-2 m-0">{releaseYear}</span>
-                            <div className="badge badge-outline">{cardType}</div>
+                        <h2 className={`card-title text-sm sm:text-xl transition-all ${isDeleted? 'duration-100 opacity-0':'duration-0 opacity-100'}`}>{mediaName} </h2>
+                        <div className="card-actions justify-start mt-1">
+                            <span className="badge text-xs sm:text-[0.875rem] p-2 mr-4 sm:mr-0">{releaseYear}</span>
+                            <div className="badge text-xs sm:text-[0.875rem] badge-outline p-2">{cardType}</div>
                         </div>
                     </div>
                 </div>

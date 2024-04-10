@@ -83,8 +83,10 @@ export default function Homepage(){
           const stickyElement = stickyElementRef.current;
           if (!stickyElement) return;
     
-          const rect = stickyElement.getBoundingClientRect();
-          if (rect.top <= 0) {
+          let rect = stickyElement.getBoundingClientRect();
+          // Determine the threshold based on screen size
+          let threshold = window.innerWidth <= 640 ? 100 : 5;
+          if (rect.top <= threshold) {
             setSticky(true);
           } else {
             setSticky(false);
@@ -101,24 +103,27 @@ export default function Homepage(){
       }, []);
     return(
         <>
-        <Header/>
-        <div ref={stickyElementRef} className="pointer-events-none flex justify-center items-center sticky top-0 left-1/4 my-10 z-50 h-14 w-full">
+
+        <Header isSticky={IsSticky}/>
+        <div ref={stickyElementRef} className="pointer-events-none flex justify-center items-center sticky top-[63px] sm:top-1 left-1/4 my-10 z-40 h-14 w-[100vw]">
         <div className={`h-fit w-full transition-all duration-400 ${IsSticky? 'mx-[28%]':'mx-[27%]'} mt-2`}>
-            <label className={`input input-bordered pointer-events-auto z-50 flex items-center w-full  gap-2 my-1 shadow-lg shadow-black/20 transition-all duration-400 ${IsFocused || !IsSticky? 'h-14 bg-base-300' : ' h-10 bg-base-200'}  ${theme === 'light' || theme === 'cyberpunk' ? 'border-1 border-black bg-gray-800' : 'border-1 border-gray'}`}>
+            <label className={`input input-bordered pointer-events-auto z-40 flex items-center w-full  gap-2 my-1 shadow-lg shadow-black/20 transition-all duration-400 ${IsFocused || !IsSticky? 'h-14 bg-base-300' : ' h-10 bg-base-200'}  ${theme === 'light' || theme === 'cyberpunk' ? 'border-1 border-black bg-gray-800' : 'border-1 border-gray'}`}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4 opacity-70"><path fillRule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clipRule="evenodd" /></svg>
                 <input type="text" spellCheck="false" value={searchQuery ? searchQuery : ''} className="grow " placeholder="Search" onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)} onChange={(e)=> {
-                    setSearchQuery(e.target.value);
+                  setSearchQuery(e.target.value);
                     window.scrollTo({
-                        top: 0,
+                      top: 0,
                         behavior: 'auto' // Smooth scrolling animation
                       });
 
                     }}/>
             </label>
         </div></div>
+        <div className="flex flex-col w-full justify-center items-center">
         {searchQuery ? (<Results results={searchResults} ISsearching={searching}/>):null}
         <Bookmarks/>
         <ContinueWatching />
+        </div>
         <div className="h-screen"></div>
         <Footer/>
         </>

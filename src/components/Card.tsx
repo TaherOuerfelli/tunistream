@@ -25,7 +25,7 @@ const Card: React.FC<CardProps> = ({ info }) => {
       };
     return(
         <>
-        <div className="card btn max-w-56 h-fit bg-base-100 shadow-xl min-w-1/2 flex-grow" onClick={handleClick}>
+        <div className="card btn max-w-[10rem] sm:max-w-[14rem]  h-fit bg-base-100 shadow-xl min-w-1/2 flex-grow" onClick={handleClick}>
         
         
         <div className="card-body mb-4 p-0">
@@ -34,12 +34,12 @@ const Card: React.FC<CardProps> = ({ info }) => {
         onLoad={() => setIsLoading(false)}
         onError={() => setIsLoading(false)}
         />
-            <h2 className="card-title">
+            <h2 className="card-title text-sm sm:text-xl">
             {info.title}
             </h2>
-            <div className="card-actions justify-start">
-            <span className="badge p-2 m-0">{info.releaseYear !== '' && info.releaseYear}</span>
-            <div className="badge badge-outline">{mediatype}</div>
+            <div className="card-actions justify-start mt-1">
+            <span className="badge text-xs sm:text-[0.875rem] p-2 mr-5 sm:mr-0">{info.releaseYear !== '' && info.releaseYear}</span>
+            <div className="badge text-xs sm:text-[0.875rem] badge-outline p-2">{mediatype}</div>
             </div>
         </div>
         </div>
