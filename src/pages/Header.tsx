@@ -11,7 +11,7 @@ export default function Header({ isSticky }: { isSticky?: boolean }){
       };
     return(
         <>
-        <div className={`navbar absolute rounded-b-box transition-all ease-in-out ${isSticky && window.innerWidth <= 640  ? 'duration-250  pb-[60px]' : 'duration-0 '} bg-base-100 pointer-events-auto shadow-xl shadow-black/20 sticky top-0 z-40`}>
+        <div className={`navbar absolute transition-all ease-in-out ${isSticky && window.innerWidth <= 640  ? 'duration-250  pb-[60px]' : 'duration-0 '} bg-base-100 pointer-events-auto shadow-xl shadow-black/20 sticky top-0 z-40`}>
         <div className="flex-1 ">
         <label htmlFor="my-drawer" className="btn btn-ghost block sm:hidden drawer-button mt-5" onClick={scrollToTop}>
         <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="arcs"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
