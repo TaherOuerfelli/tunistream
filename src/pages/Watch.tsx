@@ -10,7 +10,7 @@ const proxyUrl = import.meta.env.VITE_PROXY_URL_LINK;
 const providers = makeProviders({
   fetcher: makeStandardFetcher(fetch),
   proxiedFetcher: makeSimpleProxyFetcher(proxyUrl?proxyUrl:'', fetch),
-  target: targets.BROWSER,
+  target: targets.ANY,
   consistentIpForRequests: true,
   
 })
