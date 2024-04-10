@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import Footer from "./Footer";
 import Header from "./Header";
+import { Link } from "react-router-dom";
 
 
 const scrollToTop = () => {
@@ -11,6 +12,9 @@ export default function AboutUs(){
     useEffect (()=>scrollToTop(),[]);
     return(
         <>
+        <div className="drawer">
+        <input id="my-drawer" type="checkbox" className="drawer-toggle" />
+        <div className="drawer-content">
         <Header/>
         <div className="flex justify-center w-full my-10">
         <div className="bg-base-200 rounded-lg mx-10">
@@ -23,6 +27,20 @@ export default function AboutUs(){
         </div>
         </div>
         <Footer/>
+        </div>
+        
+        <div className="drawer-side absolute z-50">
+        <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
+        <ul className="menu p-4 w-[15rem] min-h-full bg-base-200 text-base-content">
+          {/* Sidebar content here */}
+          <li><div className="divider"></div></li>
+          <li><a className="text-xl font-bold ">Profile</a></li>
+          <li><Link to={'/Settings'} className="text-xl font-bold ">Settings</Link></li>
+          <li><a className="text-xl font-bold text-red-500/85">Log out</a></li>
+          
+        </ul>
+      </div>
+      </div>
         </>
     )
 };

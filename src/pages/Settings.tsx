@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import Header from './Header';
 import Footer from './Footer';
+import { Link } from 'react-router-dom';
 
 const Settings: React.FC = () => {
   //const { settings, toggleLanguage, toggleAppearance, toggleOtherSettings } = useSettings();
@@ -19,6 +20,9 @@ const Settings: React.FC = () => {
   };
   return (
     <>
+      <div className="drawer">
+        <input id="my-drawer" type="checkbox" className="drawer-toggle" />
+        <div className="drawer-content">
       <Header />
 
       <div className="flex flex-row my-10">
@@ -104,6 +108,19 @@ const Settings: React.FC = () => {
       </div>
       
       <Footer />
+      </div>
+      <div className="drawer-side absolute z-50">
+        <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
+        <ul className="menu p-4 w-[15rem] min-h-full bg-base-200 text-base-content">
+          {/* Sidebar content here */}
+          <li><div className="divider"></div></li>
+          <li><a className="text-xl font-bold ">Profile</a></li>
+          <li><Link to={'/Settings'} className="text-xl font-bold ">Settings</Link></li>
+          <li><a className="text-xl font-bold text-red-500/85">Log out</a></li>
+          
+        </ul>
+      </div>
+      </div>
     </>
   );
 };

@@ -1,6 +1,6 @@
 import { useState,useEffect, useRef } from "react"
 import Results from "./Results";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
 import Bookmarks from "../components/Bookmarks";
@@ -101,10 +101,15 @@ export default function Homepage(){
           window.removeEventListener('scroll', handleScroll);
         };
       }, []);
+      
+
     return(
         <>
-
+        <div className="drawer">
+        <input id="my-drawer" type="checkbox" className="drawer-toggle" />
+        <div className="drawer-content">
         <Header isSticky={IsSticky}/>
+        
         <div ref={stickyElementRef} className="pointer-events-none flex justify-center items-center sticky top-[63px] sm:top-1 left-1/4 my-10 z-40 h-14 w-[100vw]">
         <div className={`h-fit w-full transition-all duration-400 ${IsSticky? 'mx-[28%]':'mx-[27%]'} mt-2`}>
             <label className={`input input-bordered pointer-events-auto z-40 flex items-center w-full  gap-2 my-1 shadow-lg shadow-black/20 transition-all duration-400 ${IsFocused || !IsSticky? 'h-14 bg-base-300' : ' h-10 bg-base-200'}  ${theme === 'light' || theme === 'cyberpunk' ? 'border-1 border-black bg-gray-800' : 'border-1 border-gray'}`}>
@@ -126,6 +131,19 @@ export default function Homepage(){
         </div>
         <div className="h-screen"></div>
         <Footer/>
+        </div>
+        <div className="drawer-side absolute z-50">
+        <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
+        <ul className="menu p-4 w-[15rem] min-h-full bg-base-200 text-base-content">
+          {/* Sidebar content here */}
+          <li><div className="divider"></div></li>
+          <li><a className="text-xl font-bold ">Profile</a></li>
+          <li><Link to={'/Settings'} className="text-xl font-bold ">Settings</Link></li>
+          <li><a className="text-xl font-bold text-red-500/85">Log out</a></li>
+          
+        </ul>
+      </div>
+      </div>
         </>
     )
 };
