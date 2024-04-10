@@ -126,6 +126,12 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
         const hls = new Hls();
         hls.loadSource(videoLink);
         hls.attachMedia(videoRef.current);
+        hls.on(Hls.Events.ERROR, (_, data) => {
+          if (data.fatal) {
+            // Set errorOccurred state to true if error is fatal
+            setError('An error occurred while playing the video. (Try changing source)');
+          }
+        });
         hls.on(Hls.Events.MANIFEST_PARSED, function() {
           videoRef.current?.play();
         });
@@ -144,6 +150,13 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
         setHlsMainLink(videoLink)
         const hls = new Hls();
         hls.loadSource(videoLink);
+        // Listen for errors
+        hls.on(Hls.Events.ERROR, (_, data) => {
+          if (data.fatal) {
+            // Set errorOccurred state to true if error is fatal
+            setError('An error occurred while playing the video. (Try changing source)');
+          }
+        });
         hls.on(Hls.Events.MANIFEST_PARSED, function() {
           const hlsQualitiesData = hls.levels.reduce((acc, level) => {
             const quality: Qualities = `${level.height}p`as Qualities;

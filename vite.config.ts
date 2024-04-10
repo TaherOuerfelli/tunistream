@@ -17,9 +17,9 @@ export default defineConfig({
       },
       manifest: {
         name: 'Tunistream',
-        short_name: 'tnstream',
+        short_name: 'Tunistream',
         description: 'Watch movies / series / anime and much more',
-        theme_color: '#ffffff',
+        theme_color: '#1E1E1E',
         icons: [
           {
             src: 'vite.svg',

@@ -11,7 +11,6 @@ const providers = makeProviders({
   fetcher: makeStandardFetcher(fetch),
   proxiedFetcher: makeSimpleProxyFetcher(proxyUrl?proxyUrl:'', fetch),
   target: targets.ANY,
-  consistentIpForRequests: true,
   
 })
 

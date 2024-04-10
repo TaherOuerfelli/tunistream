@@ -34,7 +34,7 @@ const Settings: React.FC = () => {
           <li><a className=' text-xl' onClick={() =>scrollToElement(themeRef)}>Appearance</a></li>
           <li><a className=' text-xl' onClick={() =>scrollToElement(otherRef)}>Other Settings</a></li>
         </ul>
-        <div className="container mx-10 bg-base-200 rounded-box h-screen w-full" >
+        <div className="container mx-10 bg-base-200 rounded-box h-fit w-full" >
           <div className='mx-12' >
           <div className="w-full mt-10 " ref={langRef}>
                 <h1 className="mx-2 font-bold text-4xl " >Language:</h1>
@@ -99,6 +99,7 @@ const Settings: React.FC = () => {
           <div className="w-full mt-10 " ref={otherRef}>
                 <h1 className="mx-2 font-bold text-4xl ">Other Settings:</h1>
                 <div className="divider my-2 h-1"></div> 
+                <p className='h-[10rem]'>subtitle settings/</p>
                 
           </div>
 
