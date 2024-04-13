@@ -13,7 +13,7 @@ const proxyUrl = import.meta.env.VITE_PROXY_URL_LINK;
 const providers = makeProviders({
   fetcher: makeStandardFetcher(fetch),
   proxiedFetcher: makeSimpleProxyFetcher(proxyUrl?proxyUrl:'', fetch),
-  target: targets.ANY,
+  target: targets.BROWSER,
 })
 
 declare type SourcererEmbed = {
@@ -243,6 +243,7 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
       setLoadingEmbed(null);
       setCurrentEmbed({source:sourceID,index:EmbedIndex})
       setSettings(false);
+      setError(undefined);
   }
 
   useEffect(() => {
@@ -529,7 +530,7 @@ const handleSettings = ()=>{
 
         {/* Settings tab ###############  */}
         {settings&&<div className='absolute top-0 w-full bg-transparent z-[51]' style={{ height: window.innerHeight}} onClick={() => setSettings(false)}></div>}
-        <div className={`z-[55] overflow-clip bg-base-200 rounded-box border-2 border-blue-400/50 p-4 mb-2 shadow text-content absolute right-5 bottom-20 transition-all  ease-in-out ${settings && showUI ? 'duration-100 pointer-events-auto opacity-100 translate-y-0 ' : 'duration-200 pointer-events-none opacity-0 translate-y-10'}`}>
+        <div className={`z-[55] overflow-clip bg-base-200 rounded-box border-2 border-white/50 p-4 mb-2 shadow text-content absolute right-5 bottom-20 transition-all  ease-in-out ${settings && showUI ? 'duration-100 pointer-events-auto opacity-100 translate-y-0 ' : 'duration-200 pointer-events-none opacity-0 translate-y-10'}`}>
         {/* Settings Menu 0 */}
         <div role='Settings-menu'  className={`flex flex-col transition-all  ease-in-out ${settingsMenu===0 ? 'duration-100 opacity-100 translate-x-0 h-fit w-fit' : 'duration-100 opacity-0 -translate-x-32 w-0 h-0'}`}>
             
@@ -654,11 +655,11 @@ const handleSettings = ()=>{
         </div>
 
 
-        <div className={`absolute w-full h-fit bottom-0 pt-5 my-3 rounded-lg transition-all duration-200 ${showUI ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'} z-50`}>
-
+        <div className={`absolute w-full h-fit bottom-0 pt-5 rounded-lg transition-all duration-200 ${showUI ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'} z-50`}>
+   
         <RangeSlider Value={videoLoaded ? progress : 0} BufferValue={Math.round(loadedFraction * 10000)} onChange={(value) => handleProgress(value)}/>
 
-        <div className='flex flex-row items-center mb-1'>
+        <div className='flex flex-row items-center mb-2 mt-3'>
         <button className='btn btn-ghost ml-7 px-2' onClick={togglePlayback}>
         {playing ? 
        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>

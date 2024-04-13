@@ -10,7 +10,7 @@ const proxyUrl = import.meta.env.VITE_PROXY_URL_LINK;
 const providers = makeProviders({
   fetcher: makeStandardFetcher(fetch),
   proxiedFetcher: makeSimpleProxyFetcher(proxyUrl?proxyUrl:'', fetch),
-  target: targets.ANY,
+  target: targets.BROWSER,
   
 })
 
@@ -111,7 +111,7 @@ const Watch: React.FC<watchProps> = ( { MediaType }) => {
 
 
   const eventListeners: FullScraperEvents = {
-    update: (evt) => {
+    update: (evt: { id: any; status: any; percentage: any; }) => {
       console.log('Update event:', evt);
       setSourceInfo(prevSourceInfo => ({
         ...prevSourceInfo,
@@ -120,11 +120,11 @@ const Watch: React.FC<watchProps> = ( { MediaType }) => {
         per: evt.percentage
       }));
     },
-    init: (evt) => {
+    init: (evt: { sourceIds: string[]; }) => {
       console.log('Init event:', evt)
       setSourceIds(()=>evt.sourceIds);
   },
-    discoverEmbeds: (evt) => {
+    discoverEmbeds: (evt: { sourceId: any; embeds: { embedScraperId: any; }[]; }) => {
       console.log('DiscoverEmbeds event:', evt);
       
       setSourceInfo(prevSourceInfo => ({
@@ -135,7 +135,7 @@ const Watch: React.FC<watchProps> = ( { MediaType }) => {
         embedSource: evt.sourceId
       }));
     },
-    start: (id) => {
+    start: (id: any) => {
       console.log('Start event for ID:', id);
       setSourceInfo(prevSourceInfo => ({
         ...prevSourceInfo,
