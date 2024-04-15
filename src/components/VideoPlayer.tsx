@@ -339,9 +339,9 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
           if (mediaData) {
             let currentTime = 0;
           if(mediaType === "movie"){
-           currentTime = mediaData['m'+mediaID];
+           currentTime = mediaData['m'+mediaID].time;
           }else{
-            currentTime = mediaData['s'+mediaID+sessionIndex+episodeIndex]
+            currentTime = mediaData['s'+mediaID+sessionIndex+episodeIndex].time;
           }
           // Use the retrieved currentTime as needed
           addSeconds(currentTime);
@@ -381,7 +381,7 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
     const videoElement = videoRef.current;
     if (videoElement && videoElement.readyState > 1 && !videoElement.paused) {
       setCurrentTime(videoElement.currentTime);
-      let mediaData :  { [key: string]: number }  = {};
+      let mediaData :  { [key: string]: { time: number; progress: number }}  = {};
       try {
         const storedMediaData = localStorage.getItem('mediaData');
         if (storedMediaData) {
@@ -391,9 +391,9 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
         console.error('Error parsing media data from localStorage:', error);
       }
       if(mediaType === 'movie'){
-        mediaData['m'+mediaID] = videoElement.currentTime;
+        mediaData['m'+mediaID] = {"time":Math.floor(videoElement.currentTime),"progress":Math.floor(progress*0.01) === 0 && progress!==0 ? 1 : Math.floor(progress*0.01)};
       }else{
-        mediaData['s'+mediaID+sessionIndex+episodeIndex] = videoElement.currentTime;
+        mediaData['s'+mediaID+sessionIndex+episodeIndex] = {"time":Math.floor(videoElement.currentTime),"progress":Math.floor(progress*0.01) === 0 && progress!==0 ? 1 : Math.floor(progress*0.01)};
       }
       localStorage.setItem('mediaData', JSON.stringify(mediaData));
     }

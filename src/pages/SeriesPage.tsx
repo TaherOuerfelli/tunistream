@@ -10,9 +10,27 @@ import { ItemScroll } from "../components/ItemScroll";
 
 const SEARCH_API_KEY:string = import.meta.env.VITE_TMDB_API_KEY;
 
+
+const formatTime = (time: number): string => {
+  const hours = Math.floor(time / 3600);
+  const minutes = Math.floor((time % 3600) / 60);
+  const seconds = Math.floor(time % 60);
+
+  const formattedHours = String(hours).padStart(2, '0');
+  const formattedMinutes = String(minutes).padStart(2, '0');
+  const formattedSeconds = String(seconds).padStart(2, '0');
+  if(isNaN(time)) {return "00:00:00"}
+  return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+  
+};
+
 const scrollToTop = () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
+
+interface MediaData {
+  [key: string]: { time: number , progress : number};
+}
   
 
 export default function SeriesPage(){
@@ -24,10 +42,11 @@ export default function SeriesPage(){
     const [bookmarks, setBookmarks] = useState<string[]>([]);
     const [currentSeason , setCurrentSeason] = useState("1");
     const [currentEpisode , setCurrentEpisode] = useState("1");
+    const [currentTime , setCurrentTime] = useState(0);
 
     useEffect(() => {
       scrollToTop();
-      let mediaData = {};
+      let mediaData:MediaData = {};
       try {
           const storedMediaData = localStorage.getItem('mediaData');
           if (storedMediaData) {
@@ -37,6 +56,7 @@ export default function SeriesPage(){
               {
                 currentSeason < mediaID.slice(-2, -1) ? setCurrentSeason(mediaID.slice(-2, -1)):null;
                 currentEpisode < mediaID.slice(-1)? setCurrentEpisode(mediaID.slice(-1)):null;
+                setCurrentTime(mediaData[`s${mediaID.slice(1, -2)}${currentSeason}${currentEpisode}`].time)
               }
             })
           }
@@ -230,7 +250,7 @@ export default function SeriesPage(){
                         {new Date(seriesData.first_air_date) > new Date() ? <span className='alert'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-info shrink-0 w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         {seriesData.status}</span>:
                         <Link to={`/Watch/Series/${seriesID}/Season/${currentSeason}/Episode/${currentEpisode}?name=${seriesName}&year=${releaseYear}&i=${seriesIMDB}`} className="btn btn-block bg-white text-xl text-black hover:text-white font-bold mt-7 mr-1 ">
-                        {currentSeason !== "1" || currentEpisode !== "1" ? "Continue Watching":"Watch Now"} S{currentSeason}:E{currentEpisode}
+                        {currentSeason !== "1" || currentEpisode !== "1" || currentTime !== 0 ? `Continue ${formatTime(currentTime)}`:"Watch Now"} S{currentSeason}:E{currentEpisode}
                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2.5" stroke-linecap="butt" stroke-linejoin="bevel"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
                         </Link>}
                         {/*
