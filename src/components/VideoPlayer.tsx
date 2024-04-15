@@ -124,8 +124,9 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
       setVideoLoaded(false);
       if (type === 'hls' && Hls.isSupported()) {
         const hls = new Hls();
-        hls.loadSource(videoLink);
         hls.attachMedia(videoRef.current);
+        hls.loadSource(videoLink);
+
         hls.on(Hls.Events.ERROR, (_, data) => {
           if (data.fatal) {
             // Set errorOccurred state to true if error is fatal
@@ -133,7 +134,8 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
           }
         });
         hls.on(Hls.Events.MANIFEST_PARSED, function() {
-          videoRef.current?.play();
+            videoRef.current?.play();
+          
         });
         
       } else if (type === 'file') {
@@ -314,6 +316,7 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
 
   const handleCanPlay = () => {
     setIsLoading(false); // Set isLoading to false when video can play
+    setError(undefined);
     const videoElement = videoRef.current;
     if (videoElement) setDuration(videoElement.duration);
   };
@@ -491,7 +494,7 @@ const handleSettings = ()=>{
         }`}
         style={{ objectFit: 'contain', width: window.innerWidth, height:  window.innerHeight }} // Make the video as big as the screen
 
-        onPlay={()=> setPlaying(true)}
+        onPlay={()=> {setPlaying(true);setError(undefined)}}
         onPause={()=> setPlaying(false)}
         onError={handleVideoError}
         autoPlay
@@ -659,7 +662,7 @@ const handleSettings = ()=>{
    
         <RangeSlider Value={videoLoaded ? progress : 0} BufferValue={Math.round(loadedFraction * 10000)} onChange={(value) => handleProgress(value)}/>
 
-        <div className='flex flex-row items-center mb-2 mt-3'>
+        <div className='flex flex-row items-center mb-2 mt-2'>
         <button className='btn btn-ghost ml-7 px-2' onClick={togglePlayback}>
         {playing ? 
        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>

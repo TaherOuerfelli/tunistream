@@ -4,5 +4,9 @@
 
 body {
     background: rgb(0,0,0);
-background: linear-gradient(168deg, rgba(0,0,0,0.3435749299719888) 0%, rgba(0,0,0,1) 95%, rgba(50,50,50,1) 100%);
+    background: linear-gradient(168deg, rgba(0,0,0,0.3435749299719888) 0%, rgba(0,0,0,1) 95%, rgba(50,50,50,1) 100%);
+}
+.fadetoblack {
+    background: rgb(0,0,0);
+    background: linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 60%, rgba(17,17,17,0.427608543417367) 91%, rgba(50,50,50,0) 100%);
 }

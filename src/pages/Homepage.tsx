@@ -129,7 +129,7 @@ export default function Homepage(){
         <Bookmarks/>
         <ContinueWatching />
         </div>
-        <div className="h-screen"></div>
+        <div className="h-[100vh]"></div>
         <Footer/>
         </div>
         <div className="drawer-side absolute z-50">

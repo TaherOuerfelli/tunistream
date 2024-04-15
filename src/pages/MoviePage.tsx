@@ -197,10 +197,10 @@ export default function MoviePage(){
         <input id="my-drawer" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content">
         <Header/>
-        <main className="w-full h-full" style={{ backgroundImage: `url(${backgroundImage})` }}>
-        <div className="flex justify-center bg-base-200  bg-opacity-60 w-full ">
+        <main className="w-fit h-fit" style={{ filter: 'brightness(105%) contrast(105%)',  backgroundImage: `linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 66%, rgba(17,17,17,0.427608543417367) 82%, rgba(50,50,50,0) 100%), url(${backgroundImage})` , backgroundRepeat:"repeat" , backgroundSize:"contain",backgroundAttachment:"local"}}>
+        <div className="flex justify-center w-full ">
         <div className=" mx-10">
-            <div className="flex flex-col bg-base-300 backdrop-blur-sm rounded-lg shadow-md mx-10 my-5 mt-10 bg-opacity-90">
+            <div className="flex flex-col bg-base-300 backdrop-blur-sm rounded-lg shadow-md mx-10 my-5 mt-10 bg-opacity-60">
             <div className='flex flex-row '>
                 {posterUrl ? <img className=" w-1/3 h-1/3 rounded shadow-red-800" src={posterUrl} alt='Poster Picture' /> : <div className="skeleton w-[20rem] h-[30rem]"></div>}
                 <div className="flex flex-col gap-2 w-1/2 m-5">
