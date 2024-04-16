@@ -540,11 +540,11 @@ const handleSettings = ()=>{
         </div></div>
 
 {/* UI STARTS HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEERE  */}
-      <div className={`flex flex-row absolute top-5 transition-all duration-500 ${showUI ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'} z-50`}>
+      <div className={`flex flex-row absolute top-5 transition-opacity duration-500 ${showUI ? 'opacity-100 ' : 'opacity-0'} z-50`}>
       <h1 className='text-white opacity-65 sm:opacity-80 text-xl ml-5 sm:ml-12 sm:mt-3 mt-20'>{Name} {mediaType === "movie" ? null: <span className='text-gray-400 font-thin'>S{sessionIndex}:E{episodeIndex}</span>}</h1>
       </div>
       
-      <div className={`flex flex-row absolute top-5 right-0 transition-all duration-500 ${showUI ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'} z-50`}>
+      <div className={`flex flex-row absolute top-5 right-0 transition-opacity duration-500 ${showUI ? 'opacity-100' : 'opacity-0'} z-50`}>
       <Link to='/Home' className="btn btn-ghost hidden sm:block text-lg sm:text-2xl absolute right-2 sm:right-10 top-2 sm:top-3 font-bold bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 text-transparent bg-clip-text z-50" onClick={() => document.exitFullscreen()}>TUNISTREAM.CLUB</Link>
       </div>
 
@@ -683,7 +683,7 @@ const handleSettings = ()=>{
         </div>
 
 
-        <div className={`absolute w-full h-fit bottom-0 pt-5 rounded-lg transition-all duration-200 ${showUI ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'} z-50`}>
+        <div className={`absolute w-full h-fit bottom-0 pt-5 rounded-lg transition-opacity duration-200 ${showUI ? 'opacity-100' : 'opacity-0'} z-[55]`}>
    
         <RangeSlider Value={videoLoaded ? progress : 0} BufferValue={Math.round(loadedFraction * 10000)} onChange={(value) => handleProgress(value)}/>
 
