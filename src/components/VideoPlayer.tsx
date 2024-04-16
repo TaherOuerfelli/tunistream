@@ -57,7 +57,6 @@ const formatTime = (time: number): string => {
 
 const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, providersList , Name, Stream_Type, Quality , mediaID , mediaType , sessionIndex , episodeIndex}) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const rangeRef = useRef<HTMLInputElement>(null);
   const fullscreenRef = useRef<HTMLDivElement>(null);
   const [providerID , setCurrentProviderID] = useState(provider_ID);
   const [lastproviderID , setLastProviderID] = useState(provider_ID);
@@ -76,6 +75,7 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
   const [loadedFraction, setLoadedFraction] = useState(0);
   const [AudioState, setAudioState] = useState('on');
   const [isAudioHovered, setAudioIsHovered] = useState(false);
+  const [AudioVolume, setAudioVolume] = useState<number>(100);
   const [settingsMenu, setSettingsMenu] = useState(0);
   const [settings, setSettings] = useState(false);
   const [showUI, setShowUI] = useState(true);
@@ -463,11 +463,11 @@ useEffect(() => {
       setAudioState('off');
     }
     }
-  }, 100); // Adjust the debounce delay as needed
+  }, 50); // Adjust the debounce delay as needed
 
   const changeRangeValue = () => {
-    if (rangeRef.current && videoRef.current) {
-      rangeRef.current.value = (videoRef.current.volume*100).toString();
+    if (videoRef.current) {
+      setAudioVolume(videoRef.current.volume*100);
     }
   };
 
@@ -682,11 +682,11 @@ const handleSettings = ()=>{
         </div>
 
 
-        <div className={`absolute w-full h-fit bottom-0 pt-5 rounded-lg transition-all duration-200 ${showUI ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'} z-50`}>
-   
+        <div className={`absolute w-full h-fit bottom-0 pb-3 sm:pb-1 rounded-lg transition-all duration-200 ${showUI ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'} z-50`}>
+        <div className="relative w-[80vw] mx-[10vw] sm:w-[95vw] sm:mx-[2.5vw] sm:-my-[6px]">
         <RangeSlider Value={videoLoaded ? progress : 0} BufferValue={Math.round(loadedFraction * 10000)} onChange={(value) => handleProgress(value)}/>
-
-        <div className='flex flex-row items-center mb-2 mt-2'>
+        </div>
+        <div className='flex flex-row items-center mb-2 '>
         <button className='btn btn-ghost ml-7 px-2' onClick={togglePlayback}>
         {playing ? 
        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
@@ -717,19 +717,11 @@ const handleSettings = ()=>{
        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6"/></svg>
        : null}</div>
           {isAudioHovered && (
-      <input 
-      ref={rangeRef}
-      type="range" 
-      min={0} 
-      max={100}  
-      onChange={(e) => {
-        const volumeValue = parseFloat(e.target.value);
-        debouncedVolumeChange(volumeValue);
-      }} 
-      className={`range range-xs h-[7px] w-24 mx-1 mr-3 transition-all duration-1000 ${
-        isAudioHovered || isAudioHovered ? "opacity-100 translate-x-1" : "opacity-0"
-      }`}
-      />) }
+            <div className={`w-24 mx-1 mr-3 transition-all duration-1000 ${
+              isAudioHovered || isAudioHovered ? "opacity-100 translate-x-1" : "opacity-0"
+            }`}>
+              <RangeSlider Value={AudioVolume} min={0} max={100} onChange={(value) => debouncedVolumeChange(value)}/>
+            </div>) }
       </button>
 
       </div>
