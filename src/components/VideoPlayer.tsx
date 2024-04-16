@@ -2,7 +2,6 @@ import React, { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Hls from 'hls.js';
 import { EmbedOutput, Qualities, ScrapeMedia, StreamFile, makeProviders, makeSimpleProxyFetcher, makeStandardFetcher, targets } from '@movie-web/providers';
-import { ErrorBoundary } from '../pages/ErrorBoundary';
 import { debounce } from 'lodash';
 import { SourcererOutput, NotFoundError } from '@movie-web/providers';
 import RangeSlider from './RangeSlider';
@@ -420,7 +419,6 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
       document.documentElement.requestFullscreen();
     }
   };
-  
 useEffect(() => {
   const handleKeyPress = (event: { code: string; preventDefault: () => void; }) => {
     if (event.code === 'Space') {
@@ -500,13 +498,12 @@ const handleSettings = ()=>{
     <div ref={fullscreenRef} className={`relative overflow-hidden`} style={{ height: windowDimensions.height, width: windowDimensions.width,maxHeight:windowDimensions.height, overflow: 'hidden'  }}>
     <div className="absolute inset-0 w-full flex items-center justify-center">
     <div className='flex flex-col 'onClick={togglePlayback}>
-      <ErrorBoundary>
       {error && <div className='flex flex-col justify-center items-center gap-4 absolute inset-0'>
       <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ff5555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
         Error: {error}</div>}
       <video
         ref={videoRef}
-        className={`z-0 ${
+        className={` ${
           videoLoaded ? 'object-cover' : 'object-contain'
         }`}
         style={{ objectFit: 'contain', width: window.innerWidth, height:  window.innerHeight }} // Make the video as big as the screen
@@ -526,27 +523,29 @@ const handleSettings = ()=>{
         
         >
 
-          </video></ErrorBoundary>
+          </video>
         {/*videoLoaded ? null : (
           <p>Loading video...</p>
         )*/}
-        {(isLoading || !videoLoaded) && !error &&
+        
         <div className="flex justify-center items-center absolute inset-0">
-          
+        {(isLoading || !videoLoaded) && !error &&
           <span className="loading loading-spinner loading-lg"></span>
+          }
         </div>
-        }
         
         </div></div>
 
 {/* UI STARTS HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEERE  */}
-      <div className={`flex flex-row absolute top-5 transition-opacity duration-500 ${showUI ? 'opacity-100 ' : 'opacity-0'} z-50`}>
+
+      <div className={` absolute top-5 transition-all duration-500 ${showUI ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'} z-50`}>
       <h1 className='text-white opacity-65 sm:opacity-80 text-xl ml-5 sm:ml-12 sm:mt-3 mt-20'>{Name} {mediaType === "movie" ? null: <span className='text-gray-400 font-thin'>S{sessionIndex}:E{episodeIndex}</span>}</h1>
       </div>
       
-      <div className={`flex flex-row absolute top-5 right-0 transition-opacity duration-500 ${showUI ? 'opacity-100' : 'opacity-0'} z-50`}>
+      <div className={`flex flex-row absolute top-5 right-0 transition-all duration-500 ${showUI ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'} z-50`}>
       <Link to='/Home' className="btn btn-ghost hidden sm:block text-lg sm:text-2xl absolute right-2 sm:right-10 top-2 sm:top-3 font-bold bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 text-transparent bg-clip-text z-50" onClick={() => document.exitFullscreen()}>TUNISTREAM.CLUB</Link>
-      </div>
+    </div>
+
 
         {/* Settings tab ###############  */}
         {settings&&<div className='absolute top-0 w-full bg-transparent z-[51]' style={{ height: window.innerHeight}} onClick={() => setSettings(false)}></div>}
@@ -683,7 +682,7 @@ const handleSettings = ()=>{
         </div>
 
 
-        <div className={`absolute w-full h-fit bottom-0 pt-5 rounded-lg transition-opacity duration-200 ${showUI ? 'opacity-100' : 'opacity-0'} z-[55]`}>
+        <div className={`absolute w-full h-fit bottom-0 pt-5 rounded-lg transition-all duration-200 ${showUI ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'} z-50`}>
    
         <RangeSlider Value={videoLoaded ? progress : 0} BufferValue={Math.round(loadedFraction * 10000)} onChange={(value) => handleProgress(value)}/>
 
@@ -752,6 +751,7 @@ const handleSettings = ()=>{
       </button>
 
       </div>
+
 
 
 

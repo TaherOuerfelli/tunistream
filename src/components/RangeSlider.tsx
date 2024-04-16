@@ -50,7 +50,7 @@ interface RangeSliderProps {
       <div className="relative w-[95%] mb-2 mx-auto">
         {/* Track */}
         <div
-          className={`h-1 rounded-full bg-gray-900 absolute top-1/2 left-0 right-0 -translate-y-1/2 z-20`}
+          className={`h-1 rounded-full bg-gray-900/30 absolute top-1/2 left-0 right-0 -translate-y-1/2 z-20`}
         />
         {/* Buffer Track */}
         <div

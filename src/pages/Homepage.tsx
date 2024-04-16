@@ -105,7 +105,7 @@ export default function Homepage(){
 
     return(
         <>
-        <div className="drawer">
+        <div className="drawer overflow-hidden">
         <input id="my-drawer" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content">
         <Header isSticky={IsSticky}/>
