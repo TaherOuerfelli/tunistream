@@ -134,7 +134,9 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
           }
         });
         hls.on(Hls.Events.MANIFEST_PARSED, function() {
-            videoRef.current?.play();
+          videoRef.current?.play().catch(() => {
+            // Ignore the error silently
+          });
           
         });
         
@@ -303,7 +305,10 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
     if (videoElement) {
       setDuration(videoElement.duration);
       if (playing) {
-        videoElement.play();
+
+          videoElement.play().catch(() => {
+            // Ignore the error silently
+          });
       } else {
         videoElement.pause();
       }
@@ -533,46 +538,55 @@ const handleSettings = ()=>{
 
         {/* Settings tab ###############  */}
         {settings&&<div className='absolute top-0 w-full bg-transparent z-[51]' style={{ height: window.innerHeight}} onClick={() => setSettings(false)}></div>}
-        <div className={`z-[55] overflow-clip bg-base-200 rounded-box border-2 border-white/50 p-4 mb-2 shadow text-content absolute right-5 bottom-20 transition-all  ease-in-out ${settings && showUI ? 'duration-100 pointer-events-auto opacity-100 translate-y-0 ' : 'duration-200 pointer-events-none opacity-0 translate-y-10'}`}>
+        <div className={`z-[55] overflow-x-hidden overflow-y-auto bg-base-200 rounded-box border-2 border-white/10 p-4 shadow text-content absolute right-5 bottom-20 transition-all  ease-in-out ${settings && showUI ? 'duration-100 pointer-events-auto opacity-100 translate-y-0 ' : 'duration-200 pointer-events-none opacity-0 translate-y-10'}`} style={{ maxHeight: window.innerHeight-100}}>
         {/* Settings Menu 0 */}
-        <div role='Settings-menu'  className={`flex flex-col transition-all  ease-in-out ${settingsMenu===0 ? 'duration-100 opacity-100 translate-x-0 h-fit w-fit' : 'duration-100 opacity-0 -translate-x-32 w-0 h-0'}`}>
+        <div role='Settings-menu'  className={`flex flex-col transition-all  ease-in-out ${settingsMenu===0 ? 'duration-100 opacity-100 translate-x-0' : 'duration-100 opacity-0 -translate-x-32 w-0 h-0'}`}>
             
-          <h3 className="card-title text-sm">Settings:</h3>
+          <h3 className="card-title text-sm">Settings</h3>
           <div className='divider h-0 m-0 my-2 w-full'></div>
-          <table>
-              <tbody>
+          <table className={`${settingsMenu===0 ? 'visible':'hidden'}`}>
+              <tbody >
                 <tr>
-                <button className="btn btn-ghost label text-lg w-full font-bold" onClick={() => setSettingsMenu(1)}><td><span className='mr-10'>Quality: </span></td><td><span className='flex font-bold p-0 text-sm px-3 rounded-box bg-base-content text-base-200 justify-center items-center'>{VideoQuality && Object.keys(VideoQuality).map((quality) => (videoLink === VideoQuality[quality as Qualities].url ? quality + (+quality ? 'p' : '') : ''))}{hlsMainLink && videoLink === hlsMainLink ? 'Auto': ''}</span></td></button>
+                <button className="btn btn-ghost label text-lg w-full font-bold" onClick={() => setSettingsMenu(1)}><td><span className='mr-10 flex flex-row justify-center items-center'>
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" className='mr-2' viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+                Quality </span></td><td><span className='flex font-bold p-0 text-sm px-3 rounded-box bg-base-content text-base-200 justify-center items-center'>{VideoQuality && Object.keys(VideoQuality).map((quality) => (videoLink === VideoQuality[quality as Qualities].url ? quality + (+quality ? 'p' : '') : ''))}{hlsMainLink && videoLink === hlsMainLink ? 'Auto': ''}</span></td></button>
                 </tr>
                 <tr>
-                <button className="btn btn-ghost label text-lg w-full font-bold" onClick={() => setSettingsMenu(2)}><td><span className='mr-10'>Source: </span></td><td><span className='flex  justify-center items-center text-sm px-2'>{providerID}</span></td></button>
+                <button className="btn btn-ghost label text-lg w-full font-bold" onClick={() => setSettingsMenu(2)}><td><span className='mr-10 flex flex-row justify-center items-center'>
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" className='mr-2' viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+                Source </span></td><td><span className='flex  justify-center items-center text-sm px-2'>{providerID}</span></td></button>
                 </tr>
             </tbody>
           </table>
         </div>
         {/* Menu 0 End */}
           {/* Setting Menu 1 */}
-          <div role='Setting-option' className={`transition-all  ease-in-out ${settingsMenu===1 ? 'duration-250 opacity-100 translate-x-0 h-fit w-fit' : 'duration-300 opacity-0  translate-x-32 w-0 h-0'}`}>
+          <div role='Setting-option' className={`transition-all  ease-in-out ${settingsMenu===1 ? 'duration-250 opacity-100 translate-x-0 h-fit w-fit' : 'duration-100 opacity-0  translate-x-32 w-0 h-0'}`}>
           <div className='flex flex-row'> 
-          <button className='btn btn-link p-0 my-0 mr-1' onClick={() =>setSettingsMenu(0)}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="35" height="25" className='mr-2' viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M75 12H6M12 5l-7 7 7 7"/></svg>
+          <button className={`btn btn-link ${settingsMenu===1 ? 'visible':'hidden'} p-0 my-0 mr-1`} onClick={() =>setSettingsMenu(0)}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="33" height="23" className='mr-2 -mt-5' viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="square"><path d="M75 12H6M12 5l-7 7 7 7"/></svg>
           </button>
-              <h3 className="card-title text-sm"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
-              Quality</h3>
+              <h3 className={`card-title text-sm ${settingsMenu===1 ? 'visible':'hidden'} -mt-5`}>Quality</h3>
               </div>
-                <div className='divider h-0 m-0 my-2 w-full'></div>
-                <table>
+                <div className='divider h-0 m-0 my-2 -mt-2 w-full'></div>
+                <div className='scroll-smooth'>
+                <table className={`${settingsMenu===1 ? 'visible':'hidden'}`}>
                   <tbody>
-                    {VideoQuality && Object.keys(VideoQuality).reverse().map((quality, index) => (
-                      <tr key={index}>
-                        <td>
-                          <label className="cursor-pointer label">
-                            <span className="label-text text-lg font-bold mr-24">{quality}{+quality? 'p':''}</span>
-                            <input type="radio" name="quality" className="radio" value={VideoQuality[quality as Qualities].url} onChange={(e) => setVideoLink(e.target.value)} checked={videoLink === VideoQuality[quality as Qualities].url} />
-                          </label>
-                        </td>
-                      </tr>
-                    ))}
+                    {VideoQuality && Object.keys(VideoQuality).reverse().map((quality, index) => {
+                      if (['360', '720', '1080', '4k'].includes(quality)) {
+                        return (
+                          <tr key={index}>
+                            <td>
+                              <label className="cursor-pointer label">
+                                <span className="label-text text-lg font-bold mr-24">{quality}{+quality ? 'p' : ''}</span>
+                                <input type="radio" name="quality" className="radio" value={VideoQuality[quality as Qualities].url} onChange={(e) => setVideoLink(e.target.value)} checked={videoLink === VideoQuality[quality as Qualities].url} />
+                              </label>
+                            </td>
+                          </tr>
+                        );
+                      }
+                      return null;
+                    })}
                     {hlsMainLink && 
                     <label className="cursor-pointer label">
                     <span className="label-text font-bold text-lg mr-24">Auto</span>
@@ -580,21 +594,20 @@ const handleSettings = ()=>{
                       </label>}
                   </tbody>
                 </table>
+                </div>
            </div>
            {/* menu 1 END */}
            {/* Setting Menu 2 start */}
            <div role='Setting-option' className={`transition-all ease-in-out ${settingsMenu===2 ? 'duration-250 opacity-100 translate-x-0 h-fit w-fit' : 'duration-300 opacity-0  translate-x-32 w-0 h-0'}`}>
           <div className='flex flex-row'> 
-          <button className='btn btn-link p-1 my-0 mr-1' onClick={() =>setSettingsMenu(0)}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="35" height="25" className='mr-2' viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M75 12H6M12 5l-7 7 7 7"/></svg>
+          <button className={`btn btn-link ${settingsMenu===2 ? 'visible':'hidden'} p-1 my-0 mr-1`} onClick={() =>setSettingsMenu(0)}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="33" height="23" className='mr-2 -mt-5' viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="square"><path d="M75 12H6M12 5l-7 7 7 7"/></svg>
           </button>
-              <h3 className="card-title text-sm ">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
-              Sources</h3>
+              <h3 className={`card-title ${settingsMenu===2 ? 'visible':'hidden'} text-sm -mt-5`}>Sources</h3>
               </div>
-                <div className='divider h-0 m-0 my-2 w-full'></div>
-                <div className='h-auto scroll-smooth overflow-hidden overflow-y-auto'>
-                <table>
+                <div className='divider h-0 m-0 my-2 -mt-2 w-full'></div>
+                <div className='scroll-smooth'>
+                <table className={`${settingsMenu===2 ? 'visible':'hidden'}`}>
                   <tbody>
                     {providersList && (providersList).map((Source, index) => (
                       <tr key={index}>
@@ -621,11 +634,11 @@ const handleSettings = ()=>{
           </button>
             <h3 className="card-title text-sm">Embeds:</h3></div>
             <div className='divider h-0 m-0 my-2 w-full'></div>
-            <div className='flex w-[250px] h-[300px] overflow-y-auto justify-start items-start'>
+            <div className={`${settingsMenu===3 ? 'visible':'hidden'} flex w-[250px] h-[300px] justify-start items-start`}>
 
               {fetchError ? <div className='flex flex-col p-10 w-full justify-center items-center gap-2'>
               <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ff4242" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
-                <p className='text-gray-300 italic'>{fetchError}.</p></div>
+                <p className='text-gray-300 italic text-center'>{fetchError}.</p></div>
 
                 : 
                 !fetchEmbeds || !(fetchEmbeds.length > 0) ? <div className='flex flex-col w-full  p-10 justify-center items-center gap-2'>
@@ -633,12 +646,12 @@ const handleSettings = ()=>{
                   </div> 
                   :
                   <div className='flex w-full  h-auto p-0 justify-start items-start scroll-smooth overflow-hidden overflow-y-auto'>
-                <table>
+                <table className={`${settingsMenu===3 ? 'visible':'hidden'}`}>
                   <tbody>
                     {fetchEmbeds && (fetchEmbeds as SourcererEmbed[]).map((Embed, index) => (
                       <tr key={index}>
                         <td>
-                          <button className={`btn ${LoadingEmbed === index ? 'btn-disabled':null} w-full label`} onClick={()=> {handleFetchEmbed(Embed.embedId,Embed.url,currentFetchSource,index); setLoadingEmbed(index)}}>
+                          <button className={`btn ${LoadingEmbed === index ? 'btn-disabled':null} w-[250px] label`} onClick={()=> {handleFetchEmbed(Embed.embedId,Embed.url,currentFetchSource,index); setLoadingEmbed(index)}}>
                             <span className="label-text  text-lg font-bold mr-10">{Embed.embedId}</span>
                             {LoadingEmbed === index && !erroredEmbed ? <span className="loading loading-spinner loading-md"></span>:erroredEmbed?.source === currentFetchSource && erroredEmbed?.index === index ? 
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff4242" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>

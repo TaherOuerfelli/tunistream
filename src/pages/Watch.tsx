@@ -4,6 +4,7 @@ import LoadingSources from '../components/LoadingSources';
 import { useState,useEffect } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import StreamNotFound from '../components/StreamNotFound';
+import PlaceholderVideoPlayer from '../components/PlaceholderVideoPlayer';
 
 const proxyUrl = import.meta.env.VITE_PROXY_URL_LINK;
 
@@ -197,10 +198,12 @@ const Watch: React.FC<watchProps> = ( { MediaType }) => {
     }
     return(
         <>
-<div className='bg-black h-screen overflow-hidden'>
+<div className={`bg-black h-[${window.innerHeight}] w-[${window.innerWidth}] overflow-hidden`}>
 {startPlay  ? <VideoPlayer media={mediaInfo} videoSrc={StreamLink} provider_ID={provider_id} providersList={sourceIds} Name={mediaInfo.title} Stream_Type={StreamType} Quality={StreamQuality} mediaID={mediaID ?? ''} mediaType={MediaType} sessionIndex={sessionIndex ?? '1'} episodeIndex={epIndex ?? '1'}/> : null}
 {!FoundStream && DoneFetching ? <StreamNotFound Name={mediaInfo.title} Season={sessionIndex??null} Episode={epIndex??null}/>: null}
-{!startPlay && !DoneFetching  ? <LoadingSources sourceInfo={sourceInfo} sourceIds={sourceIds} gotLink={FoundStream}/>:null}
+{!startPlay && !DoneFetching  ? 
+<div className={`absolute overflow-hidden w-[95vw] h-[95vh]`}> <LoadingSources sourceInfo={sourceInfo} sourceIds={sourceIds} gotLink={FoundStream}/> </div>:null}
+{!startPlay && !DoneFetching  ? <PlaceholderVideoPlayer Name={mediaInfo.title}  mediaType={MediaType} sessionIndex={sessionIndex ?? '1'} episodeIndex={epIndex ?? '1'}/>: null}
 </div>
 
                 

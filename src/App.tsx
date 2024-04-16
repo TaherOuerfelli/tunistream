@@ -11,6 +11,7 @@ import Watch from "./pages/Watch";
 
 import { Route, RouterProvider , createBrowserRouter , createRoutesFromElements} from 'react-router-dom';
 import Settings from "./pages/Settings";
+//import PlayerTest from "./TESTING/playerTest";
 
 
 
@@ -23,6 +24,7 @@ const router = createBrowserRouter(
       
       <Route path="Home" element={<Homepage/>} />
       <Route path="about" element={<About/>} />
+      {/*<Route path="playerTest" element={ <PlayerTest/> } />*/}
       <Route path="Settings" element={<Settings/>} />
       <Route path="Movie/:movieID" element={<MoviePage/>} />
       <Route path="Series/:seriesID" element={<SeriesPage/>} />
