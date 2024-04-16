@@ -414,17 +414,13 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
   }
 
   const toggleFullScreen = () => {
-    const fullscreenElement = fullscreenRef.current;
-    if (!fullscreenElement) return;
-
-    if (!document.fullscreenElement) {
-        // If the page is not in fullscreen mode, request fullscreen
-        fullscreenElement.requestFullscreen();
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
     } else {
-        // If the page is already in fullscreen mode, exit fullscreen
-        document.exitFullscreen();
+      document.documentElement.requestFullscreen();
     }
-};
+  };
+  
 useEffect(() => {
   const handleKeyPress = (event: { code: string; preventDefault: () => void; }) => {
     if (event.code === 'Space') {
