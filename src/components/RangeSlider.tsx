@@ -4,7 +4,7 @@ import './RangeSlider.css'
 interface RangeSliderProps {
     min?: number;
     max?: number;
-    Value: number;
+    Value?: number;
     BufferValue?: number;
     onChange: (value: number) => void;
   }

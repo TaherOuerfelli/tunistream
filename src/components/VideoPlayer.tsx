@@ -463,7 +463,7 @@ useEffect(() => {
       setAudioState('off');
     }
     }
-  }, 50); // Adjust the debounce delay as needed
+  }, 5); // Adjust the debounce delay as needed
 
   const changeRangeValue = () => {
     if (videoRef.current) {
