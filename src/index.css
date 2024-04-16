@@ -10,3 +10,16 @@ body {
     background: rgb(0,0,0);
     background: linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 60%, rgba(17,17,17,0.427608543417367) 91%, rgba(50,50,50,0) 100%);
 }
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: #363636;
+}

@@ -75,7 +75,6 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
   const [duration, setDuration] = useState(0);
   const [progress, setProgress] = useState(0);
   const [loadedFraction, setLoadedFraction] = useState(0);
-  const [isFullscreen, setIsFullscreen] = useState(false);
   const [AudioState, setAudioState] = useState('on');
   const [isAudioHovered, setAudioIsHovered] = useState(false);
   const [settingsMenu, setSettingsMenu] = useState(0);
@@ -254,7 +253,7 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
     let timeout: ReturnType<typeof setTimeout>;
 
     const handleMouseMove = () => {
-      if (!playing) {
+      if (!playing || settings) {
         setShowUI(true);
         document.body.style.cursor = 'default';
       } else {
@@ -262,14 +261,16 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
         document.body.style.cursor = 'default';
         clearTimeout(timeout);
         timeout = setTimeout(() => {
-          setShowUI(false);
-          document.body.style.cursor = 'none'; // Hide mouse when UI is hidden
+          if (!settings) {
+            setShowUI(false);
+            document.body.style.cursor = 'none'; // Hide mouse when UI is hidden
+          }
         }, 3000); // Hide UI after 3 seconds of inactivity
       };
     };
 
     const handleMouseLeave = () => {
-      if (!playing) {
+      if (!playing || settings) {
         setShowUI(true);
         document.body.style.cursor = 'default';
       } else {
@@ -279,7 +280,7 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
     };
 
     const handleMouseEnter = () => {
-      if (!playing) {
+      if (!playing || settings) {
         setShowUI(true);
         document.body.style.cursor = 'default';
       } else {
@@ -298,7 +299,7 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
       document.removeEventListener('mouseleave', handleMouseLeave);
       document.removeEventListener('mouseenter', handleMouseEnter);
     };
-  }, [playing, showUI]);
+  }, [playing, showUI, settings]);
 
   useEffect(() => {
     const videoElement = videoRef.current;
@@ -418,20 +419,35 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
 
     if (!document.fullscreenElement) {
         // If the page is not in fullscreen mode, request fullscreen
-        fullscreenElement.requestFullscreen().then(() => {
-            setIsFullscreen(true);
-        }).catch((error) => {
-            console.error('Failed to enter fullscreen mode:', error);
-        });
+        fullscreenElement.requestFullscreen();
     } else {
         // If the page is already in fullscreen mode, exit fullscreen
-        document.exitFullscreen().then(() => {
-            setIsFullscreen(false);
-        }).catch((error) => {
-            console.error('Failed to exit fullscreen mode:', error);
-        });
+        document.exitFullscreen();
     }
 };
+useEffect(() => {
+  const handleKeyPress = (event: { code: string; preventDefault: () => void; }) => {
+    if (event.code === 'Space') {
+      event.preventDefault(); // Prevent default behavior of space key
+      togglePlayback(); // Call your existing togglePlayback function to play/pause the video
+    } else if (event.code === 'ArrowLeft') {
+      event.preventDefault(); // Prevent default behavior of left arrow key
+      addSeconds(currentTime - 10); // Add 10 seconds back
+    } else if (event.code === 'ArrowRight') {
+      event.preventDefault(); // Prevent default behavior of right arrow key
+      addSeconds(currentTime + 10); // Add 10 seconds forward
+    } else if (event.code === 'KeyK') { // Add the letter K to toggle the playback
+      event.preventDefault(); // Prevent default behavior of the letter K key
+      togglePlayback(); // Call your existing togglePlayback function to play/pause the video
+    }
+  };
+
+  document.addEventListener('keydown', handleKeyPress);
+
+  return () => {
+    document.removeEventListener('keydown', handleKeyPress);
+  };
+}, [togglePlayback, currentTime, addSeconds]);
   
   const handleVideoError = (event: React.SyntheticEvent<HTMLVideoElement, Event>) => {
     setError('An error occurred while playing the video. (Try changing source)');
@@ -735,7 +751,7 @@ const handleSettings = ()=>{
       </button>
 
       <button className='btn btn-ghost px-2 mx-1 mr-3' onClick={toggleFullScreen}>
-      {isFullscreen? <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path></svg>
+      {document.fullscreenElement? <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path></svg>
       : <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>}
       </button>
 

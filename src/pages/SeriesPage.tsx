@@ -250,7 +250,7 @@ export default function SeriesPage(){
                         {new Date(seriesData.first_air_date) > new Date() ? <span className='alert'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-info shrink-0 w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         {seriesData.status}</span>:
                         <Link to={`/Watch/Series/${seriesID}/Season/${currentSeason}/Episode/${currentEpisode}?name=${seriesName}&year=${releaseYear}&i=${seriesIMDB}`} className="btn btn-block bg-white text-xl text-black hover:text-white font-bold mt-7 mr-1 ">
-                        {currentSeason !== "1" || currentEpisode !== "1" || currentTime !== 0 ? `Continue ${formatTime(currentTime)}`:"Watch Now"} S{currentSeason}:E{currentEpisode}
+                        {currentSeason !== "1" || currentEpisode !== "1" || currentTime !== 0 ? `S${currentSeason}:E${currentEpisode} - ${formatTime(currentTime)}`:`Watch Now S${currentSeason}:E${currentEpisode}`} 
                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2.5" stroke-linecap="butt" stroke-linejoin="bevel"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
                         </Link>}
                         {/*
