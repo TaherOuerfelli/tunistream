@@ -15,7 +15,7 @@ export default function AboutUs(){
         <input id="my-drawer" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content">
         <Header/>
-        <div className="flex justify-center w-full my-10">
+        <div className="flex justify-center w-full min-h-[61vh] h-fit my-12">
         <div className="bg-base-200 rounded-lg mx-10">
             <h1 className='flex justify-center items-start text-4xl font-bold mt-5 '>About us:</h1>
             <div className='m-10 h-[30rem] text-left text-base'>

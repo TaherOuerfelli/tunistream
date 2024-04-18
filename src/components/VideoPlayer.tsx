@@ -453,6 +453,7 @@ useEffect(() => {
       if(value != 0){
       videoRef.current.volume = value / 100;
       videoRef.current.muted = false;
+      changeRangeValue();
       if(videoRef.current.volume > 0.4){
         setAudioState('on')
       }else{
@@ -463,7 +464,7 @@ useEffect(() => {
       setAudioState('off');
     }
     }
-  }, 5); // Adjust the debounce delay as needed
+  }, 10); // Adjust the debounce delay as needed
 
   const changeRangeValue = () => {
     if (videoRef.current) {
@@ -539,11 +540,11 @@ const handleSettings = ()=>{
 {/* UI STARTS HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEERE  */}
 
       <div className={` absolute top-5 transition-all duration-500 ${showUI ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'} z-50`}>
-      <h1 className='text-white opacity-65 sm:opacity-80 text-xl ml-5 sm:ml-12 sm:mt-3 mt-20'>{Name} {mediaType === "movie" ? null: <span className='text-gray-400 font-thin'>S{sessionIndex}:E{episodeIndex}</span>}</h1>
+      <h1 className='text-white opacity-65 max-w-[70vw] sm:opacity-80 text-xl ml-5 sm:ml-12 sm:mt-[0.5rem] mt-[7vh]'>{Name} {mediaType === "movie" ? null: <span className='text-gray-400 font-thin'>S{sessionIndex}:E{episodeIndex}</span>}</h1>
       </div>
       
       <div className={`flex flex-row absolute top-5 right-0 transition-all duration-500 ${showUI ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'} z-50`}>
-      <Link to='/Home' className="btn btn-ghost hidden sm:block text-lg sm:text-2xl absolute right-2 sm:right-10 top-2 sm:top-3 font-bold bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 text-transparent bg-clip-text z-50" onClick={() => document.exitFullscreen()}>TUNISTREAM.CLUB</Link>
+      <Link to='/Home' className="btn btn-ghost text-lg sm:text-2xl absolute right-[45vw] sm:right-10  sm:top-0 font-bold bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 text-transparent bg-clip-text z-50" onClick={() => document.exitFullscreen()}>TUNISTREAM.CLUB</Link>
     </div>
 
 
@@ -551,7 +552,7 @@ const handleSettings = ()=>{
         {settings&&<div className='absolute top-0 w-full bg-transparent z-[51]' style={{ height: window.innerHeight}} onClick={() => setSettings(false)}></div>}
         <div className={`z-[55] overflow-x-hidden overflow-y-auto bg-base-200 rounded-box border-2 border-white/10 p-4 shadow text-content absolute right-5 bottom-20 transition-all  ease-in-out ${settings && showUI ? 'duration-100 pointer-events-auto opacity-100 translate-y-0 ' : 'duration-200 pointer-events-none opacity-0 translate-y-10'}`} style={{ maxHeight: window.innerHeight-100}}>
         {/* Settings Menu 0 */}
-        <div role='Settings-menu'  className={`flex flex-col transition-all  ease-in-out ${settingsMenu===0 ? 'duration-100 opacity-100 translate-x-0' : 'duration-100 opacity-0 -translate-x-32 w-0 h-0'}`}>
+        <div role='Settings-menu'  className={`flex flex-col transition-all  ease-in-out ${settingsMenu===0 ? 'duration-100 opacity-100 translate-x-0 w-[250px]' : 'duration-100 opacity-0 -translate-x-32 w-0 h-0'}`}>
             
           <h3 className="card-title text-sm">Settings</h3>
           <div className='divider h-0 m-0 my-2 w-full'></div>
@@ -682,64 +683,61 @@ const handleSettings = ()=>{
         </div>
 
 
-        <div className={`absolute w-full h-fit bottom-0 pb-3 sm:pb-1 rounded-lg transition-all duration-200 ${showUI ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'} z-50`}>
-        <div className="relative w-[80vw] mx-[10vw] sm:w-[95vw] sm:mx-[2.5vw] sm:-my-[6px]">
+        <div className={`absolute w-full h-fit bottom-0 pb-3 sm:pb-0 rounded-lg transition-all duration-300 ${showUI ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'} z-50`}>
+        <div className="relative w-[80vw] mx-[10vw] sm:w-[95vw] sm:mx-[2.5vw] sm:-my-[8px]">
         <RangeSlider Value={videoLoaded ? progress : 0} BufferValue={Math.round(loadedFraction * 10000)} onChange={(value) => handleProgress(value)}/>
         </div>
-        <div className='flex flex-row items-center mb-2 '>
+        <div className='flex flex-row items-center mb-1 '>
         <button className='btn btn-ghost ml-7 px-2' onClick={togglePlayback}>
         {playing ? 
-       <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+       <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
        : (
-         <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
          )}</button>
 
       <button className='hidden sm:block btn btn-ghost px-3 ' onClick={() => addSeconds(currentTime-10)}>
-      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 2v6h6M2.66 15.57a10 10 0 1 0 .57-8.38"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 2v6h6M2.66 15.57a10 10 0 1 0 .57-8.38"/></svg>
       </button>
       <button className='hidden sm:block btn btn-ghost px-3 ' onClick={() => addSeconds(currentTime+10)}>
-      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38"/></svg>
       </button>
 
 
-      <div className='hidden sm:flex flex-row  h-full w-fit '>
-        <button className=' w-fit px-1 btn btn-link no-underline no-animation' 
+      <div className='hidden sm:flex sm:flex-row  h-fit w-fit '>
+        <button className='h-[3rem] w-fit px-1 inline-flex flex-wrap items-center justify-items-center' 
                 onMouseEnter={() => setAudioIsHovered(true)}
                 onMouseLeave={() => setAudioIsHovered(false)}
                 >
-                <div onClick={handleAudioButton} className='btn btn-ghost px-1'>
+                <div onClick={handleAudioButton} className='btn btn-ghost px-2'>
           {AudioState === 'on'? 
           
-      <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
        : AudioState === 'low'?
-       <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+       <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
        : AudioState === 'off'?
-       <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6"/></svg>
+       <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6"/></svg>
        : null}</div>
-          {isAudioHovered && (
-            <div className={`w-24 mx-1 mr-3 transition-all duration-1000 ${
-              isAudioHovered || isAudioHovered ? "opacity-100 translate-x-1" : "opacity-0"
-            }`}>
-              <RangeSlider Value={AudioVolume} min={0} max={100} onChange={(value) => debouncedVolumeChange(value)}/>
-            </div>) }
+            <div className={`mx-1 mt-[0.15rem] transition-all duration-300 ${isAudioHovered ? "w-[5.5rem]" : "w-0"}`}>
+              <RangeSlider Value={AudioVolume*10} min={0} max={1000} onChange={(value) => debouncedVolumeChange(value/10)}/>
+            </div>
       </button>
 
       </div>
 
 
-      <h2 className='text-sm sm:text-xl text-gray-300 ml-3'>{formatTime(currentTime)} / {formatTime(duration)}</h2>
+      <h2 className='select-text text-sm sm:text-[1.15rem]  text-gray-300 ml-1'>{formatTime(currentTime)} / {formatTime(duration)}</h2>
 
 
         <div className='flex flex-row absolute right-3'>
 
 
       <button className="btn btn-ghost px-2 mx-1" onClick={handleSettings}>
-      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="butt" stroke-linejoin="bevel"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="butt" stroke-linejoin="bevel"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
       </button>
 
       <button className='btn btn-ghost px-2 mx-1 mr-3' onClick={toggleFullScreen}>
       {document.fullscreenElement? <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path></svg>
-      : <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>}
+      : <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>}
       </button>
 
       </div>

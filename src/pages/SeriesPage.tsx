@@ -220,16 +220,16 @@ export default function SeriesPage(){
         <Header/>
         <main className="w-fit h-fit" style={{ filter: 'brightness(105%) contrast(105%)',  backgroundImage: `linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 66%, rgba(17,17,17,0.427608543417367) 82%, rgba(50,50,50,0) 100%), url(${backgroundImage})` , backgroundRepeat:"repeat" , backgroundSize:"contain",backgroundAttachment:"local"}}>
         <div role="Container" className="flex justify-center  w-full ">
-        <div className=" mx-5 sm:mx-10">
-            <div className="flex flex-col bg-base-300 backdrop-blur-sm rounded-lg shadow-md mx-5 sm:mx-10 my-5 mt-10 bg-opacity-60">
+        <div className="sm:mx-16">
+            <div className="flex flex-col bg-base-300 backdrop-blur-sm rounded-lg shadow-md my-5 mt-10 bg-opacity-65">
             <div className='flex flex-col sm:flex-row '>
-            {posterUrl ? <img className=" max-w-[25rem] sm:w-1/3 h-1/3 rounded shadow-red-800" src={posterUrl} alt='Poster Picture' /> : <div className="skeleton w-full sm:w-[20rem] h-[30rem]"></div>}
-                <div className="flex flex-col gap-2 w-full sm:w-1/2 m-5">
-                    <h1 className="text-4xl font-bold ">{seriesName}{releaseYear && <p className="text-xl badge ml-2 p-3 shadow-md">{releaseYear}</p>}
+            {posterUrl ? <img className="min-w-[85vw] sm:min-w-[30vw] mx-auto sm:mx-0  w-1/3 h-1/3 rounded shadow-red-800" src={posterUrl} alt='Poster Picture' /> : <div className="skeleton w-full sm:w-[20rem] h-[30rem]"></div>}
+                <div className="flex flex-col gap-2 max-w-[50vw] w-1/2 m-5">
+                    <h1 className="min-w-[80vw] sm:min-w-[30vw] mx-[5vw] sm:mx-0 text-2xl sm:text-4xl font-bold ">{seriesName}{releaseYear && <p className="text-xl badge ml-2 p-3 shadow-md">{releaseYear}</p>}
                     
                     </h1>
-                    <div className="mx-2 font-bold text-1xl mt-5 ">
-                    <h1 className="mr-2">Genre:{seriesData.genres && seriesData.genres.map((genre: { name: string } , index:number) =>  <>{index !==0 ? ',':''} <span className="font-thin badge mx-1">{genre.name}</span></>)
+                    <div className="w-[80vw] sm:w-[50vw] mx-[5vw] sm:mx-0 font-bold text-sm sm:text-1xl mt-5 ">
+                    <h1 className="mr-2">Genre:{seriesData.genres && seriesData.genres.map((genre: { name: string } , index:number) =>  <>{index !==0 ? ' - ':''} <span className="font-thin badge m-1">{genre.name}</span></>)
                         }</h1>
                         <div className="divider my-2 h-1"></div> 
                         
@@ -260,9 +260,9 @@ export default function SeriesPage(){
                         </button>*/}
                     </div>
                 </div>
-                <div className="mt-5">
+                <div className="mt-5 ml-[43vw] sm:ml-0">
                     <div className="tooltip" data-tip={bookmarks.includes('s'+seriesID?.toString()) ? `Remove "${seriesName}" from Bookmarks` : "Bookmark"}>
-                    <button className="btn btn-square shadow-lg" onClick={toggleBookmark}>
+                    <button className="btn btn-square scale-110 sm:scale-100 shadow-lg transition-transform transform hover:scale-125" onClick={toggleBookmark}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill={bookmarks.includes('s'+seriesID?.toString()) ? "currentcolor" : "none"} stroke="currentcolor" stroke-width="2.5" stroke-linecap="butt" stroke-linejoin="bevel"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
                     </button>
                     </div>
@@ -270,19 +270,20 @@ export default function SeriesPage(){
                 
             </div>
             {seriesData.overview ?
-                <div className=" mx-5 sm:mx-10 w-fit mt-10">
+                <div className="container mx-auto">
+                  <div className="max-w-[95vw] w-full mt-10">
                     <h1 className="mx-2 font-bold text-2xl ">Overview:</h1>
                     <div className="divider my-2 h-1"></div> 
                     <p className="text-xl mx-5 my-3 font-thin">{seriesData.overview}</p>
                     
-                </div>:null}
-                <div className="mx-5 sm:mx-10 mt-10">
+                </div></div>:null}
+                <div className="sm:mx-10 mt-10">
                 <div className="divider my-2 h-1"></div> 
                   <ShowSeasons seasonsList={seriesData.seasons} ShowID={seriesData.id} ShowIMDBID={seriesIMDB} ShowName={seriesName} ShowReleaseDate={releaseYear}/>
                   <div className="divider my-2 h-1"></div> 
                 </div>
                     {creditsData.cast  && <><h1 className="text-4xl font-bold mx-5 sm:mx-10 mt-10">Cast</h1>
-                <div className="flex flex-col w-full justify-center items-center">
+                <div className="flex flex-col max-w-[100vw] w-full justify-center items-center">
                     <ItemScroll>
                     {creditsData.cast ? (creditsData.cast.map((castMember: any) => (
                       <div className="w-fit">

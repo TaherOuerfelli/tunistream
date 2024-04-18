@@ -199,18 +199,18 @@ export default function MoviePage(){
         <input id="my-drawer" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content">
         <Header/>
-        <main className="w-fit h-fit" style={{ filter: 'brightness(105%) contrast(105%)',  backgroundImage: `linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 66%, rgba(17,17,17,0.427608543417367) 82%, rgba(50,50,50,0) 100%), url(${backgroundImage})` , backgroundRepeat:"repeat" , backgroundSize:"contain",backgroundAttachment:"local"}}>
-        <div className="flex justify-center w-full ">
-        <div className=" mx-10">
-            <div className="flex flex-col bg-base-300 backdrop-blur-sm rounded-lg shadow-md mx-10 my-5 mt-10 bg-opacity-60">
-            <div className='flex flex-row '>
-                {posterUrl ? <img className=" w-1/3 h-1/3 rounded shadow-red-800" src={posterUrl} alt='Poster Picture' /> : <div className="skeleton w-[20rem] h-[30rem]"></div>}
-                <div className="flex flex-col gap-2 w-1/2 m-5">
-                    <h1 className="text-4xl font-bold ">{movieData.title? movieData.title : <div className="skeleton h-7 w-15"></div>} {releaseYear ? <p className="text-xl badge ml-2 p-3 shadow-md">{releaseYear}</p>:null}
+        <main className="w-fit h-fit " style={{ filter: 'brightness(105%) contrast(105%)',  backgroundImage: `linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 66%, rgba(17,17,17,0.427608543417367) 82%, rgba(50,50,50,0) 100%), url(${backgroundImage})` , backgroundRepeat:"repeat" , backgroundSize:"contain",backgroundAttachment:"local"}}>
+        <div className="flex justify-center w-full">
+        <div className="sm:mx-16">
+            <div className="flex flex-col bg-base-300 backdrop-blur-sm rounded-lg shadow-md my-5 mt-10 bg-opacity-65">
+            <div className='flex flex-col sm:flex-row '>
+                {posterUrl ? <img className="min-w-[85vw] sm:min-w-[30vw] mx-auto sm:mx-0  w-1/3 h-1/3 rounded shadow-red-800" src={posterUrl} alt='Poster Picture' /> : <div className="skeleton w-[20rem] h-[30rem]"></div>}
+                <div className="flex flex-col gap-2 max-w-[50vw] w-1/2 m-5">
+                    <h1 className="min-w-[80vw] sm:min-w-[30vw] mx-[5vw] sm:mx-0 text-2xl sm:text-4xl font-bold ">{movieData.title? movieData.title : <div className="skeleton h-7 w-15"></div>} {releaseYear ? <p className="text-xl badge sm:ml-2 p-3 shadow-md">{releaseYear}</p>:null}
                     
                     </h1>
-                    <div className="mx-2 font-bold text-1xl mt-5 ">
-                        <h1 className="mr-2">Genre:{movieData.genres && movieData.genres.map((genre: { name: string } , index:number) =>  <>{index !==0 ? ',':''} <span className="font-thin badge mx-1">{genre.name}</span></>)
+                    <div className="w-[80vw] sm:w-[50vw] mx-[5vw] sm:mx-0 font-bold text-sm sm:text-1xl mt-5 ">
+                        <h1 className="mr-2">Genre:{movieData.genres && movieData.genres.map((genre: { name: string } , index:number) =>  <>{index !==0 ? ' - ':''} <span className="font-thin badge m-1">{genre.name}</span></>)
                         }</h1>
                         <div className="divider my-2 h-1"></div> 
                         
@@ -230,7 +230,7 @@ export default function MoviePage(){
                         <div className="divider my-2 h-1"></div> 
                         {new Date(movieData.release_date) > new Date() ? <span className='alert'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-info shrink-0 w-7 h-7"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         {movieData.status}</span>:
-                        <Link to={`/Watch/Movie/${movieID}?name=${movieData.title}&year=${releaseYear}&i=${movieData.imdb_id}`} className="btn btn-block bg-white text-xl text-black hover:text-white font-bold mt-7 mr-1 ">
+                        <Link to={`/Watch/Movie/${movieID}?name=${movieData.title}&year=${releaseYear}&i=${movieData.imdb_id}`} className="btn btn-block h-fit bg-white text-xl text-black hover:text-white font-bold mt-7 mr-1 ">
                         {progress > 0 ? `Continue (${formatTime(time)}) (${progress}%)`:"Watch Movie"}
                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2.5" stroke-linecap="butt" stroke-linejoin="bevel"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
                         </Link>}
@@ -241,9 +241,9 @@ export default function MoviePage(){
     </button>*/}
                     </div>
                 </div>
-                <div className="mt-5">
+                <div className="mt-5 ml-[43vw] sm:ml-0">
                     <div className="tooltip" data-tip={bookmarks.includes('m'+movieID?.toString()) ? `Remove "${movieData.title}" from Bookmarks` : "Bookmark"}>
-                    <button className="btn btn-square shadow-lg transition-transform transform hover:scale-110" onClick={toggleBookmark}>
+                    <button className="btn btn-square scale-110 sm:scale-100 shadow-lg transition-transform transform hover:scale-125" onClick={toggleBookmark}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill={bookmarks.includes('m'+movieID?.toString()) ? "currentcolor" : "none"} stroke="currentcolor" stroke-width="2.5" stroke-linecap="butt" stroke-linejoin="bevel"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
                     </button>
                     </div>
@@ -252,14 +252,14 @@ export default function MoviePage(){
             </div>
                 {movieData.overview ?
                 <div className="container mx-auto">
-                <div className="w-full mt-10">
-                    <h1 className="mx-2 font-bold text-2xl ">Overview:</h1>
-                    <div className="divider my-2 h-1 mx-[1%]"></div> 
-                    <p className="text-xl mx-5 my-3 font-thin">{movieData.overview}</p>
+                <div className="max-w-[95vw] w-full mt-10">
+                    <h1 className="mx-5 font-bold text-2xl ">Overview:</h1>
+                    <div className="divider my-2 h-1"></div> 
+                    <p className="text-xl mx-6 my-3 font-thin">{movieData.overview}</p>
                     
                 </div> </div>: null}
                 {!isArrayEmpty(creditsData.cast)  && <><h1 className="text-4xl font-bold mx-10 mt-10">Cast</h1>
-                <div className="flex flex-col w-full justify-center items-center">
+                <div className="flex flex-col max-w-[100vw] w-full justify-center items-center">
                     <ItemScroll>
                     {creditsData.cast ? (creditsData.cast.map((castMember: any) => (
                       <div className="w-fit">

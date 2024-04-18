@@ -198,7 +198,7 @@ const Watch: React.FC<watchProps> = ( { MediaType }) => {
     }
     return(
         <>
-<div className={`bg-black h-[${window.innerHeight}] w-[${window.innerWidth}] overflow-hidden`}>
+<div className={`bg-black select-none h-[${window.innerHeight}] w-[${window.innerWidth}] overflow-hidden`}>
 {startPlay  ? <VideoPlayer media={mediaInfo} videoSrc={StreamLink} provider_ID={provider_id} providersList={sourceIds} Name={mediaInfo.title} Stream_Type={StreamType} Quality={StreamQuality} mediaID={mediaID ?? ''} mediaType={MediaType} sessionIndex={sessionIndex ?? '1'} episodeIndex={epIndex ?? '1'}/> : null}
 {!FoundStream && DoneFetching ? <StreamNotFound Name={mediaInfo.title} Season={sessionIndex??null} Episode={epIndex??null}/>: null}
 {!startPlay && !DoneFetching  ? 

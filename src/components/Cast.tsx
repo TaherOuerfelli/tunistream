@@ -24,14 +24,14 @@ const Card: React.FC<CastProps> = ({ caster }) => {
         profilePage=`https://www.themoviedb.org/person/${caster.id}`;
     }
     return(
-        <a href={profilePage} target="_blank" rel="noopener noreferrer" className="avatar flex flex-col m-1 p-5 w-full rounded-lg text-center items-center hover:bg-base-100">
-            <div className=" w-24 rounded-full">
+        <a href={profilePage} target="_blank" rel="noopener noreferrer" className="avatar flex flex-col p-1 sm:m-1 sm:py-4 sm:px-2 sm:w-full rounded-lg text-center items-center hover:bg-base-100">
+            <div className="w-[5rem] sm:w-[7rem] rounded-full">
                 <img src={imglink}
                 alt={caster.name}
                 onError={() => {imglink=AltImg}}
                 />
             </div>
-            <p className=" text-1xl font-bold mt-1 w-fit ">{caster.name}</p>
+            <p className=" text-1xl font-bold mt-1 w-[7rem] sm:w-[9rem] ">{caster.name}</p>
             {caster.character?(<p>"{caster.character}"</p>):null}
     
         </a>

@@ -68,11 +68,11 @@ const ShowSeasons: React.FC<ShowProps> = ({ seasonsList, ShowID , ShowIMDBID , S
 
             {seasonsList.map(season => (
                 selectedSeason === season.season_number && (
-                    <div key={season.season_number} className="overflow-x-auto mt-2">
+                    <div key={season.season_number} className="overflow-x-auto max-w-[100vw] mt-2">
                         <table className="table">
                             <thead>
                                 <tr>
-                                    <th className="w-[92px]"></th>
+                                    <th className="sm:w-[92px]"></th>
                                     <th>Episode Name</th>
                                     <th>Duration</th>
                                     <th>Progress</th>
@@ -82,9 +82,9 @@ const ShowSeasons: React.FC<ShowProps> = ({ seasonsList, ShowID , ShowIMDBID , S
                                 
                                 {seasonEpisodes[season.season_number] && seasonEpisodes[season.season_number].map((episode: any) => (
                                     <tr key={episode.id} className={` ${watchData[`s${ShowID}${season.season_number}${episode.episode_number}`] && watchData[`s${ShowID}${season.season_number}${episode.episode_number}`].progress > 0 ? 'bg-base-300':null} hover:bg-base-200 text-lg ${new Date(episode.air_date) > new Date() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} onClick={() => navigate(`/Watch/Series/${ShowID}/Season/${season.season_number}/Episode/${episode.episode_number}?name=${ShowName}&year=${ShowReleaseDate}&epID=${episode.id}&ssID=${season.id}&i=${ShowIMDBID}`)}>
-                                        <th className="badge m-5">{episode.episode_number}</th>
+                                        <th className="badge mt-5 ml-2 sm:m-5">{episode.episode_number}</th>
                                         <td>{episode.name} {new Date(episode.air_date) > new Date() ? <span className='badge'>Not aired yet. </span>: ''}</td>
-                                        <td>{episode.runtime} min</td>
+                                        <td className='text-xs sm:text-sm font-thin'>{episode.runtime} min</td>
                                         <td>
                                             <div className="radial-progress text-xs" style={{ "--value": watchData[`s${ShowID}${season.season_number}${episode.episode_number}`] ? `${watchData[`s${ShowID}${season.season_number}${episode.episode_number}`].progress}` : '0', "--size": "2.5rem", "--thickness": "5px" } as any} role="progressbar">
                                                 {watchData[`s${ShowID}${season.season_number}${episode.episode_number}`] ? `${watchData[`s${ShowID}${season.season_number}${episode.episode_number}`].progress}%` : '0%'}
