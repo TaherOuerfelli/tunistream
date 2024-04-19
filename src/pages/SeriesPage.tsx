@@ -28,9 +28,22 @@ const scrollToTop = () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
-interface MediaData {
-  [key: string]: { time: number , progress : number};
+
+interface MovieData {
+  time: number;
+  progress: number;
 }
+
+interface EpisodeData {
+  time: number;
+  progress: number;
+}
+
+type SeasonData = EpisodeData[];
+
+type MediaData = {
+  [key: string]: MovieData | SeasonData[];
+};
   
 
 export default function SeriesPage(){
@@ -43,28 +56,49 @@ export default function SeriesPage(){
     const [currentSeason , setCurrentSeason] = useState("1");
     const [currentEpisode , setCurrentEpisode] = useState("1");
     const [currentTime , setCurrentTime] = useState(0);
+    const [currentProgress , setCurrentProgress] = useState(0);
 
     useEffect(() => {
       scrollToTop();
-      let mediaData:MediaData = {};
+      let mediaData: MediaData = {};
       try {
-          const storedMediaData = localStorage.getItem('mediaData');
-          if (storedMediaData) {
-            mediaData = JSON.parse(storedMediaData);
-            Object.keys(mediaData).map((mediaID)=>{
-              if(mediaID.slice(1, -2) === seriesID)
-              {
-                currentSeason < mediaID.slice(-2, -1) ? setCurrentSeason(mediaID.slice(-2, -1)):null;
-                currentEpisode < mediaID.slice(-1)? setCurrentEpisode(mediaID.slice(-1)):null;
-                setCurrentTime(mediaData[`s${mediaID.slice(1, -2)}${currentSeason}${currentEpisode}`].time)
+        const storedMediaData = localStorage.getItem('mediaData');
+        if (storedMediaData) {
+          mediaData = JSON.parse(storedMediaData);
+          let maxSeasonIndex = -1;
+          let maxEpisodeIndex = -1;
+          
+          Object.keys(mediaData).forEach(mediaID => {
+            if (mediaID.slice(1) === seriesID) { // remove the "s"
+              const seasonData = mediaData[mediaID] as SeasonData[] | null;
+              if (Array.isArray(seasonData)) {
+                seasonData.forEach((season, seasonIndex) => {
+                  if (Array.isArray(season)) {
+                    season.forEach((episode, episodeIndex) => {
+                      if (episode && episode.time !== undefined) {
+                        if (seasonIndex > maxSeasonIndex || (seasonIndex === maxSeasonIndex && episodeIndex > maxEpisodeIndex)) {
+                          maxSeasonIndex = seasonIndex;
+                          maxEpisodeIndex = episodeIndex;
+                          
+                        }
+                      }
+                    });
+                  }
+                });
               }
-            })
+            }
+          });
+          if (maxSeasonIndex !== -1 && maxEpisodeIndex !== -1) {
+            setCurrentSeason(maxSeasonIndex.toString());
+            setCurrentEpisode(maxEpisodeIndex.toString());
+            setCurrentTime((mediaData['s' + seriesID] as SeasonData[])[maxSeasonIndex][maxEpisodeIndex].time);
+            setCurrentProgress((mediaData['s' + seriesID] as SeasonData[])[maxSeasonIndex][maxEpisodeIndex].progress);
           }
-        } catch (error) {
-          console.error('Error parsing media data from localStorage:', error);
         }
-    },[]);
-
+      } catch (error) {
+        console.error('Error parsing media data from localStorage:', error);
+      }
+    }, []);
 
 
     useEffect(() => {
@@ -250,7 +284,7 @@ export default function SeriesPage(){
                         {new Date(seriesData.first_air_date) > new Date() ? <span className='alert'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-info shrink-0 w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         {seriesData.status}</span>:
                         <Link to={`/Watch/Series/${seriesID}/Season/${currentSeason}/Episode/${currentEpisode}?name=${seriesName}&year=${releaseYear}&i=${seriesIMDB}`} className="btn btn-block bg-white text-xl text-black hover:text-white font-bold mt-7 mr-1 ">
-                        {currentSeason !== "1" || currentEpisode !== "1" || currentTime !== 0 ? `S${currentSeason}:E${currentEpisode} - ${formatTime(currentTime)}`:`Watch Now S${currentSeason}:E${currentEpisode}`} 
+                        {currentSeason !== "1" || currentEpisode !== "1" || currentTime !== 0 ? `S${currentSeason}:E${currentEpisode} (${formatTime(currentTime)}) (${currentProgress}%)`:`Watch Now S${currentSeason}:E${currentEpisode}`} 
                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2.5" stroke-linecap="butt" stroke-linejoin="bevel"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
                         </Link>}
                         {/*

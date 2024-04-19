@@ -1,17 +1,32 @@
 import { useEffect, useState } from "react";
 import CardBookmark from "./CardBookmark";
 
+interface MovieData {
+  time: number;
+  progress: number;
+}
 
+interface EpisodeData {
+  time: number;
+  progress: number;
+}
+
+type SeasonData = EpisodeData[];
+
+type MediaData = {
+  [key: string]: MovieData | SeasonData[];
+};
 
 export default function ContinueWatching(){
     const [IsEditing , setIsEditing] = useState<boolean>(false);
-    const [mediaData , setMediaData] = useState({});
+    const [mediaData , setMediaData] = useState<MediaData>({});
     useEffect(() => {
         let mediaData = {};
         try {
             const storedMediaData = localStorage.getItem('mediaData');
             if (storedMediaData) {
               mediaData = JSON.parse(storedMediaData);
+              console.log("MEDIA DATA IN CONTINUE WATCHING:",mediaData);
               setMediaData(mediaData);
             }
           } catch (error) {
@@ -28,6 +43,7 @@ export default function ContinueWatching(){
             const storedMediaData = localStorage.getItem('mediaData');
             if (storedMediaData) {
               mediaData = JSON.parse(storedMediaData);
+              console.log("MEDIA DATA IN CONTINUE WATCHING:",mediaData);
               setMediaData(mediaData);
             }
           } catch (error) {
@@ -52,22 +68,31 @@ export default function ContinueWatching(){
                 </div>
                 </div>
                 <div className="divider w-full h-0 m-0"></div>
-                {Object.keys(mediaData).reduce((acc: { mediaId: string, session: string, episode: string }[], mediaID) => {
-                    const mediaIdWithoutSession = mediaID.startsWith("m") ? mediaID : mediaID.slice(0, -2);
-                    const session = mediaID.startsWith("m") ? '' : mediaID.slice(-2, -1);
-                    const episode = mediaID.startsWith("m") ? '' : mediaID.slice(-1);
-                    const existingIndex = acc.findIndex(item => item.mediaId === mediaIdWithoutSession);
-                    if (existingIndex !== -1) {
-                        if (parseInt(episode) > parseInt(acc[existingIndex].episode)) {
-                            acc[existingIndex] = { mediaId: mediaIdWithoutSession, session, episode };
+                {Object.keys(mediaData).map((mediaID: string) => {
+                  let season = '1';
+                  let episode = '1';
+
+                  if (mediaID.startsWith('s')) { // If it's a series
+
+                    const seriesData = mediaData[mediaID] as SeasonData[] | undefined;
+                    if (seriesData && Array.isArray(seriesData)) {
+                      seriesData.forEach((seasonData, seasonIndex) => {
+                        if (Array.isArray(seasonData)) {
+                          seasonData.forEach((episodeData, episodeIndex) => {
+                            if (episodeData && episodeData.time !== undefined) {
+                              season = String(seasonIndex);
+                              episode = String(episodeIndex);
+                            }
+                          });
                         }
-                    } else {
-                        acc.push({ mediaId: mediaIdWithoutSession, session, episode });
+                      });
                     }
-                    return acc;
-                }, []).reverse().map(({ mediaId, session, episode }) => (
-                    <CardBookmark mediaId={mediaId} session={session} episode={episode} isEditing={IsEditing} callBackFn={handleReset} deleteType="W"/>
-                ))}
+                  }
+
+                  return (
+                    <CardBookmark key={mediaID} mediaId={mediaID} session={season} episode={episode} isEditing={IsEditing} callBackFn={handleReset} deleteType="W"/>
+                  );
+                })};
             </div>
         )}
 

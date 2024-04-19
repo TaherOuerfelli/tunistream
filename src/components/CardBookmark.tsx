@@ -84,7 +84,7 @@ const CardBookmark: React.FC<CardProps> = ({ mediaId , session , episode , isEdi
                 if(mediaData){
                 let updatedMediaData: { [key: string]: any }  = { ...mediaData };
                 Object.keys(updatedMediaData).map((key) => {
-                    if ((key.startsWith('s') ? key.slice(0,-2) : key) === mediaId) {
+                    if (key === mediaId) {
                         delete updatedMediaData[key];
                     }
                 });

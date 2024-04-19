@@ -1,11 +1,25 @@
 import { useEffect, useState } from "react";
 import CardBookmark from "./CardBookmark";
 
-
+interface MovieData {
+    time: number;
+    progress: number;
+  }
+  
+  interface EpisodeData {
+    time: number;
+    progress: number;
+  }
+  
+  type SeasonData = EpisodeData[];
+  
+  type MediaData = {
+    [key: string]: MovieData | SeasonData[];
+  };
 
 export default function Bookmarks(){
     const [IsEditing , setIsEditing] = useState<boolean>(false);
-    const [mediaData , setMediaData] = useState({});
+    const [mediaData , setMediaData] = useState<MediaData>({});
     const [bookmarks , setBookmarks] = useState<string | null>();
     useEffect(() => {
         let mediaData = {};
@@ -15,7 +29,7 @@ export default function Bookmarks(){
         try {
             const storedMediaData = localStorage.getItem('mediaData');
             if (storedMediaData) {
-              mediaData = JSON.parse(storedMediaData);
+              mediaData = JSON.parse(storedMediaData) as MediaData;
               setMediaData(mediaData);
             }
           } catch (error) {
@@ -59,24 +73,27 @@ export default function Bookmarks(){
                 </div>
                 </div>
                 <div className="divider w-full h-0 m-0"></div>
-                {JSON.parse(bookmarks).reverse().map((mediaId: string) => {
-                    let session = '1';
+                {JSON.parse(bookmarks).reverse().map((bookmark: string) => {
+                    let season = '1';
                     let episode = '1';
-                    if (mediaId.startsWith('s')) {
-                        const seriesId = mediaId.substring(1);
-                        const highestSession = Object.keys(mediaData).filter(key => key.startsWith('s' + seriesId)).reduce((maxSession, currentSession) => {
-                            const sessionIndex = parseInt(currentSession.substring(seriesId.length + 1, seriesId.length + 2));
-                            return sessionIndex > maxSession ? sessionIndex : maxSession;
-                        }, 1);
-                        const highestEpisode = Object.keys(mediaData).filter(key => key.startsWith('s' + seriesId + highestSession)).reduce((maxEpisode, currentEpisode) => {
-                            const episodeIndex = parseInt(currentEpisode.substring(seriesId.length + highestSession.toString().length + 1));
-                            return episodeIndex > maxEpisode ? episodeIndex : maxEpisode;
-                        }, 1);
-                        session = highestSession.toString();
-                        episode = highestEpisode.toString();
-                    }
+
+                    if (bookmark.startsWith('s')) { // If it's a series bookmark
+                        const seriesBookmarks = mediaData[bookmark] as SeasonData[] | undefined;
+                        if (seriesBookmarks && Array.isArray(seriesBookmarks)) {
+                          seriesBookmarks.forEach((seasonData, seasonIndex) => {
+                            if (Array.isArray(seasonData)) { // Additional check
+                              seasonData.forEach((episodeData, episodeIndex) => {
+                                if (episodeData && episodeData.time !== undefined) {
+                                  season = String(seasonIndex);
+                                  episode = String(episodeIndex);
+                                }
+                              });
+                            }
+                          });
+                        }
+                      }
                     return (
-                        <CardBookmark mediaId={mediaId} session={session} episode={episode} isEditing={IsEditing} callBackFn={handleReset} deleteType="B"/>
+                        <CardBookmark key={bookmark} mediaId={bookmark} session={season} episode={episode} isEditing={IsEditing} callBackFn={handleReset} deleteType="B"/>
                     );
                 })}
             </div>

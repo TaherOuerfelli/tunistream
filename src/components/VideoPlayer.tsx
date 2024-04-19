@@ -55,6 +55,22 @@ const formatTime = (time: number): string => {
   
 };
 
+interface MovieData {
+  time: number;
+  progress: number;
+}
+
+interface EpisodeData {
+  time: number;
+  progress: number;
+}
+
+type SeasonData = EpisodeData[];
+
+type MediaData = {
+  [key: string]: MovieData | SeasonData[];
+};
+
 const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, providersList , Name, Stream_Type, Quality , mediaID , mediaType , sessionIndex , episodeIndex}) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const fullscreenRef = useRef<HTMLDivElement>(null);
@@ -346,7 +362,12 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
           if(mediaType === "movie"){
            currentTime = mediaData['m'+mediaID].time;
           }else{
-            currentTime = mediaData['s'+mediaID+sessionIndex+episodeIndex].time;
+            const seasonKey = 's' + mediaID;
+  
+            const season = mediaData[seasonKey] as SeasonData[];
+            if (Array.isArray(season) && season[parseInt(sessionIndex)] && season[parseInt(sessionIndex)][parseInt(episodeIndex)]) {
+              currentTime = season[parseInt(sessionIndex)][parseInt(episodeIndex)].time || 0;
+            }
           }
           // Use the retrieved currentTime as needed
           addSeconds(currentTime);
@@ -386,24 +407,44 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
     const videoElement = videoRef.current;
     if (videoElement && videoElement.readyState > 1 && !videoElement.paused) {
       setCurrentTime(videoElement.currentTime);
-      let mediaData :  { [key: string]: { time: number; progress: number }}  = {};
+      let mediaData: MediaData = {};
       try {
         const storedMediaData = localStorage.getItem('mediaData');
         if (storedMediaData) {
-          mediaData = JSON.parse(storedMediaData);
+          mediaData = JSON.parse(storedMediaData) as MediaData;
         }
       } catch (error) {
         console.error('Error parsing media data from localStorage:', error);
       }
-      if(mediaType === 'movie'){
-        mediaData['m'+mediaID] = {"time":Math.floor(videoElement.currentTime),"progress":Math.floor(progress*0.01) === 0 && progress!==0 ? 1 : Math.floor(progress*0.01)};
-      }else{
-        mediaData['s'+mediaID+sessionIndex+episodeIndex] = {"time":Math.floor(videoElement.currentTime),"progress":Math.floor(progress*0.01) === 0 && progress!==0 ? 1 : Math.floor(progress*0.01)};
+      if (mediaType === 'movie') {
+        mediaData['m' + mediaID] = {
+          time: Math.floor(videoElement.currentTime),
+          progress: Math.floor(progress * 0.01) === 0 && progress !== 0 ? 1 : Math.floor(progress * 0.01)
+        };
+      } else {
+        const seasonKey = 's' + mediaID;
+  
+        if (!mediaData[seasonKey]) {
+          mediaData[seasonKey] = [];
+        }
+  
+        const season = mediaData[seasonKey] as SeasonData[];
+        if (!Array.isArray(season[parseInt(sessionIndex)])) {
+          season[parseInt(sessionIndex)] = [];
+        }
+  
+        const episode = season[parseInt(sessionIndex)];
+        episode[parseInt(episodeIndex)] = {
+          time: Math.floor(videoElement.currentTime),
+          progress: Math.floor(progress * 0.01) === 0 && progress !== 0 ? 1 : Math.floor(progress * 0.01)
+        };
       }
       localStorage.setItem('mediaData', JSON.stringify(mediaData));
     }
   };
-  
+
+
+
   const addSeconds = (value : number) => {
     const videoElement = videoRef.current;
     if (videoElement) {
