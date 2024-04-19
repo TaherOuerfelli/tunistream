@@ -16,9 +16,24 @@ interface ShowProps {
     ShowName:string;
     ShowReleaseDate:string;
 }
+interface MovieData {
+    time: number;
+    progress: number;
+  }
+  
+  interface EpisodeData {
+    time: number;
+    progress: number;
+  }
+  
+  type SeasonData = EpisodeData[];
+  
+  type MediaData = {
+    [key: string]: MovieData | SeasonData[];
+  };
 
 const ShowSeasons: React.FC<ShowProps> = ({ seasonsList, ShowID , ShowIMDBID , ShowName , ShowReleaseDate }) => {
-    const [selectedSeason, setSelectedSeason] = useState<number | null>(1);
+    const [selectedSeason, setSelectedSeason] = useState<number>(1);
     const [seasonEpisodes, setSeasonEpisodes] = useState<Record<string, any>>({});
     const [watchData, setWatchData] = useState<Record<string, any>>({});
     const navigate = useNavigate();
@@ -40,8 +55,8 @@ const ShowSeasons: React.FC<ShowProps> = ({ seasonsList, ShowID , ShowIMDBID , S
     }, [selectedSeason, ShowID]);
 
     useEffect(() => {
-      let mediaData = {};
-      try {
+        let mediaData: MediaData = {};
+        try {
           const storedMediaData = localStorage.getItem('mediaData');
           if (storedMediaData) {
             mediaData = JSON.parse(storedMediaData);
@@ -50,10 +65,40 @@ const ShowSeasons: React.FC<ShowProps> = ({ seasonsList, ShowID , ShowIMDBID , S
         } catch (error) {
           console.error('Error parsing media data from localStorage:', error);
         }
-    },[]);
+        
+      }, []);
+
+      useEffect(() => {
+        let maxSeasonIndex = -1;
+        let maxEpisodeIndex = -1;
+        
+        Object.keys(watchData).forEach(mediaID => {
+          if (ShowID && mediaID.slice(1) === ShowID.toString()) { // remove the "s"
+            const seasonData = watchData[mediaID] as SeasonData[] | null;
+            if (Array.isArray(seasonData)) {
+              seasonData.forEach((season, seasonIndex) => {
+                if (Array.isArray(season)) {
+                  season.forEach((episode, episodeIndex) => {
+                    if (episode && episode.time !== undefined) {
+                      if (seasonIndex > maxSeasonIndex || (seasonIndex === maxSeasonIndex && episodeIndex > maxEpisodeIndex)) {
+                        maxSeasonIndex = seasonIndex;
+                        maxEpisodeIndex = episodeIndex;
+                        
+                      }
+                    }
+                  });
+                }
+              });
+            }
+          }
+        });
+        if (maxSeasonIndex !== -1 && maxEpisodeIndex !== -1) {
+            setSelectedSeason(maxSeasonIndex);
+        }
+      }, [watchData,ShowID]);
 
     const handleSeasonClick = (seasonNumber: number) => {
-        setSelectedSeason(seasonNumber === selectedSeason ? null : seasonNumber);
+        seasonNumber !== selectedSeason && setSelectedSeason(seasonNumber);
     };
     if(!seasonsList) return <p>Series details are unavailable.</p>
     return (

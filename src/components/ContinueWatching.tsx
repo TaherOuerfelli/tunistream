@@ -71,6 +71,7 @@ export default function ContinueWatching(){
                 {Object.keys(mediaData).map((mediaID: string) => {
                   let season = '1';
                   let episode = '1';
+                  let progress = null;
 
                   if (mediaID.startsWith('s')) { // If it's a series
 
@@ -82,6 +83,7 @@ export default function ContinueWatching(){
                             if (episodeData && episodeData.time !== undefined) {
                               season = String(seasonIndex);
                               episode = String(episodeIndex);
+                              progress = episodeData.progress;
                             }
                           });
                         }
@@ -90,9 +92,9 @@ export default function ContinueWatching(){
                   }
 
                   return (
-                    <CardBookmark key={mediaID} mediaId={mediaID} session={season} episode={episode} isEditing={IsEditing} callBackFn={handleReset} deleteType="W"/>
+                    <CardBookmark key={mediaID} mediaId={mediaID} session={season} episode={episode} progress={progress} isEditing={IsEditing} callBackFn={handleReset} deleteType="W"/>
                   );
-                })};
+                })}
             </div>
         )}
 

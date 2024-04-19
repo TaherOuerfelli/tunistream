@@ -21,6 +21,7 @@ export default function Bookmarks(){
     const [IsEditing , setIsEditing] = useState<boolean>(false);
     const [mediaData , setMediaData] = useState<MediaData>({});
     const [bookmarks , setBookmarks] = useState<string | null>();
+    const allBookmarks = [...new Set([...Object.keys(mediaData), ...(bookmarks ? JSON.parse(bookmarks) : [])])];
     useEffect(() => {
         let mediaData = {};
         let bookmarks = localStorage.getItem('bookmarks');
@@ -73,29 +74,33 @@ export default function Bookmarks(){
                 </div>
                 </div>
                 <div className="divider w-full h-0 m-0"></div>
-                {JSON.parse(bookmarks).reverse().map((bookmark: string) => {
-                    let season = '1';
-                    let episode = '1';
+                
 
-                    if (bookmark.startsWith('s')) { // If it's a series bookmark
-                        const seriesBookmarks = mediaData[bookmark] as SeasonData[] | undefined;
-                        if (seriesBookmarks && Array.isArray(seriesBookmarks)) {
+                {allBookmarks.filter(bookmark => bookmarks && bookmarks.includes(bookmark)).map((bookmark) => {
+                  let season = '1';
+                  let episode = '1';
+                  let progress = null;
+
+                  if (bookmark.startsWith('s')) { // If it's a series bookmark
+                      const seriesBookmarks = mediaData[bookmark] as SeasonData[] | undefined;
+                      if (seriesBookmarks && Array.isArray(seriesBookmarks)) {
                           seriesBookmarks.forEach((seasonData, seasonIndex) => {
-                            if (Array.isArray(seasonData)) { // Additional check
-                              seasonData.forEach((episodeData, episodeIndex) => {
-                                if (episodeData && episodeData.time !== undefined) {
-                                  season = String(seasonIndex);
-                                  episode = String(episodeIndex);
-                                }
-                              });
-                            }
+                              if (Array.isArray(seasonData)) { // Additional check
+                                  seasonData.forEach((episodeData, episodeIndex) => {
+                                      if (episodeData && episodeData.time !== undefined) {
+                                          season = String(seasonIndex);
+                                          episode = String(episodeIndex);
+                                          progress = episodeData.progress;
+                                      }
+                                  });
+                              }
                           });
-                        }
                       }
-                    return (
-                        <CardBookmark key={bookmark} mediaId={bookmark} session={season} episode={episode} isEditing={IsEditing} callBackFn={handleReset} deleteType="B"/>
-                    );
-                })}
+                  }
+                  return (
+                      <CardBookmark key={bookmark} mediaId={bookmark} session={season} episode={episode} progress={progress} isEditing={IsEditing} callBackFn={handleReset} deleteType="B"/>
+                  );
+              })}
             </div>
         )}
 

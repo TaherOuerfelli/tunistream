@@ -417,9 +417,12 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
         console.error('Error parsing media data from localStorage:', error);
       }
       if (mediaType === 'movie') {
-        mediaData['m' + mediaID] = {
-          time: Math.floor(videoElement.currentTime),
-          progress: Math.floor(progress * 0.01) === 0 && progress !== 0 ? 1 : Math.floor(progress * 0.01)
+        mediaData = {
+          ...mediaData,
+          ['m' + mediaID]: {
+            time: Math.floor(videoElement.currentTime),
+            progress: Math.floor(progress * 0.01) === 0 && progress !== 0 ? 1 : Math.floor(progress * 0.01)
+          }
         };
       } else {
         const seasonKey = 's' + mediaID;
@@ -437,6 +440,10 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
         episode[parseInt(episodeIndex)] = {
           time: Math.floor(videoElement.currentTime),
           progress: Math.floor(progress * 0.01) === 0 && progress !== 0 ? 1 : Math.floor(progress * 0.01)
+        };
+        mediaData = {
+          [seasonKey]: [episode, ...(season.filter((_, index) => index !== parseInt(sessionIndex)) || [])],
+          ...mediaData
         };
       }
       localStorage.setItem('mediaData', JSON.stringify(mediaData));
