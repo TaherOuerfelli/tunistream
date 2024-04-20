@@ -26,7 +26,7 @@ const Settings: React.FC = () => {
       <Header />
 
       <div className="flex flex-row my-10">
-        <ul className="menu menu-lg bg-base-200 ml-10 mt-36 w-[35%] min-w-48 h-fit rounded-box sticky top-20">
+        <ul className="hidden sm:block menu menu-lg bg-base-200 ml-10 mt-36 w-[35%] min-w-48 h-fit rounded-box sticky top-20">
           <h1 className="menu-title text-3xl font-bold ">
           Settings</h1>
           <div className='divider h-1 p-0 mx-[5%] my-0'></div>
@@ -34,7 +34,7 @@ const Settings: React.FC = () => {
           <li><a className=' text-xl' onClick={() =>scrollToElement(themeRef)}>Appearance</a></li>
           <li><a className=' text-xl' onClick={() =>scrollToElement(otherRef)}>Other Settings</a></li>
         </ul>
-        <div className="container mx-10 bg-base-200 rounded-box h-fit w-full" >
+        <div className="container sm:mx-10 bg-base-200 rounded-box h-fit w-full" >
           <div className='mx-12' >
           <div className="w-full mt-10 " ref={langRef}>
                 <h1 className="mx-2 font-bold text-4xl " >Language:</h1>
