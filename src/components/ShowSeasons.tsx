@@ -113,7 +113,7 @@ const ShowSeasons: React.FC<ShowProps> = ({ seasonsList, ShowID , ShowIMDBID , S
 
             {seasonsList.map(season => (
                 selectedSeason === season.season_number && (
-                    <div key={season.season_number} className="overflow-x-auto max-w-[100vw] mt-2">
+                    <div key={season.season_number} className="overflow-x-hidden max-w-[100vw] mt-2">
                         <table className="table">
                             <thead>
                                 <tr>
@@ -132,7 +132,7 @@ const ShowSeasons: React.FC<ShowProps> = ({ seasonsList, ShowID , ShowIMDBID , S
                                         && 
                                         watchData[`s${ShowID}`][season.season_number][episode.episode_number] 
                                         && watchData[`s${ShowID}`][season.season_number][episode.episode_number].progress !== undefined ? 'bg-base-300':null} hover:bg-base-200 text-lg ${new Date(episode.air_date) > new Date() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} onClick={() => navigate(`/Watch/Series/${ShowID}/Season/${season.season_number}/Episode/${episode.episode_number}?name=${ShowName}&year=${ShowReleaseDate}&epID=${episode.id}&ssID=${season.id}&i=${ShowIMDBID}`)}>
-                                        <th className="badge mt-5 ml-2 sm:m-5">{episode.episode_number}</th>
+                                        <th className="badge mt-5 ml-3 sm:m-5">{episode.episode_number}</th>
                                         <td>{episode.name} {new Date(episode.air_date) > new Date() ? <span className='badge'>Not aired yet. </span>: ''}</td>
                                         <td className='text-xs sm:text-sm font-thin'>{episode.runtime} min</td>
                                         <td>
@@ -166,7 +166,7 @@ const ShowSeasons: React.FC<ShowProps> = ({ seasonsList, ShowID , ShowIMDBID , S
                                             </span><p className='mx-5'>Episodes are currently not available for this Season.</p>
                                             </div>
                                             )
-                                        : !seasonEpisodes[season.season_number] && <p>Loading</p>}</td>
+                                        : !seasonEpisodes[season.season_number] && <p>Loading <span className="loading loading-dots loading-sm ml-2 mt-7"></span></p>}</td>
                                     </tr>
 
                             </tbody>
