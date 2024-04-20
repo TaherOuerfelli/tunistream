@@ -112,7 +112,7 @@ const CardBookmark: React.FC<CardProps> = ({ mediaId , session , episode , progr
     return (
         <>
             {mediaInfo && (
-                <div className={`card  ${theme === 'black' || theme === 'cyberpunk' ? 'rounded-none' : 'rounded-md'} p-0 btn max-w-[10rem] sm:max-w-[15rem] h-fit bg-base-100/50 shadow-xl ${theme === 'light' || theme === 'cyberpunk' ? 'border-1 border-black' : theme === 'black' ? 'border-2 border-gray-700':'border-2 border-gray-800'} transition-all  ${isDeleted? 'duration-500 w-0 opacity-0' : 'opacity-100 duration-0 w-56'}`} onClick={handleClick} onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)} >
+                <div className={`card z-10 ${theme === 'black' || theme === 'cyberpunk' ? 'rounded-none' : 'rounded-md'} p-0 btn max-w-[10rem] sm:max-w-[15rem] h-fit bg-base-100/50 shadow-xl ${theme === 'light' || theme === 'cyberpunk' ? 'border-1 border-black' : theme === 'black' ? 'border-2 border-gray-700':'border-2 border-gray-800'} transition-all  ${isDeleted? 'duration-500 w-0 opacity-0' : 'opacity-100 duration-0 w-56'}`} onClick={handleClick} onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)} >
                     
                     
                     <div className="card-body relative mb-4 p-0">
