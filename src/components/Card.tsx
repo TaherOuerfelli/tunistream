@@ -29,7 +29,7 @@ const Card: React.FC<CardProps> = ({ info }) => {
         
         
         <div className="card-body mb-4 p-0">
-        {isLoading ? <div className="skeleton w-48 h-80 mt-4"></div>:null}
+        {isLoading ? <div className="skeleton w-[8rem] h-[12rem] sm:w-48 sm:h-80 mt-4"></div>:null}
         <img className="w-full h-full mt-4" src={info.posterUrl} alt={`${info.title} Poster`} style={{ display: !isLoading ? 'block' : 'none' }} 
         onLoad={() => setIsLoading(false)}
         onError={() => setIsLoading(false)}
