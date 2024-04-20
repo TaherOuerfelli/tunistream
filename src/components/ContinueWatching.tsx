@@ -89,6 +89,8 @@ export default function ContinueWatching(){
                         }
                       });
                     }
+                  }else{
+                    mediaData[mediaID] ? progress = (mediaData[mediaID] as MovieData).progress:progress=null;
                   }
 
                   return (

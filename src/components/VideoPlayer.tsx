@@ -592,7 +592,7 @@ const handleSettings = ()=>{
       </div>
       
       <div className={`flex flex-row absolute top-5 right-0 transition-all duration-500 ${showUI ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'} z-50`}>
-      <Link to='/Home' className="btn btn-ghost text-lg sm:text-2xl absolute right-[45vw] sm:right-10  sm:top-0 font-bold bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 text-transparent bg-clip-text z-50" onClick={() => document.exitFullscreen()}>TUNISTREAM.CLUB</Link>
+      <Link to='/Home' className="btn btn-ghost text-lg sm:text-2xl absolute right-0 sm:right-5  top-2 sm:top-0 font-bold bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 text-transparent bg-clip-text z-50" onClick={() => document.exitFullscreen()}>TUNISTREAM.CLUB</Link>
     </div>
 
 
@@ -623,8 +623,8 @@ const handleSettings = ()=>{
           {/* Setting Menu 1 */}
           <div role='Setting-option' className={`transition-all  ease-in-out ${settingsMenu===1 ? 'duration-250 opacity-100 translate-x-0 h-fit w-fit' : 'duration-100 opacity-0  translate-x-32 w-0 h-0'}`}>
           <div className='flex flex-row'> 
-          <button className={`btn btn-link ${settingsMenu===1 ? 'visible':'hidden'} p-0 my-0 mr-1`} onClick={() =>setSettingsMenu(0)}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="33" height="23" className='mr-2 -mt-5' viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="square"><path d="M75 12H6M12 5l-7 7 7 7"/></svg>
+          <button className={`btn btn-link ${settingsMenu===1 ? 'visible':'hidden'} p-0 my-0 mr-1 hover:scale-110 hover:scale-x-125 hover:translate-y-[0.05rem]`} onClick={() =>setSettingsMenu(0)}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="33" height="23" className='-ml-1 mr-2 -mt-5' viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="square"><path d="M50 12H6M12 5l-7 7 7 7"/></svg>
           </button>
               <h3 className={`card-title text-sm ${settingsMenu===1 ? 'visible':'hidden'} -mt-5`}>Quality</h3>
               </div>
@@ -660,8 +660,8 @@ const handleSettings = ()=>{
            {/* Setting Menu 2 start */}
            <div role='Setting-option' className={`transition-all ease-in-out ${settingsMenu===2 ? 'duration-250 opacity-100 translate-x-0 h-fit w-fit' : 'duration-300 opacity-0  translate-x-32 w-0 h-0'}`}>
           <div className='flex flex-row'> 
-          <button className={`btn btn-link ${settingsMenu===2 ? 'visible':'hidden'} p-1 my-0 mr-1`} onClick={() =>setSettingsMenu(0)}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="33" height="23" className='mr-2 -mt-5' viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="square"><path d="M75 12H6M12 5l-7 7 7 7"/></svg>
+          <button className={`btn btn-link ${settingsMenu===2 ? 'visible':'hidden'} p-1 my-0 mr-1 hover:scale-110 hover:scale-x-125 hover:translate-y-[0.05rem]`} onClick={() =>setSettingsMenu(0)}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="33" height="23" className='-ml-1 mr-2 -mt-5' viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="square"><path d="M50 12H6M12 5l-7 7 7 7"/></svg>
           </button>
               <h3 className={`card-title ${settingsMenu===2 ? 'visible':'hidden'} text-sm -mt-5`}>Sources</h3>
               </div>
@@ -689,8 +689,8 @@ const handleSettings = ()=>{
            {/* Setting Menu 3 */}
         <div role='Settings-menu'  className={`flex flex-col  transition-all  ease-in-out ${settingsMenu===3 ? 'duration-100 opacity-100 translate-x-0 h-fit w-fit' : 'duration-100 opacity-0 -translate-x-32 w-0 h-0'}`}>
         <div className='flex flex-row'>
-        <button className='btn btn-link p-1 my-0 mr-1' onClick={() =>setSettingsMenu(2)}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="35" height="25" className='mr-2' viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M75 12H6M12 5l-7 7 7 7"/></svg>
+        <button className='btn btn-link p-1 my-0 mr-1 hover:scale-110 hover:scale-x-125 hover:translate-y-[0.05rem]' onClick={() =>setSettingsMenu(2)}>
+        <svg xmlns="http://www.w3.org/2000/svg" width="33" height="23" className='-ml-1 mr-2 ' viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="square"><path d="M50 12H6M12 5l-7 7 7 7"/></svg>
           </button>
             <h3 className="card-title text-sm">Embeds:</h3></div>
             <div className='divider h-0 m-0 my-2 w-full'></div>
@@ -732,26 +732,27 @@ const handleSettings = ()=>{
 
 
         <div className={`absolute w-full h-fit bottom-0 pb-3 sm:pb-0 rounded-lg transition-all duration-300 ${showUI ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'} z-50`}>
-        <div className="relative w-[80vw] mx-[10vw] sm:w-[95vw] sm:mx-[2.5vw] sm:-my-[8px]">
+        <div className="relative  w-[80vw] mx-[10vw] sm:w-[95vw] sm:mx-[2.5vw] sm:-my-[8px]">
         <RangeSlider Value={videoLoaded ? progress : 0} BufferValue={Math.round(loadedFraction * 10000)} onChange={(value) => handleProgress(value)}/>
         </div>
-        <div className='flex flex-row items-center mb-1 '>
-        <button className='btn btn-ghost ml-7 px-2' onClick={togglePlayback}>
+        <div className='flex flex-start justify-between items-center  w-[80vw] mx-[10vw] sm:w-[95vw] sm:mx-[2.5vw] sm:-my-[8px]'>
+        <div className='flex flex-row items-center  w-fit mb-3 '>
+        <button className='btn btn-ghost px-2' onClick={togglePlayback}>
         {playing ? 
-       <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+       <svg xmlns="http://www.w3.org/2000/svg" width="29" height="29" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="5" height="16"></rect><rect x="14" y="4" width="5" height="16"></rect></svg>
        : (
-         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+         <svg xmlns="http://www.w3.org/2000/svg" width="29" height="29" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
          )}</button>
 
       <button className='hidden sm:block btn btn-ghost px-3 ' onClick={() => addSeconds(currentTime-10)}>
-      <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 2v6h6M2.66 15.57a10 10 0 1 0 .57-8.38"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 2v6h6M2.66 15.57a10 10 0 1 0 .57-8.38"/></svg>
       </button>
       <button className='hidden sm:block btn btn-ghost px-3 ' onClick={() => addSeconds(currentTime+10)}>
-      <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38"/></svg>
       </button>
 
 
-      <div className='hidden sm:flex sm:flex-row  h-fit w-fit '>
+      <div className='hidden sm:flex sm:flex-row h-fit w-fit '>
         <button className='h-[3rem] w-fit px-1 inline-flex flex-wrap items-center justify-items-center' 
                 onMouseEnter={() => setAudioIsHovered(true)}
                 onMouseLeave={() => setAudioIsHovered(false)}
@@ -771,23 +772,18 @@ const handleSettings = ()=>{
       </button>
 
       </div>
+      <h2 className='select-text text-[0.9rem] sm:text-[1.15rem]  text-gray-300 ml-1'>{formatTime(currentTime)} / {formatTime(duration)}</h2>
+      </div>
 
+        <div className='flex flex-row  mb-3'>
+          <button className="btn btn-ghost px-3" onClick={handleSettings}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" className={` transition-transform duration-200 ${settings ? 'rotate-[45deg]':'null'}`} viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="butt" stroke-linejoin="bevel"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          </button>
 
-      <h2 className='select-text text-sm sm:text-[1.15rem]  text-gray-300 ml-1'>{formatTime(currentTime)} / {formatTime(duration)}</h2>
-
-
-        <div className='flex flex-row absolute right-3'>
-
-
-      <button className="btn btn-ghost px-2 mx-1" onClick={handleSettings}>
-      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="butt" stroke-linejoin="bevel"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-      </button>
-
-      <button className='btn btn-ghost px-2 mx-1 mr-3' onClick={toggleFullScreen}>
-      {document.fullscreenElement? <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path></svg>
-      : <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>}
-      </button>
-
+          <button className='btn btn-ghost px-3' onClick={toggleFullScreen}>
+          {document.fullscreenElement? <svg xmlns="http://www.w3.org/2000/svg" className='-mx-[0.1rem]' width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path></svg>
+          : <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>}
+          </button>
       </div>
 
 

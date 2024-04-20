@@ -133,8 +133,8 @@ const CardBookmark: React.FC<CardProps> = ({ mediaId , session , episode , progr
                             style={{ display: !isLoading ? 'block' : 'none' }}
                             onLoad={() => setIsLoading(false)}
                             onError={() => setIsLoading(false)}
-                        />: <div className="skeleton w-full h-[200px]">Poster of {`${mediaName}`} is unavailable</div>}
-                        {progress && <progress className="progress w-[85%] h-1 absolute bottom-4 left-4" value={progress} max="100"></progress>}
+                        />: <div className="skeleton w-full h-[250px]">Poster of {`${mediaName}`} is unavailable</div>}
+                        {progress && <progress className="progress w-[85%] h-2 sm:h-1 absolute bottom-3 right-[6%]" value={progress} max="100"></progress>}
                         </div>
                         </div>
                         <h2 className={`card-title text-sm sm:text-xl transition-all ${isDeleted? 'duration-100 opacity-0':'duration-0 opacity-100'}`}>{mediaName} </h2>

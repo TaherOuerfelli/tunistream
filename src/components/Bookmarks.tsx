@@ -96,6 +96,8 @@ export default function Bookmarks(){
                               }
                           });
                       }
+                  }else{
+                    mediaData[bookmark] ? progress = (mediaData[bookmark] as MovieData).progress:progress=null;
                   }
                   return (
                       <CardBookmark key={bookmark} mediaId={bookmark} session={season} episode={episode} progress={progress} isEditing={IsEditing} callBackFn={handleReset} deleteType="B"/>
