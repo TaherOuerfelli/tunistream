@@ -598,7 +598,7 @@ const handleSettings = ()=>{
 
         {/* Settings tab ###############  */}
         {settings&&<div className='absolute top-0 w-full bg-transparent z-[51]' style={{ height: window.innerHeight}} onClick={() => setSettings(false)}></div>}
-        <div className={`z-[55] overflow-x-hidden overflow-y-auto bg-base-200 rounded-box border-2 border-white/10 p-4 shadow text-content absolute right-5 bottom-20 transition-all  ease-in-out ${settings && showUI ? 'duration-100 pointer-events-auto opacity-100 translate-y-0 ' : 'duration-200 pointer-events-none opacity-0 translate-y-10'}`} style={{ maxHeight: window.innerHeight-100}}>
+        <div className={`z-[55] overflow-x-hidden overflow-y-auto bg-base-200 rounded-box border-2 border-white/10 p-4 shadow text-content absolute right-2 bottom-20 transition-all  ease-in-out ${settings && showUI ? 'duration-100 pointer-events-auto opacity-100 translate-y-0 ' : 'duration-200 pointer-events-none opacity-0 translate-y-10'}`} style={{ maxHeight: window.innerHeight-100}}>
         {/* Settings Menu 0 */}
         <div role='Settings-menu'  className={`flex flex-col transition-all  ease-in-out ${settingsMenu===0 ? 'duration-100 opacity-100 translate-x-0 w-[250px]' : 'duration-100 opacity-0 -translate-x-32 w-0 h-0'}`}>
             

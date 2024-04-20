@@ -83,7 +83,7 @@ const Settings: React.FC = () => {
                 <div className='flex flex-wrap gap-8'>
   
                 <input type="radio" name="theme-radios" aria-label="Default" className="btn theme-controller" value="dark" onChange={() => localStorage.setItem('theme', 'dark')}/>
-                <input type="radio" name="theme-radios" aria-label="Light" className="btn theme-controller" value="light" onChange={() => localStorage.setItem('theme', 'light')}/>
+                <input type="radio" name="theme-radios" aria-label="Light" className="btn theme-controller" value="nord" onChange={() => localStorage.setItem('theme', 'nord')}/>
                 <input type="radio" name="theme-radios" aria-label="Black" className="btn theme-controller" value="black" onChange={() => localStorage.setItem('theme', 'black')}/>
                 <input type="radio" name="theme-radios" aria-label="Sunset" className="btn theme-controller" value="sunset" onChange={() => localStorage.setItem('theme', 'sunset')}/>
                 <input type="radio" name="theme-radios" aria-label="Cyberpunk" className="btn theme-controller" value="cyberpunk" onChange={() => localStorage.setItem('theme', 'cyberpunk')}/>
