@@ -547,7 +547,7 @@ const handleSettings = ()=>{
     <div ref={fullscreenRef} className={`relative overflow-hidden`} style={{ height: windowDimensions.height, width: windowDimensions.width,maxHeight:windowDimensions.height, overflow: 'hidden'  }}>
     <div className="absolute inset-0 w-full flex items-center justify-center">
     <div className='flex flex-col 'onClick={togglePlayback}>
-      {error && <div className='flex flex-col justify-center items-center gap-4 absolute inset-0'>
+      {error && <div className='flex flex-col justify-center items-center text-center gap-4 absolute inset-0'>
       <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ff5555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
         Error: {error}</div>}
       <video
@@ -587,7 +587,7 @@ const handleSettings = ()=>{
 
 {/* UI STARTS HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEERE  */}
 
-      <div className={` absolute top-5 transition-all duration-500 ${showUI ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'} z-50`}>
+      <div className={` absolute top-5 left-0 transition-all duration-500 ${showUI ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'} z-50`}>
       <h1 className='text-white opacity-65 max-w-[70vw] sm:opacity-80 text-xl ml-5 sm:ml-12 sm:mt-[0.5rem] mt-[7vh]'>{Name} {mediaType === "movie" ? null: <span className='text-gray-400 font-thin'>S{sessionIndex}:E{episodeIndex}</span>}</h1>
       </div>
       

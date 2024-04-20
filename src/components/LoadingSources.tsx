@@ -65,7 +65,7 @@ const LoadingSources: React.FC<SourceProps> = ({ sourceIds, sourceInfo , gotLink
 
     if (sourceInfos.length < 1) return null; // draw nothing if no sources
     return (
-        <div className="flex flex-col scale-50 sm:scale-90 justify-center items-center gap-4 text-xl h-screen overflow-hidden">
+        <div className="flex flex-col scale-75 sm:scale-90 justify-center items-center gap-4 text-xl h-screen overflow-hidden">
             <div className="flex flex-row text-2xl font-bold gap-2 mb-5">
                 <h1>Fetching results</h1>
                 <span className="loading loading-ring loading-lg"></span>
