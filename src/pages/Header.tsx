@@ -12,12 +12,12 @@ export default function Header({ isSticky }: { isSticky?: boolean }){
     return(
         <>
         <div className={`navbar absolute transition-all ease-in-out ${isSticky && window.innerWidth <= 640  ? 'duration-250  pb-[60px]' : 'duration-0 '} bg-base-100 pointer-events-auto shadow-xl shadow-black/20 sticky top-0 z-40`}>
-        <div className="flex-1 ">
-        <label htmlFor="my-drawer" className="btn btn-ghost block sm:hidden drawer-button mt-5" onClick={scrollToTop}>
-        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="arcs"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        <div className="flex justify-between w-full  ">
+            <Link to='/Home' className="btn btn-ghost mt-5 sm:mt-2 text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text ">TUNISTREAM.CLUB
+            <span className="text-gray-500 ml-2 font-normal text-[0.65rem]">v1.01</span></Link>
+        <label htmlFor="my-drawer" className="btn btn-ghost block sm:hidden drawer-button pt-1" onClick={scrollToTop}>
+        <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="arcs"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
         </label>
-            <Link to='/Home' className="btn btn-ghost mt-5 sm:mt-2 text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text ">TUNISTREAM.CLUB</Link>
-            <p className="text-gray-500 text-xs">v1.01</p>
         </div>
         <div className="flex-none gap-2 ">
             <div className="hidden sm:block dropdown dropdown-end">

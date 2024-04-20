@@ -25,7 +25,7 @@ const Card: React.FC<CardProps> = ({ info }) => {
       };
     return(
         <>
-        <div className="card btn max-w-[10rem] sm:max-w-[14rem]  h-fit bg-base-100 shadow-xl min-w-1/2 flex-grow" onClick={handleClick}>
+        <div className="card btn max-w-[10rem] sm:max-w-[14rem]  h-fit bg-base-100/20 shadow-xl min-w-1/2 flex-grow" onClick={handleClick}>
         
         
         <div className="card-body mb-4 p-0">

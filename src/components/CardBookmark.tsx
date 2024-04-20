@@ -112,10 +112,10 @@ const CardBookmark: React.FC<CardProps> = ({ mediaId , session , episode , progr
     return (
         <>
             {mediaInfo && (
-                <div className={`card btn max-w-[10rem] sm:max-w-[14rem] h-fit bg-base-100 shadow-xl ${theme === 'light' || theme === 'cyberpunk' ? 'border-1 border-black' : 'border-2 border-gray-700'} transition-all  ${isDeleted? 'duration-500 w-0 opacity-0' : 'opacity-100 duration-0 w-56'}`} onClick={handleClick} onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)} >
+                <div className={`card  ${theme === 'black' || theme === 'cyberpunk' ? 'rounded-none' : 'rounded-md'} p-0 btn max-w-[10rem] sm:max-w-[15rem] h-fit bg-base-100/50 shadow-xl ${theme === 'light' || theme === 'cyberpunk' ? 'border-1 border-black' : theme === 'black' ? 'border-2 border-gray-700':'border-2 border-gray-800'} transition-all  ${isDeleted? 'duration-500 w-0 opacity-0' : 'opacity-100 duration-0 w-56'}`} onClick={handleClick} onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)} >
                     
                     
-                    <div className="card-body relative mb-4 p-0 ">
+                    <div className="card-body relative mb-4 p-0">
                         
                     <div>
                         <div className='absolute w-full h-full bg-transparent z-40'> <button className={`btn btn-circle mt-[75%]  z-40 scale-125 transition-all transform hover:scale-150 duration-150 ${isEditing ? 'opacity-100 ':'opacity-0 scale-50 '}`} onClick={handleDelete}>
@@ -127,18 +127,20 @@ const CardBookmark: React.FC<CardProps> = ({ mediaId , session , episode , progr
                     <span className={` transition-all duration-400 ${isHovered ? 'text-white text-[1.15rem]/[1.65rem]':'text-gray-350 text-[1rem]/[1.5rem]'} bg-base-300 rounded-box  font-medium tracking-widest w-fit p-0 px-3 absolute right-2 top-2`}>{mediaType === 'movie' ? null:<p>S{session} E{episode}</p>}</span>
                         {isLoading ? <div className="skeleton w-48 h-80 mt-4"></div> : null}
                         {posterUrl ? <img
-                            className="w-full h-full mt-4 "
+                            className={`w-full h-full ${theme === 'black' || theme === 'cyberpunk' ? 'rounded-none' : 'rounded-t-md'} `}
                             src={posterUrl}
                             alt={`${mediaName} Poster`}
                             style={{ display: !isLoading ? 'block' : 'none' }}
                             onLoad={() => setIsLoading(false)}
                             onError={() => setIsLoading(false)}
                         />: <div className="skeleton w-full h-[250px]">Poster of {`${mediaName}`} is unavailable</div>}
-                        {progress && <progress className="progress w-[85%] h-2 sm:h-1 absolute bottom-3 right-[6%]" value={progress} max="100"></progress>}
+                        {progress && <div className='absolute w-full bottom-0 p-7' style={{
+                        background: 'linear-gradient(0deg, rgba(0,0,0,0.8869922969187675) 0%, rgba(0,0,0,0.8841911764705882) 20%, rgba(0,0,0,0.5704656862745099) 60%, rgba(0,0,0,0) 100%)'}}>
+                        <progress className={`progress ${theme === 'black' || theme === 'dark' ? null:'progress-accent'} w-[85%] h-[0.3rem] bg-black/30 absolute  bottom-3 right-[6%]`} value={progress} max="100"></progress></div>}
                         </div>
                         </div>
-                        <h2 className={`card-title text-sm sm:text-xl transition-all ${isDeleted? 'duration-100 opacity-0':'duration-0 opacity-100'}`}>{mediaName} </h2>
-                        <div className="card-actions justify-start mt-1">
+                        <h2 className={`card-title text-[1.15rem] justify-center sm:justify-start mx-[7%] sm:text-xl transition-all ${isDeleted? 'duration-100 opacity-0':'duration-0 opacity-100'}`}>{mediaName} </h2>
+                        <div className="card-actions justify-center sm:justify-start  mx-[7%] mt-1">
                             <span className="badge text-xs sm:text-[0.875rem] p-2 mr-4 sm:mr-0">{releaseYear}</span>
                             <div className="badge text-xs sm:text-[0.875rem] badge-outline p-2">{cardType}</div>
                         </div>

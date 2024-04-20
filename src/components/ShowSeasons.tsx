@@ -131,7 +131,7 @@ const ShowSeasons: React.FC<ShowProps> = ({ seasonsList, ShowID , ShowIMDBID , S
                                         Array.isArray(watchData[`s${ShowID}`][season.season_number])
                                         && 
                                         watchData[`s${ShowID}`][season.season_number][episode.episode_number] 
-                                        && watchData[`s${ShowID}`][season.season_number][episode.episode_number].progress !== undefined ? 'bg-base-300':null} hover:bg-base-200 text-lg ${new Date(episode.air_date) > new Date() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} onClick={() => navigate(`/Watch/Series/${ShowID}/Season/${season.season_number}/Episode/${episode.episode_number}?name=${ShowName}&year=${ShowReleaseDate}&epID=${episode.id}&ssID=${season.id}&i=${ShowIMDBID}`)}>
+                                        && watchData[`s${ShowID}`][season.season_number][episode.episode_number].progress !== undefined ? 'bg-base-300/50':'bg-base-500/50'} hover:bg-base-300 text-lg ${new Date(episode.air_date) > new Date() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} onClick={() => navigate(`/Watch/Series/${ShowID}/Season/${season.season_number}/Episode/${episode.episode_number}?name=${ShowName}&year=${ShowReleaseDate}&epID=${episode.id}&ssID=${season.id}&i=${ShowIMDBID}`)}>
                                         <th className="badge mt-5 ml-3 sm:m-5">{episode.episode_number}</th>
                                         <td>{episode.name} {new Date(episode.air_date) > new Date() ? <span className='badge'>Not aired yet. </span>: ''}</td>
                                         <td className='text-xs sm:text-sm font-thin'>{episode.runtime} min</td>

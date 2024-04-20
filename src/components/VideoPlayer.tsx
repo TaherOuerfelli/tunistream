@@ -623,7 +623,7 @@ const handleSettings = ()=>{
           {/* Setting Menu 1 */}
           <div role='Setting-option' className={`transition-all  ease-in-out ${settingsMenu===1 ? 'duration-250 opacity-100 translate-x-0 h-fit w-fit' : 'duration-100 opacity-0  translate-x-32 w-0 h-0'}`}>
           <div className='flex flex-row'> 
-          <button className={`btn btn-link ${settingsMenu===1 ? 'visible':'hidden'} p-0 my-0 mr-1 hover:scale-110 hover:scale-x-125 hover:translate-y-[0.05rem]`} onClick={() =>setSettingsMenu(0)}>
+          <button className={`btn btn-link ${settingsMenu===1 ? 'visible':'hidden'} p-0 my-0 mr-1 hover:-translate-x-[0.25rem]`} onClick={() =>setSettingsMenu(0)}>
           <svg xmlns="http://www.w3.org/2000/svg" width="33" height="23" className='-ml-1 mr-2 -mt-5' viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="square"><path d="M50 12H6M12 5l-7 7 7 7"/></svg>
           </button>
               <h3 className={`card-title text-sm ${settingsMenu===1 ? 'visible':'hidden'} -mt-5`}>Quality</h3>
@@ -660,7 +660,7 @@ const handleSettings = ()=>{
            {/* Setting Menu 2 start */}
            <div role='Setting-option' className={`transition-all ease-in-out ${settingsMenu===2 ? 'duration-250 opacity-100 translate-x-0 h-fit w-fit' : 'duration-300 opacity-0  translate-x-32 w-0 h-0'}`}>
           <div className='flex flex-row'> 
-          <button className={`btn btn-link ${settingsMenu===2 ? 'visible':'hidden'} p-1 my-0 mr-1 hover:scale-110 hover:scale-x-125 hover:translate-y-[0.05rem]`} onClick={() =>setSettingsMenu(0)}>
+          <button className={`btn btn-link ${settingsMenu===2 ? 'visible':'hidden'} p-1 my-0 mr-1 hover:-translate-x-[0.25rem]`} onClick={() =>setSettingsMenu(0)}>
           <svg xmlns="http://www.w3.org/2000/svg" width="33" height="23" className='-ml-1 mr-2 -mt-5' viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="square"><path d="M50 12H6M12 5l-7 7 7 7"/></svg>
           </button>
               <h3 className={`card-title ${settingsMenu===2 ? 'visible':'hidden'} text-sm -mt-5`}>Sources</h3>
@@ -689,7 +689,7 @@ const handleSettings = ()=>{
            {/* Setting Menu 3 */}
         <div role='Settings-menu'  className={`flex flex-col  transition-all  ease-in-out ${settingsMenu===3 ? 'duration-100 opacity-100 translate-x-0 h-fit w-fit' : 'duration-100 opacity-0 -translate-x-32 w-0 h-0'}`}>
         <div className='flex flex-row'>
-        <button className='btn btn-link p-1 my-0 mr-1 hover:scale-110 hover:scale-x-125 hover:translate-y-[0.05rem]' onClick={() =>setSettingsMenu(2)}>
+        <button className='btn btn-link p-1 my-0 mr-1 hover:-translate-x-[0.25rem]' onClick={() =>setSettingsMenu(2)}>
         <svg xmlns="http://www.w3.org/2000/svg" width="33" height="23" className='-ml-1 mr-2 ' viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="square"><path d="M50 12H6M12 5l-7 7 7 7"/></svg>
           </button>
             <h3 className="card-title text-sm">Embeds:</h3></div>

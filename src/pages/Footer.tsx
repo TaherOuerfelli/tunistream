@@ -12,7 +12,7 @@ export default function Footer(){
             </nav>
             <nav>
                 <div className="grid grid-flow-col gap-4">
-                <p>Joins our Discord:</p>
+                <p>Join our Discord:</p>
                 </div>
             </nav> 
             <aside>
