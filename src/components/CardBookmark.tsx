@@ -124,7 +124,7 @@ const CardBookmark: React.FC<CardProps> = ({ mediaId , session , episode , progr
 
                     <div className={`transition-all duration-300 ${isEditing ? 'blur-sm' : 'blur-none'}`}>
 
-                    <span className={` transition-all duration-400 ${isHovered ? 'text-white scale-110':'text-gray-350'} text-base bg-base-300 rounded-box  font-medium tracking-widest w-fit p-0 px-3 absolute right-[7%] top-[5%]`}>{mediaType === 'movie' ? null:<p>S{session} E{episode}</p>}</span>
+                    <span className={` transition-all duration-400 ${isHovered ? 'text-white scale-110':'text-gray-350'} text-base bg-base-300 ${theme === 'black' || theme === 'cyberpunk' ? 'rounded-none' : 'rounded-md'} font-medium tracking-widest w-fit p-0 px-3 absolute right-[7%] top-[5%]`}>{mediaType === 'movie' ? null:<p>S{session} E{episode}</p>}</span>
                         {isLoading ? <div className="skeleton w-48 h-80 mt-4"></div> : null}
                         {posterUrl ? <img
                             className={`w-full h-full ${theme === 'black' || theme === 'cyberpunk' ? 'rounded-none' : 'rounded-t-md'} `}
@@ -136,7 +136,7 @@ const CardBookmark: React.FC<CardProps> = ({ mediaId , session , episode , progr
                         />: <div className="skeleton w-full h-[250px]">Poster of {`${mediaName}`} is unavailable</div>}
                         {progress && <div className='absolute w-full bottom-0 p-7' style={{
                         background: 'linear-gradient(0deg, rgba(0,0,0,0.9598214285714286) 0%, rgba(0,0,0,0.9009978991596639) 46%, rgba(0,0,0,0.8085609243697479) 58%, rgba(0,0,0,0.53125) 72%, rgba(0,0,0,0.2511379551820728) 88%, rgba(0,0,0,0) 100%)'}}>
-                        <progress className={`progress ${theme === 'black' || theme === 'dark' ? null:'progress-accent'} w-full sm:w-[85%] h-[0.3rem] bg-gray-700/30 absolute bottom-0 sm:bottom-3 right-0 sm:right-[6%]`} value={progress} max="100"></progress></div>}
+                        <progress className={`progress ${theme === 'black' || theme === 'dark' ? null:'progress-accent'} w-full sm:w-[85%] h-[0.3rem] bg-transparent sm:bg-gray-700/30 absolute bottom-0 sm:bottom-3 right-0 sm:right-[6%]`} value={progress} max="100"></progress></div>}
                         </div>
                         </div>
                         <h2 className={`card-title text-[1.15rem] justify-center sm:justify-start mx-[7%] sm:text-xl transition-all ${isDeleted? 'duration-100 opacity-0':'duration-0 opacity-100'}`}>{mediaName} </h2>
