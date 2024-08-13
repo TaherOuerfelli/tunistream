@@ -1,4 +1,4 @@
-import { makeProviders, makeStandardFetcher,makeSimpleProxyFetcher, targets ,FullScraperEvents ,ScrapeMedia, StreamFile, Qualities } from '@movie-web/providers';
+import { makeProviders, makeStandardFetcher,makeSimpleProxyFetcher, targets ,FullScraperEvents ,ScrapeMedia, StreamFile, Qualities } from '../../providers/lib/index';
 import VideoPlayer from '../components/VideoPlayer';
 import LoadingSources from '../components/LoadingSources';
 import { useState,useEffect } from 'react';
@@ -11,7 +11,7 @@ const proxyUrl = import.meta.env.VITE_PROXY_URL_LINK;
 const providers = makeProviders({
   fetcher: makeStandardFetcher(fetch),
   proxiedFetcher: makeSimpleProxyFetcher(proxyUrl?proxyUrl:'', fetch),
-  target: targets.BROWSER,
+  target: targets.ANY,
   
 })
 

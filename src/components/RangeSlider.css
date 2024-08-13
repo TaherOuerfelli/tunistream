@@ -36,20 +36,19 @@ input[type=range].styled-slider:focus {
 
 /*webkit*/
 input[type=range].styled-slider::-webkit-slider-thumb {
-  visibility: hidden;
-  transition: transform 0.3s;
+  transition: transform 0.2s;
   -webkit-appearance: none;
+  transform: scale(0);
   width: 0.5em;
   height: 0.5em;
   border-radius: 1em;
-  background: var(--secondary-color);
+  background: rgb(255, 255, 255);
   border: none;
   box-shadow: 0 0 3px #000000;
   margin-top: calc(0.2em * 0.5 - 0.5em * 0.5);
 }
 input[type=range].styled-slider:hover::-webkit-slider-thumb {
-  visibility: visible;
-  transform: scale(1.65);
+  transform: scale(1.6);
 }
 
 
@@ -62,8 +61,7 @@ input[type=range].styled-slider::-webkit-slider-runnable-track {
 }
 
 input[type=range].styled-slider::-webkit-slider-thumb:hover {
-  transform: scale(1.85);
-  background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+  transform: scale(1.65);
 }
 
 input[type=range].styled-slider:hover::-webkit-slider-runnable-track {
@@ -71,9 +69,6 @@ input[type=range].styled-slider:hover::-webkit-slider-runnable-track {
   background: linear-gradient(to right, rgba(53, 53, 53, 0.65), #46464652);
 }
 
-input[type=range].styled-slider::-webkit-slider-thumb:active {
-  background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
-}
 
 input[type=range].styled-slider:active::-webkit-slider-runnable-track {
   background: linear-gradient(to right, rgba(53, 53, 53, 0.75), #55555580);
@@ -103,7 +98,7 @@ input[type=range].styled-slider::-moz-range-thumb {
   width: 0.6em;
   height: 0.6em;
   border-radius: 1em;
-  background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+  background: rgb(255, 255, 255);
   border: none;
   box-shadow: 0 0 3px #000000;
   margin-top: calc(0.2em * 0.5 - 0.6em * 0.5);
@@ -124,16 +119,11 @@ input[type=range].styled-slider::-moz-range-track {
 
 input[type=range].styled-slider::-moz-range-thumb:hover {
   transform: scale(1.85);
-  background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
 }
 
 input[type=range].styled-slider:hover::-moz-range-track {
   height: 4px;
   background: linear-gradient(to right, rgba(53, 53, 53, 0.65), #46464652);
-}
-
-input[type=range].styled-slider::-moz-range-thumb:active {
-  background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
 }
 
 input[type=range].styled-slider:active::-moz-range-track {

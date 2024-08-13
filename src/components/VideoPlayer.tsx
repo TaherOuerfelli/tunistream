@@ -1,18 +1,21 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Hls from 'hls.js';
-import { EmbedOutput, Qualities, ScrapeMedia, StreamFile, makeProviders, makeSimpleProxyFetcher, makeStandardFetcher, targets } from '@movie-web/providers';
+import { EmbedOutput, Qualities, ScrapeMedia, StreamFile, makeProviders, makeSimpleProxyFetcher, makeStandardFetcher, targets } from '../../providers/lib/index';
 import { debounce } from 'lodash';
-import { SourcererOutput, NotFoundError } from '@movie-web/providers';
+import { SourcererOutput, NotFoundError } from '../../providers/lib/index';
 import RangeSlider from './RangeSlider';
 import '../styles/videoplayer.css';
+import SubtitlesComponent from './SubtitleComponent';
+
+
 
 const proxyUrl = import.meta.env.VITE_PROXY_URL_LINK;
 
 const providers = makeProviders({
   fetcher: makeStandardFetcher(fetch),
   proxiedFetcher: makeSimpleProxyFetcher(proxyUrl?proxyUrl:'', fetch),
-  target: targets.BROWSER,
+  target: targets.ANY,
 })
 
 declare type SourcererEmbed = {
@@ -71,6 +74,9 @@ type MediaData = {
   [key: string]: MovieData | SeasonData[];
 };
 
+
+
+
 const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, providersList , Name, Stream_Type, Quality , mediaID , mediaType , sessionIndex , episodeIndex}) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const fullscreenRef = useRef<HTMLDivElement>(null);
@@ -90,10 +96,12 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
   const [progress, setProgress] = useState(0);
   const [loadedFraction, setLoadedFraction] = useState(0);
   const [AudioState, setAudioState] = useState('on');
+  const [theme, setTheme] = useState('dark');
   const [isAudioHovered, setAudioIsHovered] = useState(false);
   const [AudioVolume, setAudioVolume] = useState<number>(100);
   const [settingsMenu, setSettingsMenu] = useState(0);
   const [settings, setSettings] = useState(false);
+  const [playbackSpeed, setPlaybackSpeed] = useState(1);
   const [showUI, setShowUI] = useState(true);
 //  const [theme , setTheme] = useState('dark');
   const [VideoQuality, setVideoQuality] = useState<Record<Qualities, StreamFile | StreamHLS> |null>(Quality);
@@ -129,7 +137,7 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
   useEffect(()=>{
     let theme = localStorage.getItem('theme');
     document.documentElement.setAttribute('data-theme', theme || 'dark');
-    //setTheme(theme ?? 'dark');
+    setTheme(theme ?? 'dark');
     changeRangeValue();
   },[])
 
@@ -139,12 +147,11 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
       if (type === 'hls' && Hls.isSupported()) {
         const hls = new Hls();
         hls.attachMedia(videoRef.current);
-        hls.loadSource(videoLink);
-
+        hls.loadSource(`${videoLink}`);
         hls.on(Hls.Events.ERROR, (_, data) => {
           if (data.fatal) {
             // Set errorOccurred state to true if error is fatal
-            setError('An error occurred while playing the video. (Try changing source)');
+            setError(`${data.error}.`);
           }
         });
         hls.on(Hls.Events.MANIFEST_PARSED, function() {
@@ -155,7 +162,7 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
         });
         
       } else if (type === 'file') {
-        videoRef.current.src = videoLink;
+        videoRef.current.src = `${videoLink}`;
       }
       
       console.log(VideoQuality)
@@ -165,14 +172,14 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
   useEffect(() => {
     if (videoRef.current) {
       if (type === 'hls' && Hls.isSupported()){
-        setHlsMainLink(videoLink)
+        setHlsMainLink(`${videoLink}`)
         const hls = new Hls();
-        hls.loadSource(videoLink);
+        hls.loadSource(`${videoLink}`);
         // Listen for errors
         hls.on(Hls.Events.ERROR, (_, data) => {
-          if (data.fatal) {
+          if (data.fatal) { 
             // Set errorOccurred state to true if error is fatal
-            setError('An error occurred while playing the video. (Try changing source)');
+            setError(`${data.error}.`);
           }
         });
         hls.on(Hls.Events.MANIFEST_PARSED, function() {
@@ -265,8 +272,15 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
   }
 
   useEffect(() => {
-    let timeout: ReturnType<typeof setTimeout>;
-
+    let timeout: ReturnType<typeof setTimeout>|null = null;
+    if(timeout)clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      if (playing && !settings) {
+        setShowUI(false);
+        document.body.style.cursor = 'none'; // Hide mouse when UI is hidden
+      }
+    }, 3000); // Hide UI after 3 seconds of inactivity
+    
     const handleMouseMove = () => {
       if (!playing || settings) {
         setShowUI(true);
@@ -274,9 +288,9 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
       } else {
         setShowUI(true);
         document.body.style.cursor = 'default';
-        clearTimeout(timeout);
+        if(timeout)clearTimeout(timeout);
         timeout = setTimeout(() => {
-          if (!settings) {
+          if (playing && !settings) {
             setShowUI(false);
             document.body.style.cursor = 'none'; // Hide mouse when UI is hidden
           }
@@ -295,24 +309,26 @@ const VideoPlayer: React.FC<VideoProps> = ({media, videoSrc, provider_ID, provid
     };
 
     const handleMouseEnter = () => {
-      if (!playing || settings) {
         setShowUI(true);
         document.body.style.cursor = 'default';
-      } else {
+    };
+
+    const handleMouseClick = () => {
         setShowUI(true);
         document.body.style.cursor = 'default';
-      };
     };
 
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseleave', handleMouseLeave);
     document.addEventListener('mouseenter', handleMouseEnter);
+    document.addEventListener('click', handleMouseClick);
 
     return () => {
-      clearTimeout(timeout); // Clear the timeout when the component unmounts
+      if(timeout)clearTimeout(timeout); // Clear the timeout when the component unmounts
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseleave', handleMouseLeave);
       document.removeEventListener('mouseenter', handleMouseEnter);
+      document.removeEventListener('click', handleMouseClick);
     };
   }, [playing, showUI, settings]);
 
@@ -490,10 +506,34 @@ useEffect(() => {
     document.removeEventListener('keydown', handleKeyPress);
   };
 }, [togglePlayback, currentTime, addSeconds]);
+
+
+const handlePnP = ()=>{
+  const videoElement = videoRef.current;
+  if (videoElement) {
+      if (document.pictureInPictureElement) {
+        document.exitPictureInPicture();
+      }else{
+        videoElement.requestPictureInPicture();
+      }
+    }
+
+}
+
+
+useEffect(()=>{
+  const videoElement = videoRef.current;
+  if (videoElement) {videoElement.playbackRate = playbackSpeed;}
+},[playbackSpeed])
   
   const handleVideoError = (event: React.SyntheticEvent<HTMLVideoElement, Event>) => {
-    setError('An error occurred while playing the video. (Try changing source)');
-    console.error('Video error:', (event.target as HTMLVideoElement).error);
+    setError(`${(event.target as HTMLVideoElement).error}.`);
+    const videoError = (event.target as HTMLVideoElement).error;
+    if (videoError instanceof MediaError) {
+      console.error('Video error:', videoError.message);
+    } else {
+      console.error('Video error:', videoError);
+    }
   };
 
   const debouncedVolumeChange = debounce((value: number) => {
@@ -546,10 +586,11 @@ const handleSettings = ()=>{
     <>
     <div ref={fullscreenRef} className={`relative overflow-hidden`} style={{ height: windowDimensions.height, width: windowDimensions.width,maxHeight:windowDimensions.height, overflow: 'hidden'  }}>
     <div className="absolute inset-0 w-full flex items-center justify-center">
-    <div className='flex flex-col 'onClick={togglePlayback}>
-      {error && <div className='flex flex-col justify-center items-center text-center gap-4 absolute inset-0'>
+    <div className='flex flex-col'onClick={togglePlayback}>
+      {error && <div className='flex flex-col bg-black/20 justify-center items-center text-center absolute inset-0'>
+      <p className='flex flex-col gap-4 justify-center items-center text-center bg-black/70 rounded-box p-4 text-white'>
       <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ff5555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-        Error: {error}</div>}
+        Video {error} <span className='font-semibold'>(Try Changing Source)</span></p></div>}
       <video
         ref={videoRef}
         className={` ${
@@ -598,7 +639,7 @@ const handleSettings = ()=>{
 
         {/* Settings tab ###############  */}
         {settings&&<div className='absolute top-0 w-full bg-transparent z-[51]' style={{ height: window.innerHeight}} onClick={() => setSettings(false)}></div>}
-        <div className={`z-[55] overflow-x-hidden overflow-y-auto bg-base-200 rounded-box border-2 border-white/10 p-4 shadow text-content absolute right-2 bottom-28 sm:bottom-20 transition-all  ease-in-out ${settings && showUI ? 'duration-100 pointer-events-auto opacity-100 translate-y-0 ' : 'duration-200 pointer-events-none opacity-0 translate-y-10'}`} style={{ maxHeight: window.innerHeight-100}}>
+        <div className={`z-[55] overflow-x-hidden overflow-y-auto bg-base-300 ${theme === 'black' || theme === 'cyberpunk' ? 'rounded-none':'rounded-lg'} border-2 border-white/10 p-4 shadow text-content absolute right-2 bottom-28 sm:bottom-20 transition-all  ease-in-out ${settings && showUI ? 'duration-100 pointer-events-auto opacity-100 translate-y-0 ' : 'duration-200 pointer-events-none opacity-0 translate-y-10'}`} style={{ maxHeight: window.innerHeight-100}}>
         {/* Settings Menu 0 */}
         <div role='Settings-menu'  className={`flex flex-col transition-all  ease-in-out ${settingsMenu===0 ? 'duration-100 opacity-100 translate-x-0 w-[250px]' : 'duration-100 opacity-0 -translate-x-32 w-0 h-0'}`}>
             
@@ -615,6 +656,11 @@ const handleSettings = ()=>{
                 <button className="btn btn-ghost label text-lg w-full font-bold" onClick={() => setSettingsMenu(2)}><td><span className='mr-10 flex flex-row justify-center items-center'>
                 <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" className='mr-2' viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
                 Source </span></td><td><span className='flex  justify-center items-center text-sm px-2'>{providerID}</span></td></button>
+                </tr>
+                <tr>
+                <div className='divider h-0 m-0 my-2 w-full'></div>
+                <button className="btn btn-ghost label text-lg w-full font-bold" onClick={() => setSettingsMenu(4)}><span className='w-fit h-fit'>
+                Playback Speed </span><span className='w-fit h-fit font-bold p-0 text-sm px-3 rounded-box bg-base-content text-base-200'>{playbackSpeed}x</span></button>
                 </tr>
             </tbody>
           </table>
@@ -672,7 +718,7 @@ const handleSettings = ()=>{
                     {providersList && (providersList).map((Source, index) => (
                       <tr key={index}>
                         <td>
-                          <button className="btn w-full label" onClick={() =>{setSettingsMenu(3); handleRefetch(Source);setLoadingEmbed(null);setCurrentFetchSource(Source);}}>
+                          <button className="btn btn-ghost w-full label" onClick={() =>{setSettingsMenu(3); handleRefetch(Source);setLoadingEmbed(null);setCurrentFetchSource(Source);}}>
                             <span className="label-text text-lg font-bold mr-16">{Source}</span>
                             <span>{Source === providerID? 
                             <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#4ee54d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
@@ -711,7 +757,7 @@ const handleSettings = ()=>{
                     {fetchEmbeds && (fetchEmbeds as SourcererEmbed[]).map((Embed, index) => (
                       <tr key={index}>
                         <td>
-                          <button className={`btn ${LoadingEmbed === index ? 'btn-disabled':null} w-[250px] label`} onClick={()=> {handleFetchEmbed(Embed.embedId,Embed.url,currentFetchSource,index); setLoadingEmbed(index)}}>
+                          <button className={`btn btn-ghost ${LoadingEmbed === index ? 'btn-disabled':null} w-[250px] label`} onClick={()=> {handleFetchEmbed(Embed.embedId,Embed.url,currentFetchSource,index); setLoadingEmbed(index)}}>
                             <span className="label-text  text-lg font-bold mr-10">{Embed.embedId}</span>
                             {LoadingEmbed === index && !erroredEmbed ? <span className="loading loading-spinner loading-md"></span>:erroredEmbed?.source === currentFetchSource && erroredEmbed?.index === index ? 
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff4242" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
@@ -728,36 +774,64 @@ const handleSettings = ()=>{
             </div>
           </div>
           {/* Menu 3 End */}
+          {/* Setting Menu 4 */}
+          <div role='Setting-option' className={`transition-all  ease-in-out ${settingsMenu===4 ? 'duration-250 opacity-100 translate-x-0 h-fit w-fit' : 'duration-100 opacity-0  translate-x-32 w-0 h-0'}`}>
+          <div className='flex flex-row'> 
+          <button className={`btn btn-link ${settingsMenu===4 ? 'visible':'hidden'} p-0 my-0 mr-1 hover:-translate-x-[0.25rem]`} onClick={() =>setSettingsMenu(0)}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="33" height="23" className='-ml-1 mr-2 -mt-5' viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="square"><path d="M50 12H6M12 5l-7 7 7 7"/></svg>
+          </button>
+              <h3 className={`card-title text-sm ${settingsMenu===4 ? 'visible':'hidden'} -mt-5`}>Playback Speed</h3>
+              </div>
+                <div className='divider h-0 m-0 my-2 -mt-2 w-full'></div>
+                <div className='scroll-smooth'>
+                  <div className={`${settingsMenu===4 ? 'visible':'hidden'} join w-full mt-2`}>
+                    <input className={`join-item btn btn-square w-[2.7rem] min-h-[2.5rem] h-[2.5rem]`} type="radio" name="playback" aria-label="0.25" onClick={()=>setPlaybackSpeed(0.25)} checked={playbackSpeed === 0.25}/>
+                    <input className={`join-item btn btn-square border-l-[1px] border-l-white/50 hover:border-l-white/50 w-[2.7rem] min-h-[2.5rem] h-[2.5rem]`} type="radio" name="playback" aria-label="0.5" onClick={()=>setPlaybackSpeed(0.5)} checked={playbackSpeed === 0.5}/>
+                    <input className={`join-item btn btn-square border-l-[1px] border-l-white/50 hover:border-l-white/50 w-[2.7rem] min-h-[2.5rem] h-[2.5rem]`}  type="radio" name="playback" aria-label="1x" onClick={()=>setPlaybackSpeed(1)} checked={playbackSpeed === 1}/>
+                    <input className={`join-item btn btn-square border-l-[1px] border-l-white/50 hover:border-l-white/50 w-[2.7rem] min-h-[2.5rem] h-[2.5rem]`} type="radio" name="playback" aria-label="1.25" onClick={()=>setPlaybackSpeed(1.25)} checked={playbackSpeed === 1.25}/>
+                    <input className={`join-item btn btn-square border-l-[1px] border-l-white/50 hover:border-l-white/50 w-[2.7rem] min-h-[2.5rem] h-[2.5rem]`} type="radio" name="playback" aria-label="1.5" onClick={()=>setPlaybackSpeed(1.5)} checked={playbackSpeed === 1.5}/>
+                    <input className={`join-item btn btn-square border-l-[1px] border-l-white/50 hover:border-l-white/50 w-[2.7rem] min-h-[2.5rem] h-[2.5rem]`} type="radio" name="playback" aria-label="2" onClick={()=>setPlaybackSpeed(2)} checked={playbackSpeed === 2}/>
+                  </div>
+                </div>
+           </div>
+           {/* menu 1 END */}
         </div>
 
 
-        <div className={`absolute w-full h-fit bottom-0 pb-3 sm:pb-0 rounded-lg transition-all duration-300 ${showUI ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'} z-50`}>
-        <div className="relative  w-[80vw] mx-[10vw] sm:w-[97vw] sm:mx-[1.5vw] sm:-my-[8px]">
+        <div className='absolute w-full h-fit bottom-0 pb-3 sm:pb-0 rounded-lg z-50'>
+          <div className={`flex justify-center items-center text-center w-[80vw] mx-[10vw] sm:w-[97vw] sm:mx-[1.5vw] sm:my-[2px] transition-transform duration-300 ${showUI ? 'translate-y-0' : 'translate-y-5'}`} onClick={togglePlayback}><p className='text-[2rem] text-white outlined-text font-[500] mb-2' /*style={{,WebkitTextStroke: '2px black'}}*/><SubtitlesComponent url={'null'/*link for subtitle goes here example: 'https://rapidcdn.cc/sub/cache/subtitle/13616089.vtt'*/} currentTime={(videoRef.current ? videoRef.current.currentTime:currentTime)}/></p></div>
+          <div className={`transition-all duration-300 ${showUI ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
+        <div className="relative  w-[80vw] mx-[10vw] sm:w-[97vw] sm:mx-[1.5vw] sm:my-[2px]">
         <RangeSlider Value={videoLoaded ? progress : 0} BufferValue={Math.round(loadedFraction * 10000)} onChange={(value) => handleProgress(value)}/>
         </div>
         <div className='flex flex-start justify-between items-center  w-[80vw] mx-[10vw] sm:w-[97vw] sm:mx-[1.5vw] sm:-my-[8px]'>
-        <div className='flex flex-row items-center  w-fit mb-4 '>
-        <button className='btn btn-ghost px-2' onClick={togglePlayback}>
+        <div className='flex flex-row items-center gap-1 w-fit mb-4 '>
+        <button className='btn btn-ghost px-2 hover:scale-110' onClick={togglePlayback}>
         {playing ? 
        <svg xmlns="http://www.w3.org/2000/svg" width="29" height="29" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="5" height="16"></rect><rect x="14" y="4" width="5" height="16"></rect></svg>
        : (
-         <svg xmlns="http://www.w3.org/2000/svg" width="29" height="29" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+         <svg xmlns="http://www.w3.org/2000/svg" width="29" height="29" className='translate-x-[0.1rem]' viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
          )}</button>
 
-      <button className='hidden sm:block btn btn-ghost px-3 ' onClick={() => addSeconds(currentTime-10)}>
+      <div className="lg:tooltip" data-tip="Backward 10">
+      <button className='hidden sm:block btn btn-ghost px-3 hover:scale-110' onClick={() => addSeconds(currentTime-10)}>
       <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 2v6h6M2.66 15.57a10 10 0 1 0 .57-8.38"/></svg>
       </button>
-      <button className='hidden sm:block btn btn-ghost px-3 ' onClick={() => addSeconds(currentTime+10)}>
+      </div>
+
+      <div className="lg:tooltip" data-tip="Forward 10">
+      <button className='hidden sm:block btn btn-ghost px-3 hover:scale-110' onClick={() => addSeconds(currentTime+10)}>
       <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38"/></svg>
       </button>
+      </div>
 
 
-      <div className='hidden sm:flex sm:flex-row h-fit w-fit '>
-        <button className='h-[3rem] w-fit px-1 inline-flex flex-wrap items-center justify-items-center' 
+      <div className='hidden sm:flex sm:flex-row h-fit w-fit'>
+        <button className='h-[3rem] w-fit px-1 inline-flex flex-wrap items-center justify-items-center ' 
                 onMouseEnter={() => setAudioIsHovered(true)}
                 onMouseLeave={() => setAudioIsHovered(false)}
                 >
-                <div onClick={handleAudioButton} className='btn btn-ghost px-2'>
+                <div onClick={handleAudioButton} className='btn btn-ghost px-2 hover:scale-110'>
           {AudioState === 'on'? 
           
       <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
@@ -766,30 +840,44 @@ const handleSettings = ()=>{
        : AudioState === 'off'?
        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6"/></svg>
        : null}</div>
-            <div className={`mx-1 mt-[0.15rem] transition-all duration-300 ${isAudioHovered ? "w-[5.5rem]" : "w-0"}`}>
+            <div className={`mx-3 mt-[0.15rem] transition-all duration-300 ${isAudioHovered ? "w-[5.5rem]" : "w-0"}`}>
               <RangeSlider Value={AudioVolume*10} min={0} max={1000} onChange={(value) => debouncedVolumeChange(value/10)}/>
             </div>
       </button>
 
       </div>
-      <h2 className='select-text text-[0.9rem] sm:text-[1.15rem]  text-gray-300 ml-1'>{formatTime(currentTime)} / {formatTime(duration)}</h2>
+      <h2 className='select-text text-[0.9rem] sm:text-[1.15rem]  text-gray-300'>{formatTime(currentTime)} / {formatTime(duration)}</h2>
       </div>
 
-        <div className='flex flex-row mb-4'>
-          <button className="btn btn-ghost px-3" onClick={handleSettings}>
+        <div className='flex flex-row gap-1 mb-4'>
+        <div className="lg:tooltip" data-tip="Picture in Picture">
+          <button className="btn btn-ghost px-[0.4rem] hover:scale-110" onClick={handlePnP}>
+            {document.pictureInPictureElement ? 
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="35" viewBox="0 0 24 24"><g fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"><path d="M11 19H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4"></path><path d="M14 15a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-5a1 1 0 0 1-1-1zM7 9l4 4m-4-1V9h3"></path></g></svg>
+            :
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="35" viewBox="0 0 24 24"><g fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"><path d="M11 19H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4"></path><path d="M14 15a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-5a1 1 0 0 1-1-1zM7 9l4 4m-3 0h3v-3"></path></g></svg>
+            }
+          </button>
+          </div>
+
+          
+          <button className="btn btn-ghost px-3 hover:scale-110" onClick={handleSettings}>
           <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" className={` transition-transform duration-200 ${settings ? 'rotate-[45deg]':'null'}`} viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="butt" stroke-linejoin="bevel"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
           </button>
 
-          <button className='btn btn-ghost px-3' onClick={toggleFullScreen}>
+
+          <button className='btn btn-ghost px-3 hover:scale-110' onClick={toggleFullScreen}>
           {document.fullscreenElement? <svg xmlns="http://www.w3.org/2000/svg" className='-mx-[0.1rem]' width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path></svg>
           : <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>}
           </button>
-      </div>
-
-
-
 
       </div>
+
+
+
+
+      </div>
+        </div>
         </div>
         </div>
     </>

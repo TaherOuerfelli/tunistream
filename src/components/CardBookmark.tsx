@@ -112,7 +112,7 @@ const CardBookmark: React.FC<CardProps> = ({ mediaId , session , episode , progr
     return (
         <>
             {mediaInfo && (
-                <div className={`card z-10 ${theme === 'black' || theme === 'cyberpunk' ? 'rounded-none' : 'rounded-md'} p-0 btn max-w-[10rem] sm:max-w-[15rem] h-fit bg-base-100/50 shadow-xl ${theme === 'light' || theme === 'cyberpunk' ? 'border-1 border-black' : theme === 'black' ? 'border-1 border-gray-300/50':'border-1 border-gray-600/50'} transition-all  ${isDeleted? 'duration-500 w-0 opacity-0' : 'opacity-100 duration-0 w-56'}`} onClick={handleClick} onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)} >
+                <div className={`card z-10 ${theme === 'black' || theme === 'cyberpunk' ? 'rounded-none' : 'rounded-md'} p-0 btn max-w-[10rem] sm:max-w-[15rem] h-fit bg-base-100/50  shadow-xl ${theme === 'light' || theme === 'cyberpunk' ? 'hover:border-1 border-black' : theme === 'black' ? 'hover:border-1 border-gray-300/50':'hover:border-1 border-gray-600/50'} transition-all  ${isDeleted? 'duration-500 w-0 opacity-0' : 'opacity-100 duration-0 w-56'}`} onClick={handleClick} onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)} >
                     
                     
                     <div className="card-body relative mb-4 p-0">
@@ -140,7 +140,7 @@ const CardBookmark: React.FC<CardProps> = ({ mediaId , session , episode , progr
                         </div>
                         </div>
                         <h2 className={`card-title text-[1.15rem] justify-center sm:justify-start mx-[7%] sm:text-xl transition-all ${isDeleted? 'duration-100 opacity-0':'duration-0 opacity-100'}`}>{mediaName} </h2>
-                        <div className="card-actions justify-center sm:justify-start  mx-[7%] mt-1">
+                        <div className="card-actions justify-center sm:justify-start  mx-[7%] mt-3">
                             <span className="badge text-xs sm:text-[0.875rem] p-2 mr-4 sm:mr-0">{releaseYear}</span>
                             <div className="badge text-xs sm:text-[0.875rem] badge-outline p-2">{cardType}</div>
                         </div>

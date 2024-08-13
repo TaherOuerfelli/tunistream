@@ -37,12 +37,14 @@ const Settings: React.FC = () => {
         <div className="container sm:mx-10 bg-base-200 rounded-box h-fit w-full" >
           <div className='mx-12' >
           <div className="w-full mt-10 " ref={langRef}>
-                <h1 className="mx-2 font-bold text-4xl " >Language:</h1>
+                <h1 className="mx-2 mb-4 font-bold text-4xl " >Language:</h1>
                 <div className="divider my-2 h-1"></div> 
+                <p className='m-3'>Select language for the entire Application.</p>
               
                   <div className="dropdown mb-10">
-                  <div tabIndex={0} role="button" className="btn btn-wide border-2 flex justify-between border-gray-600 text-xl m-1">
-                    <span>Select Language</span>
+                  <div tabIndex={0} role="button" className="btn w-fit border-2 flex justify-between border-gray-600 text-xl m-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="30" width="30" viewBox="0 -960 960 960"  fill='currentcolor' stroke='currentcolor'><path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-155.5t86-127Q252-817 325-848.5T480-880q83 0 155.5 31.5t127 86q54.5 54.5 86 127T880-480q0 82-31.5 155t-86 127.5q-54.5 54.5-127 86T480-80Zm0-82q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 39.5T660-480q0 21-1.5 40.5T654-400Zm-16-240h118q-29-50-72.5-87T584-782q18 33 31.5 68.5T638-640Zm-234 0h152q-12-44-31-83t-45-75q-26 36-45 75t-31 83Zm-200 0h118q9-38 22.5-73.5T376-782q-56 18-99.5 55T204-640Z"/></svg>
+                  <span className='mr-5'>Select Language</span>
                     <svg width="20px" height="20px" className="h-3 w-3 fill-current opacity-60 inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2048"><path d="M1799 349l242 241-1017 1017L7 590l242-241 775 775 775-775z"></path></svg>
                   </div>
 
@@ -77,10 +79,10 @@ const Settings: React.FC = () => {
                 
           </div>
           <div className="w-full mt-10 " ref={themeRef}>
-                <h1 className="mx-2 font-bold text-4xl ">Appearance:</h1>
+                <h1 className="mx-2 mb-4 font-bold text-4xl ">Appearance:</h1>
                 <div className="divider my-2 h-1"></div> 
                     
-                <div className='flex flex-wrap gap-8'>
+                <div className='flex flex-wrap gap-8 m-3'>
   
                 <input type="radio" name="theme-radios" aria-label="Default" className="btn theme-controller" value="dark" onChange={() => localStorage.setItem('theme', 'dark')}/>
                 <input type="radio" name="theme-radios" aria-label="Light" className="btn theme-controller" value="nord" onChange={() => localStorage.setItem('theme', 'nord')}/>
@@ -94,9 +96,9 @@ const Settings: React.FC = () => {
                 </div>
           </div>
           <div className="w-full mt-10 " ref={otherRef}>
-                <h1 className="mx-2 font-bold text-4xl ">Other Settings:</h1>
+                <h1 className="mx-2 mb-4 font-bold text-4xl ">Other Settings:</h1>
                 <div className="divider my-2 h-1"></div> 
-                <p className='h-[10rem]'>subtitle settings/</p>
+                <p className='h-[10rem] m-3'>subtitle settings/</p>
                 
           </div>
 

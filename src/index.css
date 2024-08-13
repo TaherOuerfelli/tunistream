@@ -10,7 +10,12 @@ body {
     background: rgb(0,0,0);
     background: linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 60%, rgba(17,17,17,0.427608543417367) 91%, rgba(50,50,50,0) 100%);
 }
-
+.outlined-text {
+  text-shadow: 
+        -2px 2px 0 #000,
+				 2px 2px 0 #000,
+				 2px -2px 0 #000;
+}
 /* Firefox scrollbar */
 * {
     scrollbar-width: thin;

@@ -35,5 +35,6 @@ export default defineConfig({
       },
     }),
   ],
+  assetsInclude: ['**/*.srt'], // Add this line to include .srt files
 })
 
