@@ -9,12 +9,7 @@ export default {
   },
   plugins: [require("daisyui")],
   daisyui: {
-    themes: ["nord",
-     {
-      dark: {
-        ...require("daisyui/src/theming/themes")["dark"],
-      },
-    }
+    themes: ["nord","dark"
     , "sunset","black","cyberpunk","synthwave","aqua"],
   },
 }
