@@ -799,7 +799,7 @@ const handleSettings = ()=>{
 
 
         <div className='absolute w-full h-fit bottom-0 pb-3 sm:pb-0 rounded-lg z-50'>
-          <div className={`flex justify-center items-center text-center w-[80vw] mx-[10vw] sm:w-[97vw] sm:mx-[1.5vw] sm:my-[2px] transition-transform duration-300 ${showUI ? 'translate-y-0' : 'translate-y-5'}`} onClick={togglePlayback}><p className='text-[2rem] text-white outlined-text font-[500] mb-2' /*style={{,WebkitTextStroke: '2px black'}}*/><SubtitlesComponent url={'null'/*link for subtitle goes here example: 'https://rapidcdn.cc/sub/cache/subtitle/13616089.vtt'*/} currentTime={(videoRef.current ? videoRef.current.currentTime:currentTime)}/></p></div>
+          <div className={`flex justify-center items-center text-center w-[80vw] mx-[10vw] sm:w-[97vw] sm:mx-[1.5vw] sm:my-[2px] transition-transform duration-300 ${showUI ? 'translate-y-0' : 'translate-y-5'}`} onClick={togglePlayback}><p className='text-[2rem] text-white outlined-text font-[500] mb-2' /*style={{,WebkitTextStroke: '2px black'}}*/><SubtitlesComponent url={'https://rapidcdn.cc/sub/cache/subtitle/13616089.vtt'} currentTime={(videoRef.current ? videoRef.current.currentTime:currentTime)}/></p></div>
           <div className={`transition-all duration-300 ${showUI ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
         <div className="relative  w-[80vw] mx-[10vw] sm:w-[97vw] sm:mx-[1.5vw] sm:my-[2px]">
         <RangeSlider Value={videoLoaded ? progress : 0} BufferValue={Math.round(loadedFraction * 10000)} onChange={(value) => handleProgress(value)}/>
